@@ -19,7 +19,8 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -39,7 +40,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
 
 
@@ -57,9 +57,6 @@ public class RobotContainer {
 
   //Set the default auto (do nothing) 
   autoChooser.setDefaultOption("Do Nothing", Commands.none());
-
-  //Add a simple auto option to have the robot drive forward for 1 second then stop
-  autoChooser.addOption("Drive Forward", m_SwerveSubsystem.driveForward().withTimeout(1));
 
   SmartDashboard.putData("Auto Chooser", autoChooser);
   }
@@ -95,7 +92,7 @@ public class RobotContainer {
                                                                     .scaleTranslation(0.8)
                                                                     .allianceRelativeControl(true);
   // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleKeyboard     = driveAngularVelocityKeyboard.copy()
+  SwerveInputStream driveDirectAngleKeyboard   = driveAngularVelocityKeyboard.copy()
                                                                                .withControllerHeadingAxis(() ->
                                                                                                               Math.sin(
                                                                                                                   m_DriverJoystick.getRawAxis(
@@ -129,12 +126,12 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngle      = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity  = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
-    // Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-        // driveDirectAngle);
+    Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngle);
     Command driveFieldOrientedDirectAngleKeyboard      = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
     Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
-    // Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-        // driveDirectAngleKeyboard);
+    Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation())
     {
@@ -149,7 +146,20 @@ public class RobotContainer {
       Pose2d target = new Pose2d(new Translation2d(1, 4),
                                  Rotation2d.fromDegrees(90));
       m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
-      // driveDirectAngleKeyboard.driveToPose(() -> target, new PIDController(5,0,0), new PIDController(5, 0, 0));
+
+        driveDirectAngleKeyboard.driveToPose(() -> target,
+                                           new ProfiledPIDController(5,
+                                                                     0,
+                                                                     0,
+                                                                     new Constraints(5, 2)),
+                                           new ProfiledPIDController(5,
+                                                                     0,
+                                                                     0,
+                                                                     new Constraints(Units.degreesToRadians(360),
+                                                                                     Units.degreesToRadians(180))
+                                           ));
+
+
       m_DriverJoystick.trigger().onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
       m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
@@ -163,7 +173,7 @@ public class RobotContainer {
     }
     if (DriverStation.isTest())
     {
-      // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+      m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
       // m_DriverJoystick.x().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
       // m_DriverJoystick.start().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
