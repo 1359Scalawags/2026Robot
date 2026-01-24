@@ -67,7 +67,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                                                                 () -> m_DriverJoystick.getY() * -1,
                                                                 () -> m_DriverJoystick.getX() * -1)
-                                                            .withControllerRotationAxis(m_DriverJoystick::getZ) //TODO: is getz the right one or is it gettwist?
+                                                            .withControllerRotationAxis(m_DriverJoystick::getZ)  //TODO: is getz the right one or is it gettwist?
                                                             .deadband(Constants.OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -175,18 +175,18 @@ public class RobotContainer {
     {
       m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      // m_DriverJoystick.x().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
-      // m_DriverJoystick.start().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
-      // m_DriverJoystick.back().whileTrue(m_SwerveSubsystem.centerModulesCommand());
-      // m_DriverJoystick.leftBumper().onTrue(Commands.none());
-      // m_DriverJoystick.rightBumper().onTrue(Commands.none());
+      // m_DriverJoystick.button(0).whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
+      m_DriverJoystick.button(1).onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+      // m_DriverJoystick.button(0).whileTrue(m_SwerveSubsystem.centerModulesCommand());
+      // m_DriverJoystick.button(0).onTrue(Commands.none());
+      // m_DriverJoystick.button(0).onTrue(Commands.none());
     } else
     {
-      // m_DriverJoystick.a().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
-      // m_DriverJoystick.start().whileTrue(Commands.none());
-      // m_DriverJoystick.back().whileTrue(Commands.none());
-      // m_DriverJoystick.leftBumper().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
-      // m_DriverJoystick.rightBumper().onTrue(Commands.none());
+      m_DriverJoystick.button(1).onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+      // m_DriverJoystick.button(0).whileTrue(Commands.none());
+      // m_DriverJoystick.button(0).whileTrue(Commands.none());
+      // m_DriverJoystick.button(0).whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
+      // m_DriverJoystick.button(0).onTrue(Commands.none());
     }
   }
 
