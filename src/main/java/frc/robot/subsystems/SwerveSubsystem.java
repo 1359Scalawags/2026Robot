@@ -5,6 +5,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -16,11 +17,20 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.studica.frc.AHRS;
+
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -34,6 +44,7 @@ import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -47,44 +58,92 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import limelight.Limelight;
+import limelight.networktables.AngularVelocity3d;
+import limelight.networktables.LimelightPoseEstimator;
+import limelight.networktables.LimelightResults;
+import limelight.networktables.LimelightSettings.LEDMode;
+import limelight.networktables.Orientation3d;
+import limelight.networktables.PoseEstimate;
+import limelight.networktables.LimelightPoseEstimator.EstimationMode;
+import limelight.networktables.target.pipeline.NeuralClassifier;
 
-public class SwerveSubsystem extends SubsystemBase {
+public class SwerveSubsystem extends SubsystemBase
+{
+  /**
+   * Swerve drive object.
+   */
+  private final SwerveDrive swerveDrive;
 
-    /**
-     * Swerve drive object.
-     */
-    private final SwerveDrive swerveDrive;
+  /**
+   * Initialize {@link SwerveDrive} with the directory provided.
+   *
+   * @param directory Directory of swerve drive config files.
+   */
 
-    /**
-     * Initialize {@link SwerveDrive} with the directory provided.
-     *
-     * @param directory Directory of swerve drive config files.
-     */
-    public SwerveSubsystem(File directory) {
-        boolean blueAlliance = false;
-        Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
-                Meter.of(4)),
-                Rotation2d.fromDegrees(0))
-                : new Pose2d(new Translation2d(Meter.of(16),
-                        Meter.of(4)),
-                        Rotation2d.fromDegrees(180));
-        // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
-        SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
-        try {
-            swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.swerveDrive.MAX_SPEED, startingPose);
-            // Alternative method if you don't want to supply the conversion factor via JSON files.
-            // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
-        swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
-        swerveDrive.setAngularVelocityCompensation(true,
-                true,
-                0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
-        swerveDrive.setModuleEncoderAutoSynchronize(false,
-                1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
-        // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
+  // SparkMax left, right;
+  // RelativeEncoder leftEncoder, rightEncoder;
+  AHRS navx;
+
+  // double                         driveGearRatio      = 1.0;
+  // double                         wheelDiameterMeters = 4.0;
+  // double                         trackWidth          = Units.inchesToMeters(20);
+  DifferentialDrivePoseEstimator differentialDrivePoseEstimator;
+  DifferentialDriveKinematics    differentialDriveKinematics;
+  Pose3d cameraOffset = new Pose3d(Inches.of(5).in(Meters),
+                                                                  Inches.of(5).in(Meters),
+                                                                  Inches.of(5).in(Meters),
+                                                                  Rotation3d.kZero);
+  Limelight limelight;
+  LimelightPoseEstimator poseEstimator;
+
+   public SwerveSubsystem(File directory) { 
+
+    // differentialDriveKinematics = new DifferentialDriveKinematics(trackWidth);
+    differentialDrivePoseEstimator = new DifferentialDrivePoseEstimator(differentialDriveKinematics,
+                                                                        navx.getRotation2d(),
+                                                                        0,
+                                                                        0,
+                                                                        Pose2d.kZero); // Starting at (0,0)
+
+    limelight = new Limelight("limelight");
+    limelight.getSettings()
+             .withLimelightLEDMode(LEDMode.PipelineControl)
+             .withCameraOffset(cameraOffset)
+             .save();
+             
+    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+
+
+    boolean blueAlliance = false;
+    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
+                                                                      Meter.of(4)),
+                                                    Rotation2d.fromDegrees(0))
+                                       : new Pose2d(new Translation2d(Meter.of(16),
+                                                                      Meter.of(4)),
+                                                    Rotation2d.fromDegrees(180));
+    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    try
+    {
+      swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.swerveDrive.MAX_SPEED, startingPose);
+      // Alternative method if you don't want to supply the conversion factor via JSON files.
+      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
+    } catch (Exception e)
+    {
+      throw new RuntimeException(e);
+    }
+    swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
+    swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
+    swerveDrive.setAngularVelocityCompensation(true,
+                                               true,
+                                               0.1); //Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1.
+    swerveDrive.setModuleEncoderAutoSynchronize(false,
+                                                1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
+    // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
         setupPathPlanner();
     }
@@ -103,9 +162,48 @@ public class SwerveSubsystem extends SubsystemBase {
                         Rotation2d.fromDegrees(0)));
     }
 
-    @Override
-    public void periodic() {
-    }
+  @Override
+  public void periodic()
+  {
+          //TODO: find a substatuite in YAGSL for getswervemoduleposistions
+      // differentialDrivePoseEstimator.update(navx.getRotation2d(), SwerveModule);
+
+    // Required for megatag2
+    limelight.getSettings()
+             .withRobotOrientation(new Orientation3d(navx.getRotation3d(),
+                                                     new AngularVelocity3d(DegreesPerSecond.of(0),
+                                                                           DegreesPerSecond.of(0),
+                                                                           DegreesPerSecond.of(0))))
+             .save();
+
+    // Get the vision estimate.
+    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
+    visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
+      // If the average tag distance is less than 4 meters,
+      // there are more than 0 tags in view,
+      // and the average ambiguity between tags is less than 30% then we update the pose estimation.
+      if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
+      {
+        differentialDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
+                                                            poseEstimate.timestampSeconds);
+      }
+    });
+
+    limelight.getLatestResults().ifPresent((LimelightResults result) -> {
+      for (NeuralClassifier object : result.targets_Classifier)
+      {
+        // Classifier says its a note.
+        if (object.className.equals("algae"))
+        {
+          if (object.ty > 2 && object.ty < 1)
+          {
+            // do stuff
+          }
+        }
+      }
+    });
+  }
+  
 
     @Override
     public void simulationPeriodic() {
