@@ -4,112 +4,123 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Feet;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkParameters;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import yams.gearing.GearBox;
-import yams.gearing.MechanismGearing;
-import yams.mechanisms.SmartMechanism;
-import yams.mechanisms.config.FlyWheelConfig;
-import yams.mechanisms.velocity.FlyWheel;
-import yams.mechanisms.config.FlyWheelConfig;
-import yams.mechanisms.velocity.FlyWheel;
-import yams.motorcontrollers.SmartMotorController;
-import yams.motorcontrollers.SmartMotorControllerConfig;
-import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
-import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
-import yams.motorcontrollers.local.SparkWrapper;
+import frc.robot.Constants;
+import frc.robot.Robot;
+import frc.robot.RobotContainer;
 
 public class ShooterSubsystem extends SubsystemBase {
 
-  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
-  // Feedback Constants (PID Constants)
-  .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-  .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-  // Feedforward Constants
-  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  // Telemetry name and verbosity level
-  .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-  // Gearing from the motor rotor to final shaft.
-  // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
-  // You could also use .withGearing(12) which does the same thing.
-  .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-  // Motor properties to prevent over currenting.
-  .withMotorInverted(false)
-  .withIdleMode(MotorMode.COAST)
-  .withStatorCurrentLimit(Amps.of(40));
+  private SparkMax flyWheel;
+  private SparkMax fingerWheel;
 
-  // Vendor motor controller object
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  private double targetSpeed;
+  private SparkClosedLoopController flySpeedPID;
+  private SparkClosedLoopController fingerSpeedPID;
 
-  // Create our SmartMotorController from our Spark and config with the NEO.
-  private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
-
-   private final FlyWheelConfig shooterConfig = new FlyWheelConfig(sparkSmartMotorController)
-  // Diameter of the flywheel.
-  .withDiameter(Inches.of(4))
-  // Mass of the flywheel.
-  .withMass(Pounds.of(1))
-  // Maximum speed of the shooter.
-  .withUpperSoftLimit(RPM.of(1000))
-  // Telemetry name and verbosity for the arm.
-  .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
-
-  // Shooter Mechanism
-  private FlyWheel shooter = new FlyWheel(shooterConfig);
-
-  /** Creates a new ExampleSubsystem. */
-  public ShooterSubsystem() {}
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+  enum ShooterSpeed {
+    off,
+    low,
+    full
   }
 
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  ShooterSpeed currentSpeed;
+
+  /** Creates a new ExampleSubsystem. */
+  public ShooterSubsystem() {
+    flyWheel = new SparkMax(Constants.Shooter.flyWheelID, SparkLowLevel.MotorType.kBrushless);
+      flyWheel.configure(SparkMaxConfig.Presets.REV_NEO_2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    fingerWheel = new SparkMax(Constants.Shooter.fingerWheelID, SparkLowLevel.MotorType.kBrushless);
+      fingerWheel.configure(SparkMaxConfig.Presets.REV_NEO_550, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    currentSpeed = ShooterSpeed.off;
+
+
+    speedPIDR = flyWheel.();
+      speedPIDR.setP(Constants.shooterSubsystem.kRightMotorP);
+      speedPIDR.setI(Constants.shooterSubsystem.kRightMotorI);
+      speedPIDR.setD(Constants.shooterSubsystem.kRightMotorD);
+      speedPIDR.setFF(Constants.shooterSubsystem.kRightmotorFF);
+      speedPIDR.setIZone(Constants.shooterSubsystem.kRightMotorIZ);
+    speedPIDL = fingerWheel.getPIDController();
+      speedPIDL.setP(Constants.shooterSubsystem.kLeftMotorP);
+      speedPIDL.setI(Constants.shooterSubsystem.kLeftMotorI);
+      speedPIDL.setD(Constants.shooterSubsystem.kLeftMotorD);
+      speedPIDL.setFF(Constants.shooterSubsystem.kLeftmotorFF);
+      speedPIDL.setIZone(Constants.shooterSubsystem.kLeftMotorIZ);
+    
+    shooterLimiter = new SlewRateLimiter
+      (Constants.shooterSubsystem.kTwoMotorUsed ? Constants.shooterSubsystem.kShootingspeedlimit : 3500);
+  }
+
+  public void spinShootingMotor() {
+    currentSpeed = ShooterSpeed.full;
+
+    // fingerWheel.set(Constants.Shooter.kShootingspeed);
+    // flyWheel.set(-Constants.Shooter.kShootingspeed);
+  }
+
+  public void ampSpinShootingMotor() {
+    currentSpeed = ShooterSpeed.low;
+
+    // fingerWheel.set(Constants.Shooter.kIdleshootingspeed);
+    // flyWheel.set(-Constants.Shooter.kIdleshootingspeed);
+
+  }
+
+  public void stopSpinShootingMotor() {
+    currentSpeed = ShooterSpeed.off;
+
+    // fingerWheel.set(Constants.Shooter.kstopshootingspeed);
+    // flyWheel.set(-Constants.Shooter.kstopshootingspeed);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    shooter.updateTelemetry();
+    if(!DriverStation.isTest()){
+      // This method will be called once per scheduler run
+      if (currentSpeed == ShooterSpeed.off) {
+        targetSpeed = Constants.shooterSubsystem.kstopshootingspeed;
+      }
+      else if (currentSpeed == ShooterSpeed.low) {
+        targetSpeed = Constants.shooterSubsystem.kAmpshootingspeed;
+      }
+      else {
+        targetSpeed = Constants.shooterSubsystem.kShootingspeed;
+      }
+      double limitSpeed = shooterLimiter.calculate(targetSpeed);
+      //speedPIDR.setReference(0, ControlType.kVelocity); //Right motor
+      speedPIDR.setReference(Constants.shooterSubsystem.kTwoMotorUsed ? limitSpeed : 0, ControlType.kVelocity); //Right motor
+      speedPIDL.setReference(Constants.shooterSubsystem.kTwoMotorUsed ? limitSpeed : 3000, ControlType.kVelocity); // Left motor
+    }
+    else {
+      double joyX = Robot.getRobotContainer().driverGetForward()/2;
+      fingerWheel.set(joyX);
+      flyWheel.set(joyX);
+
+
+
+    }
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
-    shooter.simIterate();
   }
 }
