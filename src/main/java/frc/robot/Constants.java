@@ -15,8 +15,8 @@ package frc.robot;
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    public static final int DriverJoystick = 1;
-    public static final int AssistJoystick = 2;
+    public static final int DriverJoystick = 0;
+    public static final int AssistJoystick = 1;
     public static final double DEADBAND = 0.05;
   }
 
@@ -25,7 +25,7 @@ public final class Constants {
     public static final String testbot = "Pearl/testbot";
 
 
-    public static final double MAX_SPEED = 0;
+    public static final double MAX_SPEED = 4;
   }
 
 
