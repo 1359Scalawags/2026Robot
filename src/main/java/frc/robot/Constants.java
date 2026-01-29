@@ -39,6 +39,12 @@ public final class Constants {
     public static final String testbot = "Pearl/testbot";
 
     public static final double MAX_SPEED = 4;
+
+    public static class autoAlign {
+      public static final double X_REEF_ALIGNMENT_P = 0;
+      public static final double Y_REEF_ALIGNMENT_P = 0;
+      public static final double ROT_REEF_ALIGNMENT_P = 0;
+    }
   }
 
   public static class Shooter {

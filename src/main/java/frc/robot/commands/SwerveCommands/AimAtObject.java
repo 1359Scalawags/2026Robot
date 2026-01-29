@@ -4,7 +4,6 @@
 
 package frc.robot.commands.SwerveCommands;
 
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.DoubleSupplier;
