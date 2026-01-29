@@ -1,7 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
@@ -33,170 +32,170 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
+    // The robot's subsystems and commands are defined here...
 
+    private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
 
-  private final CommandJoystick m_DriverJoystick = new CommandJoystick(Constants.OperatorConstants.DriverJoystick);
-  private final CommandJoystick m_AssistantJoystick = new CommandJoystick(Constants.OperatorConstants.AssistJoystick);
-      
-  private final SendableChooser<Command> autoChooser;
+    private final CommandJoystick m_DriverJoystick = new CommandJoystick(Constants.OperatorConstants.DriverJoystick);
+    private final CommandJoystick m_AssistantJoystick = new CommandJoystick(Constants.OperatorConstants.AssistJoystick);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    configureBindings();
+    private final SendableChooser<Command> autoChooser;
 
-   //Have the autoChooser pull in all PathPlanner autos as options
-  autoChooser = AutoBuilder.buildAutoChooser();
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and
+     * commands.
+     */
+    public RobotContainer() {
+        configureBindings();
 
-  //Set the default auto (do nothing) 
-  autoChooser.setDefaultOption("Do Nothing", Commands.none());
+        //Have the autoChooser pull in all PathPlanner autos as options
+        autoChooser = AutoBuilder.buildAutoChooser();
 
-  SmartDashboard.putData("Auto Chooser", autoChooser);
-  }
+        //Set the default auto (do nothing) 
+        autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
- /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
-   */
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                                                                () -> m_DriverJoystick.getY() * -1,
-                                                                () -> m_DriverJoystick.getX() * -1)
-                                                            .withControllerRotationAxis(m_DriverJoystick::getZ)  //TODO: is getz the right one or is it gettwist?
-                                                            .deadband(Constants.OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
-  /**
-   * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
-   */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_DriverJoystick::getX,
-                                                                                             m_DriverJoystick::getY)
-                                                           .headingWhile(true);
-  /**
-   * Clone's the angular velocity input stream and converts it to a robotRelative input stream.
-   */
-  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-                                                             .allianceRelativeControl(false);
-
-  SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                                                                        () -> -m_DriverJoystick.getY(),
-                                                                        () -> -m_DriverJoystick.getX())
-                                                                    .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
-                                                                        2))
-                                                                    .deadband(OperatorConstants.DEADBAND)
-                                                                    .scaleTranslation(0.8)
-                                                                    .allianceRelativeControl(true);
-  // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleKeyboard   = driveAngularVelocityKeyboard.copy()
-                                                                               .withControllerHeadingAxis(() ->
-                                                                                                              Math.sin(
-                                                                                                                  m_DriverJoystick.getRawAxis(
-                                                                                                                      2) *
-                                                                                                                  Math.PI) *
-                                                                                                              (Math.PI *
-                                                                                                               2),
-                                                                                                          () ->
-                                                                                                              Math.cos(
-                                                                                                                  m_DriverJoystick.getRawAxis(
-                                                                                                                      2) *
-                                                                                                                  Math.PI) *
-                                                                                                              (Math.PI *
-                                                                                                               2))
-                                                                               .headingWhile(true)
-                                                                               .translationHeadingOffset(true)
-                                                                               .translationHeadingOffset(Rotation2d.fromDegrees(
-                                                                                   0));
-
-
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
-  private void configureBindings() {
-    Command driveFieldOrientedDirectAngle      = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity  = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard      = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleKeyboard);
-
-    if (RobotBase.isSimulation())
-    {
-      m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-    } else
-    {
-      m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
-    if (Robot.isSimulation())
-    {
-      Pose2d target = new Pose2d(new Translation2d(1, 4),
-                                 Rotation2d.fromDegrees(90));
-      m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+    /**
+     * Converts driver input into a field-relative ChassisSpeeds that is
+     * controlled by angular velocity.
+     */
+    SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
+            () -> m_DriverJoystick.getYChannel() * -1,
+            () -> m_DriverJoystick.getXChannel() * -1)
+            .withControllerRotationAxis(m_DriverJoystick::getXChannel)
+            .deadband(Constants.OperatorConstants.DEADBAND)
+            .scaleTranslation(0.8)
+            .allianceRelativeControl(true);
+    /**
+     * Clone's the angular velocity input stream and converts it to a
+     * fieldRelative input stream.
+     */
+    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_DriverJoystick::getXChannel,
+            m_DriverJoystick::getYChannel)
+            .headingWhile(true);
+    /**
+     * Clone's the angular velocity input stream and converts it to a
+     * robotRelative input stream.
+     */
+    SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
+            .allianceRelativeControl(false);
 
-        driveDirectAngleKeyboard.driveToPose(() -> target,
-                                           new ProfiledPIDController(5,
-                                                                     0,
-                                                                     0,
-                                                                     new Constraints(5, 2)),
-                                           new ProfiledPIDController(5,
-                                                                     0,
-                                                                     0,
-                                                                     new Constraints(Units.degreesToRadians(360),
-                                                                                     Units.degreesToRadians(180))
-                                           ));
+    SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
+            () -> -m_DriverJoystick.getYChannel(),
+            () -> -m_DriverJoystick.getXChannel())
+            .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
+            2))
+            .deadband(OperatorConstants.DEADBAND)
+            .scaleTranslation(0.8)
+            .allianceRelativeControl(true);
+    // Derive the heading axis with math!
+    SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+            .withControllerHeadingAxis(()
+                    -> Math.sin(
+                    m_DriverJoystick.getRawAxis(
+                            2)
+                    * Math.PI)
+            * (Math.PI
+            * 2),
+                    ()
+                    -> Math.cos(
+                            m_DriverJoystick.getRawAxis(
+                                    2)
+                            * Math.PI)
+                    * (Math.PI
+                    * 2))
+            .headingWhile(true)
+            .translationHeadingOffset(true)
+            .translationHeadingOffset(Rotation2d.fromDegrees(
+                    0));
 
+    /**
+     * Use this method to define your trigger->command mappings. Triggers can be
+     * created via the
+     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor
+     * with an arbitrary predicate, or via the named factories in {@link
+     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
+     * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+     * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+     * joysticks}.
+     */
+    private void configureBindings() {
+        Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
+        Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
+        Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
+        Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+                driveDirectAngle);
+        Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
+        Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
+        Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+                driveDirectAngleKeyboard);
 
-      m_DriverJoystick.trigger().onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
-      m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+        if (RobotBase.isSimulation()) {
+            m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+        } else {
+            m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+        }
+
+        if (Robot.isSimulation()) {
+            Pose2d target = new Pose2d(new Translation2d(1, 4),
+                    Rotation2d.fromDegrees(90));
+            m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+
+            driveDirectAngleKeyboard.driveToPose(() -> target,
+                    new ProfiledPIDController(5,
+                            0,
+                            0,
+                            new Constraints(5, 2)),
+                    new ProfiledPIDController(5,
+                            0,
+                            0,
+                            new Constraints(Units.degreesToRadians(360),
+                                    Units.degreesToRadians(180))
+                    ));
+
+            m_DriverJoystick.trigger().onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+            m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+            m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                    () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
 //      driverXbox.b().whileTrue(
 //          drivebase.driveToPose(
 //              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
 //                              );
+        }
+        if (DriverStation.isTest()) {
+            m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
+            // m_DriverJoystick.x().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
+            // m_DriverJoystick.start().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+            // m_DriverJoystick.back().whileTrue(m_SwerveSubsystem.centerModulesCommand());
+            // m_DriverJoystick.leftBumper().onTrue(Commands.none());
+            // m_DriverJoystick.rightBumper().onTrue(Commands.none());
+        } else {
+            // m_DriverJoystick.a().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+            // m_DriverJoystick.start().whileTrue(Commands.none());
+            // m_DriverJoystick.back().whileTrue(Commands.none());
+            // m_DriverJoystick.leftBumper().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
+            // m_DriverJoystick.rightBumper().onTrue(Commands.none());
+        }
     }
-    if (DriverStation.isTest())
-    {
-      m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      // m_DriverJoystick.button(0).whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
-      m_DriverJoystick.button(1).onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
-      // m_DriverJoystick.button(0).whileTrue(m_SwerveSubsystem.centerModulesCommand());
-      // m_DriverJoystick.button(0).onTrue(Commands.none());
-      // m_DriverJoystick.button(0).onTrue(Commands.none());
-    } else
-    {
-      m_DriverJoystick.button(1).onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
-      // m_DriverJoystick.button(0).whileTrue(Commands.none());
-      // m_DriverJoystick.button(0).whileTrue(Commands.none());
-      // m_DriverJoystick.button(0).whileTrue(Commands.runOnce(m_SwerveSubsystem::lock, m_SwerveSubsystem).repeatedly());
-      // m_DriverJoystick.button(0).onTrue(Commands.none());
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An example command will be run in autonomous
+        return autoChooser.getSelected();
     }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return autoChooser.getSelected();
-  }
 }
