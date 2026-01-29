@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -44,6 +45,16 @@ public final class Constants {
       public static final double X_REEF_ALIGNMENT_P = 0;
       public static final double Y_REEF_ALIGNMENT_P = 0;
       public static final double ROT_REEF_ALIGNMENT_P = 0;
+      public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final Time DONT_SEE_TAG_WAIT_TIME = null;
+    public static final Time POSE_VALIDATION_TIME = null;
+
+
     }
   }
 
