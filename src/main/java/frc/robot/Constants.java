@@ -4,15 +4,29 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class FieldConstants {
+    // gives a generic translation 2d for the red and blue side to be used on any object.
+      // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
+      // public static final Translation2d kSpeakerPositionRED = new Translation2d();
+    public static final Translation2d kRedHubPosition = new Translation2d();
+    public static final Translation2d kBlueHubPosition = new Translation2d();
+  }
+
   public static class Shooter {
 
     public static final int flyWheelID = 0;
@@ -31,10 +45,15 @@ public final class Constants {
     public static final String robot = "2026robot";
     public static final String testbot = "Pearl/testbot";
 
-
     public static final double MAX_SPEED = 4;
   }
 
+  public static class Shooter {
+    public static final int shooterMotorPort = 101;
+    public static final int feederMotorPort = 102;
+  }
 
-
+  public static class Climber {
+    public static final int elevatorMotorPort = 103;
+  }
 }
