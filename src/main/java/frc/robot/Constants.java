@@ -28,6 +28,13 @@ public final class Constants {
     public static final Translation2d kBlueHubPosition = new Translation2d();
   }
 
+  public static class Shooter {
+
+    public static final int flyWheelID = 0;
+    public static final int fingerWheelID = 0;
+    
+    
+  }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
