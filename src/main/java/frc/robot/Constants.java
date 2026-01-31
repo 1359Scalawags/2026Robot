@@ -21,9 +21,10 @@ import edu.wpi.first.units.measure.Time;
  */
 public final class Constants {
   public static class FieldConstants {
-    // gives a generic translation 2d for the red and blue side to be used on any object.
-      // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
-      // public static final Translation2d kSpeakerPositionRED = new Translation2d();
+    // gives a generic translation 2d for the red and blue side to be used on any
+    // object.
+    // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
+    // public static final Translation2d kSpeakerPositionRED = new Translation2d();
     public static final Translation2d kRedHubPosition = new Translation2d();
     public static final Translation2d kBlueHubPosition = new Translation2d();
   }
@@ -32,9 +33,9 @@ public final class Constants {
 
     public static final int flyWheelID = 0;
     public static final int fingerWheelID = 0;
-    
-    
+
   }
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
@@ -53,24 +54,41 @@ public final class Constants {
       public static final double Y_REEF_ALIGNMENT_P = 0;
       public static final double ROT_REEF_ALIGNMENT_P = 0;
       public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
-    public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
-    public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
-    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
-    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
-    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
-    public static final Time DONT_SEE_TAG_WAIT_TIME = null;
-    public static final Time POSE_VALIDATION_TIME = null;
-
+      public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
+      public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
+      public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
+      public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
+      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
+      public static final Time DONT_SEE_TAG_WAIT_TIME = null;
+      public static final Time POSE_VALIDATION_TIME = null;
 
     }
   }
 
-  public static class Shooter {
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
-  }
 
   public static class Climber {
     public static final int elevatorMotorPort = 103;
   }
+
+  public static class Intake {
+    // ========== CONFIGURATION ==========
+    // CAN IDs for the motor controllers
+    public static final int KICKER_MOTOR_CAN_ID = 10;
+    public static final int STAR_MOTOR_CAN_ID = 11;
+
+    // Motor speed in RPM
+    public static final double INTAKE_SPEED_RPM = 1600;
+
+    // PID Constants (tune these based on your robot's performance)
+    public static final double kP = 0.0001;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kFF = 0.000156; // Feed-forward for NEO motors
+
+    // Current and speed thresholds
+    public static final int CURRENT_LIMIT = 40; // Amps
+    public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
+    public static final double RPM_TOLERANCE = 100.0; // RPM
+  }
+
 }

@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -19,25 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
  * Uses modern REVLib configuration API
  */
 public class IntakeSubsystem extends SubsystemBase {
-  
-  // ========== CONFIGURATION ==========
-  // CAN IDs for the motor controllers
-  private static final int KICKER_MOTOR_CAN_ID = 10;
-  private static final int STAR_MOTOR_CAN_ID = 11;
-  
-  // Motor speed in RPM
-  private static final double INTAKE_SPEED_RPM = 1600;
-  
-  // PID Constants (tune these based on your robot's performance)
-  private static final double kP = 0.0001;
-  private static final double kI = 0.0;
-  private static final double kD = 0.0;
-  private static final double kFF = 0.000156; // Feed-forward for NEO motors
-  
-  // Current and speed thresholds
-  private static final int CURRENT_LIMIT = 40; // Amps
-  private static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
-  private static final double RPM_TOLERANCE = 100.0; // RPM
   
   // ========== MOTOR CONTROLLERS ==========
   private final SparkMax kickerMotor;
@@ -56,10 +38,10 @@ public class IntakeSubsystem extends SubsystemBase {
    */
   public IntakeSubsystem() {
     // Initialize kicker motor (spins one direction) - motor type set in constructor
-    kickerMotor = new SparkMax(KICKER_MOTOR_CAN_ID, MotorType.kBrushless);
+    kickerMotor = new SparkMax(Constants.Intake.KICKER_MOTOR_CAN_ID, MotorType.kBrushless);
     
     // Initialize star motor (spins opposite direction) - motor type set in constructor
-    starMotor = new SparkMax(STAR_MOTOR_CAN_ID, MotorType.kBrushless);
+    starMotor = new SparkMax(Constants.Intake.STAR_MOTOR_CAN_ID, MotorType.kBrushless);
     
     // Get encoders
     kickerEncoder = kickerMotor.getEncoder();
@@ -82,20 +64,20 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxConfig kickerConfig = new SparkMaxConfig();
     kickerConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(CURRENT_LIMIT)
+      .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
       .inverted(false)
       .voltageCompensation(12.0);
     
     // Configure closed loop control for kicker motor
     kickerConfig.closedLoop
-      .p(kP)
-      .i(kI)
-      .d(kD)
+      .p(Constants.Intake.kP)
+      .i(Constants.Intake.kI)
+      .d(Constants.Intake.kD)
       .outputRange(-1, 1);
     
     // Configure feedforward separately using the new API
     kickerConfig.closedLoop.feedForward
-      .kV(kFF);
+      .kV(Constants.Intake.kFF);
     
     // Apply configuration to kicker motor and persist parameters
     kickerMotor.configure(
@@ -108,20 +90,20 @@ public class IntakeSubsystem extends SubsystemBase {
     SparkMaxConfig starConfig = new SparkMaxConfig();
     starConfig
       .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(CURRENT_LIMIT)
+      .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
       .inverted(true) // Inverted to spin opposite direction
       .voltageCompensation(12.0);
     
     // Configure closed loop control for star motor
     starConfig.closedLoop
-      .p(kP)
-      .i(kI)
-      .d(kD)
+      .p(Constants.Intake.kP)
+      .i(Constants.Intake.kI)
+      .d(Constants.Intake.kD)
       .outputRange(-1, 1);
     
     // Configure feedforward separately using the new API
     starConfig.closedLoop.feedForward
-      .kV(kFF);
+      .kV(Constants.Intake.kFF);
     
     // Apply configuration to star motor and persist parameters
     starMotor.configure(
@@ -137,9 +119,9 @@ public class IntakeSubsystem extends SubsystemBase {
    * Turn on both motors to intake balls at 1600 RPM
    */
   public void intakeOn() {
-    kickerPID.setSetpoint(INTAKE_SPEED_RPM, ControlType.kVelocity);
-    starPID.setSetpoint(INTAKE_SPEED_RPM, ControlType.kVelocity);
-    System.out.println("Intake ON at " + INTAKE_SPEED_RPM + " RPM");
+    kickerPID.setSetpoint(Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
+    starPID.setSetpoint(Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
+    System.out.println("Intake ON at " + Constants.Intake.INTAKE_SPEED_RPM + " RPM");
   }
   
   /**
@@ -155,9 +137,9 @@ public class IntakeSubsystem extends SubsystemBase {
    * Reverse both motors (for ejecting balls)
    */
   public void intakeReverse() {
-    kickerPID.setSetpoint(-INTAKE_SPEED_RPM, ControlType.kVelocity);
-    starPID.setSetpoint(-INTAKE_SPEED_RPM, ControlType.kVelocity);
-    System.out.println("Intake REVERSE at -" + INTAKE_SPEED_RPM + " RPM");
+    kickerPID.setSetpoint(-Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
+    starPID.setSetpoint(-Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
+    System.out.println("Intake REVERSE at -" + Constants.Intake.INTAKE_SPEED_RPM + " RPM");
   }
   
   /**
@@ -206,8 +188,8 @@ public class IntakeSubsystem extends SubsystemBase {
    * @return True if current is too high
    */
   public boolean isCurrentSpiking() {
-    return getKickerMotorCurrent() > CURRENT_THRESHOLD ||
-           getStarMotorCurrent() > CURRENT_THRESHOLD;
+    return getKickerMotorCurrent() > Constants.Intake.CURRENT_THRESHOLD ||
+           getStarMotorCurrent() > Constants.Intake.CURRENT_THRESHOLD;
   }
   
   /**
@@ -215,9 +197,9 @@ public class IntakeSubsystem extends SubsystemBase {
    * @return True if both motors are within tolerance
    */
   public boolean isAtTargetSpeed() {
-    double kickerError = Math.abs(getKickerMotorRPM() - INTAKE_SPEED_RPM);
-    double starError = Math.abs(getStarMotorRPM() - INTAKE_SPEED_RPM);
-    return kickerError < RPM_TOLERANCE && starError < RPM_TOLERANCE;
+    double kickerError = Math.abs(getKickerMotorRPM() - Constants.Intake.INTAKE_SPEED_RPM);
+    double starError = Math.abs(getStarMotorRPM() - Constants.Intake.INTAKE_SPEED_RPM);
+    return kickerError < Constants.Intake.RPM_TOLERANCE && starError < Constants.Intake.RPM_TOLERANCE;
   }
   
   /**
