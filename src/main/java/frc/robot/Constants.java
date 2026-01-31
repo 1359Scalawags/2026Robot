@@ -32,7 +32,8 @@ public final class Constants {
 
     public static final int flyWheelID = 0;
     public static final int fingerWheelID = 0;
-    
+    public static final int shooterMotorPort = 101;
+    public static final int feederMotorPort = 102;
     
   }
   public static class OperatorConstants {
@@ -65,10 +66,10 @@ public final class Constants {
     }
   }
 
-  public static class Shooter {
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
-  }
+  // public static class Shooter {
+  //   public static final int shooterMotorPort = 101;
+  //   public static final int feederMotorPort = 102;
+  // }
 
   public static class Climber {
     public static final int elevatorMotorPort = 103;
