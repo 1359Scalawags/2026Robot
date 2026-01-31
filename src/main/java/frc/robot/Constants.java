@@ -67,7 +67,25 @@ public final class Constants {
   }
 
   public static class Climber {
-    public static final int elevatorMotorPort = 103;
+    public static final int climberMotorPort = 103;
+     // Constants
+ // Change to your CAN ID
+    
+    public static final double GEAR_RATIO = 125.0;
+    public static final int CURRENT_LIMIT = 60; // Amps
+    
+    // PID Constants(tune these!)
+    public static final double kP = 0.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kFF = 0.0;
+    
+    // Position limits (in rotations of the output shaft)
+    public static final double MAX_HEIGHT = 100.0; // Adjust based on your mechanism
+    public static final double MIN_HEIGHT = 0.0;
+    
+    // Speeds
+    public static final double MAX_SPEED = 0.8; // 80% max speed
   }
 
   public static class Intake {
