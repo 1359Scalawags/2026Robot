@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -63,6 +64,7 @@ public class RobotContainer {
         autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
         SmartDashboard.putData("Auto Chooser", autoChooser);
+        SmartDashboard.putData(CommandScheduler.getInstance());
     }
 
     /**
@@ -70,9 +72,9 @@ public class RobotContainer {
      * controlled by angular velocity.
      */
     SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-            () -> m_DriverJoystick.getYChannel() * -1,
-            () -> m_DriverJoystick.getXChannel() * -1)
-            .withControllerRotationAxis(m_DriverJoystick::getXChannel)
+            () -> m_DriverJoystick.getY() * -1,
+            () -> m_DriverJoystick.getX() * -1)
+            .withControllerRotationAxis(m_DriverJoystick::getX)
             .deadband(Constants.OperatorConstants.DEADBAND)
             .scaleTranslation(0.8)
             .allianceRelativeControl(true);
@@ -80,8 +82,8 @@ public class RobotContainer {
      * Clone's the angular velocity input stream and converts it to a
      * fieldRelative input stream.
      */
-    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_DriverJoystick::getXChannel,
-            m_DriverJoystick::getYChannel)
+    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_DriverJoystick::getX,
+            m_DriverJoystick::getY)
             .headingWhile(true);
     /**
      * Clone's the angular velocity input stream and converts it to a
@@ -91,8 +93,8 @@ public class RobotContainer {
             .allianceRelativeControl(false);
 
     SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-            () -> -m_DriverJoystick.getYChannel(),
-            () -> -m_DriverJoystick.getXChannel())
+            () -> -m_DriverJoystick.getY(),
+            () -> -m_DriverJoystick.getX())
             .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
             2))
             .deadband(OperatorConstants.DEADBAND)
@@ -140,7 +142,7 @@ public class RobotContainer {
         Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                 driveDirectAngleKeyboard);
 
-        Command AimAtObject = new AimAtObject(m_SwerveSubsystem, m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
+        // Command AimAtObject = new AimAtObject(m_SwerveSubsystem, m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
 
         if (RobotBase.isSimulation()) {
             m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
@@ -170,7 +172,7 @@ public class RobotContainer {
         m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
         m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-        m_DriverJoystick.button(3).whileTrue(AimAtObject);
+        // m_DriverJoystick.button(3).whileTrue(AimAtObject);
 
 //      driverXbox.b().whileTrue(
 //          drivebase.driveToPose(
