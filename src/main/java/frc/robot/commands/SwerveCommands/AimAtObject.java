@@ -45,8 +45,7 @@ public class AimAtObject extends Command {
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
-    //no clue if this works, hell if I know
-    //this somehow works actually, no clue how tbh
+   
     double distanceX = m_SwerveSubsystem.getPose().getX() - targetSpeaker.getX();
     double distanceY = m_SwerveSubsystem.getPose().getY() - targetSpeaker.getY();
     double relativeHeading = Math.toDegrees(Math.atan2(distanceY, distanceX)); 

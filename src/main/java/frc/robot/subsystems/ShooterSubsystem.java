@@ -6,10 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
@@ -32,6 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double targetSpeed;
   private SparkClosedLoopController flySpeedPID;
   private SparkClosedLoopController fingerSpeedPID;
+  SlewRateLimiter shooterLimiter;
 
   enum ShooterSpeed {
     off,
@@ -50,23 +48,6 @@ public class ShooterSubsystem extends SubsystemBase {
       fingerWheel.configure(SparkMaxConfig.Presets.REV_NEO_550, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     currentSpeed = ShooterSpeed.off;
-
-
-    speedPIDR = flyWheel.();
-      speedPIDR.setP(Constants.shooterSubsystem.kRightMotorP);
-      speedPIDR.setI(Constants.shooterSubsystem.kRightMotorI);
-      speedPIDR.setD(Constants.shooterSubsystem.kRightMotorD);
-      speedPIDR.setFF(Constants.shooterSubsystem.kRightmotorFF);
-      speedPIDR.setIZone(Constants.shooterSubsystem.kRightMotorIZ);
-    speedPIDL = fingerWheel.getPIDController();
-      speedPIDL.setP(Constants.shooterSubsystem.kLeftMotorP);
-      speedPIDL.setI(Constants.shooterSubsystem.kLeftMotorI);
-      speedPIDL.setD(Constants.shooterSubsystem.kLeftMotorD);
-      speedPIDL.setFF(Constants.shooterSubsystem.kLeftmotorFF);
-      speedPIDL.setIZone(Constants.shooterSubsystem.kLeftMotorIZ);
-    
-    shooterLimiter = new SlewRateLimiter
-      (Constants.shooterSubsystem.kTwoMotorUsed ? Constants.shooterSubsystem.kShootingspeedlimit : 3500);
   }
 
   public void spinShootingMotor() {
@@ -93,30 +74,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(!DriverStation.isTest()){
-      // This method will be called once per scheduler run
-      if (currentSpeed == ShooterSpeed.off) {
-        targetSpeed = Constants.shooterSubsystem.kstopshootingspeed;
-      }
-      else if (currentSpeed == ShooterSpeed.low) {
-        targetSpeed = Constants.shooterSubsystem.kAmpshootingspeed;
-      }
-      else {
-        targetSpeed = Constants.shooterSubsystem.kShootingspeed;
-      }
-      double limitSpeed = shooterLimiter.calculate(targetSpeed);
-      //speedPIDR.setReference(0, ControlType.kVelocity); //Right motor
-      speedPIDR.setReference(Constants.shooterSubsystem.kTwoMotorUsed ? limitSpeed : 0, ControlType.kVelocity); //Right motor
-      speedPIDL.setReference(Constants.shooterSubsystem.kTwoMotorUsed ? limitSpeed : 3000, ControlType.kVelocity); // Left motor
-    }
-    else {
-      double joyX = Robot.getRobotContainer().driverGetForward()/2;
-      fingerWheel.set(joyX);
-      flyWheel.set(joyX);
 
-
-
-    }
   }
 
   @Override

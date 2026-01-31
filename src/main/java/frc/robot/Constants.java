@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Time;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -21,12 +18,11 @@ import edu.wpi.first.units.measure.Time;
  */
 public final class Constants {
   public static class FieldConstants {
-    // gives a generic translation 2d for the red and blue side to be used on any
-    // object.
-    // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
-    // public static final Translation2d kSpeakerPositionRED = new Translation2d();
-    public static final Translation2d kRedHubPosition = new Translation2d();
-    public static final Translation2d kBlueHubPosition = new Translation2d();
+    // gives a generic translation 2d for the red and blue side to be used on any object.
+      // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
+      // public static final Translation2d kSpeakerPositionRED = new Translation2d();
+    public static final Translation2d kBlueHubPosition = new Translation2d(4.021328, 4.61137);
+    public static final Translation2d kRedHubPosition = new Translation2d(4.021328, 11.901424);
   }
 
   public static class Shooter {
@@ -34,6 +30,8 @@ public final class Constants {
     public static final int flyWheelID = 0;
     public static final int fingerWheelID = 0;
 
+    public static final int shooterMotorPort = 101;
+    public static final int feederMotorPort = 102;
   }
 
   public static class OperatorConstants {
@@ -64,7 +62,6 @@ public final class Constants {
 
     }
   }
-
 
   public static class Climber {
     public static final int elevatorMotorPort = 103;
