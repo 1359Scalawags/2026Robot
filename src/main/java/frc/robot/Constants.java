@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -17,6 +20,21 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class FieldConstants {
+    // gives a generic translation 2d for the red and blue side to be used on any object.
+      // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
+      // public static final Translation2d kSpeakerPositionRED = new Translation2d();
+    public static final Translation2d kRedHubPosition = new Translation2d();
+    public static final Translation2d kBlueHubPosition = new Translation2d();
+  }
+
+  public static class Shooter {
+
+    public static final int flyWheelID = 0;
+    public static final int fingerWheelID = 0;
+    
+    
+  }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
@@ -29,6 +47,22 @@ public final class Constants {
     public static final String testbot = "Pearl/testbot";
 
     public static final double MAX_SPEED = 4;
+
+    public static class autoAlign {
+      public static final double X_REEF_ALIGNMENT_P = 0;
+      public static final double Y_REEF_ALIGNMENT_P = 0;
+      public static final double ROT_REEF_ALIGNMENT_P = 0;
+      public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
+    public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
+    public static final Time DONT_SEE_TAG_WAIT_TIME = null;
+    public static final Time POSE_VALIDATION_TIME = null;
+
+
+    }
   }
 
   public static class Shooter {

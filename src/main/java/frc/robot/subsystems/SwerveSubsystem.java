@@ -733,6 +733,38 @@ public class SwerveSubsystem extends SubsystemBase
         return swerveDrive;
     }
 
+    public void headingDrive(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
+            DoubleSupplier headingY) {
+        double xInput = translationX.getAsDouble();
+        double yInput = translationY.getAsDouble();
+
+        if (isRedAlliance()) {
+            driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(-xInput, -yInput,
+                    headingX.getAsDouble(),
+                    headingY.getAsDouble(),
+                    swerveDrive.getOdometryHeading().getRadians(),
+                    swerveDrive.getMaximumChassisVelocity()));
+
+        } else {
+            driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(xInput, yInput,
+                    headingX.getAsDouble(),
+                    headingY.getAsDouble(),
+                    swerveDrive.getOdometryHeading().getRadians(),
+                    swerveDrive.getMaximumChassisVelocity()));
+            
+        }
+    }
+
+    public Translation2d getTargetHub() {
+        if (isRedAlliance()) {
+            return Constants.FieldConstants.kRedHubPosition;
+        } else {
+            return Constants.FieldConstants.kBlueHubPosition;
+        }
+    }
+
+
+
   // simple proportional turning control with Limelight.
   // "proportional control" is a control algorithm in which the output is proportional to the error.
   // in this case, we are going to return an angular velocity that is proportional to the 
