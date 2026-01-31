@@ -24,8 +24,8 @@ public final class Constants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
       // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
       // public static final Translation2d kSpeakerPositionRED = new Translation2d();
-    public static final Translation2d kBlueHubPosition = new Translation2d(4.021328, 4.61137);
-    public static final Translation2d kRedHubPosition = new Translation2d(4.021328, 11.901424);
+    public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
+    public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
   }
 
   public static class Shooter {
@@ -41,7 +41,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.1;
+    public static final double DEADBAND = 0.07;
   }
 
   public static class swerveDrive {
