@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -46,8 +46,10 @@ public class ClimberSubsystem extends SubsystemBase {
         // Configure PID
         config.closedLoop
             .pid(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD)
-            .velocityFF(Constants.Climber.kFF)
             .outputRange(-Constants.Climber.MAX_SPEED, Constants.Climber.MAX_SPEED);
+
+        config.closedLoop.feedForward
+            .kV(Constants.Climber.kFF);
         
         // Apply configuration
         climberMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -89,7 +91,7 @@ public class ClimberSubsystem extends SubsystemBase {
         // Clamp to limits
         position = Math.max(Constants.Climber.MIN_HEIGHT, Math.min(Constants.Climber.MAX_HEIGHT, position));
         
-        controller.setReference(position, SparkMax.ControlType.kPosition);
+        controller.setSetpoint(position, SparkMax.ControlType.kPosition);
     }
     
     /**
