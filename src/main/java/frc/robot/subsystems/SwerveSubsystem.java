@@ -559,6 +559,14 @@ public class SwerveSubsystem extends SubsystemBase
         return swerveDrive.getPose();
     }
 
+    public  double getX() {
+        return swerveDrive.getPose().getX();
+    }
+
+    public  double getY() {
+        return swerveDrive.getPose().getY();
+    }
+
     /**
      * Set chassis speeds with closed-loop velocity control.
      *

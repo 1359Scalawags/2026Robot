@@ -6,6 +6,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
@@ -139,6 +140,8 @@ public class RobotContainer {
         Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                 driveDirectAngleKeyboard);
 
+        Command AimAtObject = new AimAtObject(m_SwerveSubsystem, m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
+
         if (RobotBase.isSimulation()) {
             m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
         } else {
@@ -162,10 +165,12 @@ public class RobotContainer {
                                     Units.degreesToRadians(180))
                     ));
 
-            m_DriverJoystick.trigger().onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-            m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
-            m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+        
+        m_DriverJoystick.trigger().onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(() -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                     () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+        m_DriverJoystick.button(3).whileTrue(AimAtObject);
 
 //      driverXbox.b().whileTrue(
 //          drivebase.driveToPose(

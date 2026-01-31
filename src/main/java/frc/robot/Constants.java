@@ -24,16 +24,17 @@ public final class Constants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
       // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
       // public static final Translation2d kSpeakerPositionRED = new Translation2d();
-    public static final Translation2d kRedHubPosition = new Translation2d();
-    public static final Translation2d kBlueHubPosition = new Translation2d();
+    public static final Translation2d kBlueHubPosition = new Translation2d(4.021328, 4.61137);
+    public static final Translation2d kRedHubPosition = new Translation2d(4.021328, 11.901424);
   }
 
   public static class Shooter {
 
     public static final int flyWheelID = 0;
     public static final int fingerWheelID = 0;
-    
-    
+
+    public static final int shooterMotorPort = 101;
+    public static final int feederMotorPort = 102;
   }
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -63,11 +64,6 @@ public final class Constants {
 
 
     }
-  }
-
-  public static class Shooter {
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
   }
 
   public static class Climber {
