@@ -94,9 +94,9 @@ public class SwerveSubsystem extends SubsystemBase
   // double                         trackWidth          = Units.inchesToMeters(20);
   DifferentialDrivePoseEstimator differentialDrivePoseEstimator;
   DifferentialDriveKinematics    differentialDriveKinematics;
-  Pose3d cameraOffset = new Pose3d(Inches.of(5).in(Meters),
-                                                                  Inches.of(5).in(Meters),
-                                                                  Inches.of(5).in(Meters),
+  Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
+                                                                  Inches.of(-13).in(Meters),
+                                                                  Inches.of(9).in(Meters),
                                                                   Rotation3d.kZero);
   Limelight limelight;
   LimelightPoseEstimator poseEstimator;
