@@ -65,6 +65,7 @@ public final class Constants {
 
   public static class Climber {
     public static final int elevatorMotorPort = 103;
+    public static final int climberMotorPort = 0;
   }
 
   public static class Intake {
