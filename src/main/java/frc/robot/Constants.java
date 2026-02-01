@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Time;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -21,8 +24,8 @@ public final class Constants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
       // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
       // public static final Translation2d kSpeakerPositionRED = new Translation2d();
-    public static final Translation2d kBlueHubPosition = new Translation2d(4.021328, 4.61137);
-    public static final Translation2d kRedHubPosition = new Translation2d(4.021328, 11.901424);
+    public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
+    public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
   }
 
   public static class Shooter {
@@ -38,7 +41,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.05;
+    public static final double DEADBAND = 0.07;
   }
 
   public static class swerveDrive {
@@ -64,8 +67,25 @@ public final class Constants {
   }
 
   public static class Climber {
-    public static final int elevatorMotorPort = 103;
-    public static final int climberMotorPort = 0;
+    public static final int climberMotorPort = 103;
+     // Constants
+ // Change to your CAN ID
+    
+    public static final double GEAR_RATIO = 125.0;
+    public static final int CURRENT_LIMIT = 60; // Amps
+    
+    // PID Constants(tune these!)
+    public static final double kP = 0.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kFF = 0.0;
+    
+    // Position limits (in rotations of the output shaft)
+    public static final double MAX_HEIGHT = 100.0; // Adjust based on your mechanism
+    public static final double MIN_HEIGHT = 0.0;
+    
+    // Speeds
+    public static final double MAX_SPEED = 0.8; // 80% max speed
   }
 
   public static class Intake {

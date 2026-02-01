@@ -22,6 +22,6 @@ public class IntakeCommandFactory extends SubsystemBase {
     public Command StopIntake() { 
         return runOnce(() -> IntakeSubsystem.intakeOff()); 
 
-
+    }
 
 }

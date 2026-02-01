@@ -2,8 +2,8 @@ package frc.robot.subsystems;
 
 import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.PersistMode;
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -23,24 +23,6 @@ public class ClimberSubsystem extends SubsystemBase {
     // Closed Loop Controller
     private final SparkClosedLoopController controller;
     
-    // Constants
- // Change to your CAN ID
-    
-    private static final double GEAR_RATIO = 125.0;
-    private static final int CURRENT_LIMIT = 60; // Amps
-    
-    // PID Constants (tune these!)
-    private static final double kP = 0.0;
-    private static final double kI = 0.0;
-    private static final double kD = 0.0;
-    private static final double kFF = 0.0;
-    
-    // Position limits (in rotations of the output shaft)
-    private static final double MAX_HEIGHT = 100.0; // Adjust based on your mechanism
-    private static final double MIN_HEIGHT = 0.0;
-    
-    // Speeds
-    private static final double MAX_SPEED = 0.8; // 80% max speed
     
     public ClimberSubsystem() {
         // Initialize motor
@@ -52,20 +34,22 @@ public class ClimberSubsystem extends SubsystemBase {
         // Configure motor
         config
             .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(CURRENT_LIMIT)
+            .smartCurrentLimit(Constants.Climber.CURRENT_LIMIT)
             .inverted(false); // Change if needed
         
         // Configure encoder conversion factors
         // Since one motor drives two gearboxes, the encoder tracks both sides
         config.encoder
-            .positionConversionFactor(1.0 / GEAR_RATIO)
-            .velocityConversionFactor(1.0 / GEAR_RATIO);
+            .positionConversionFactor(1.0 / Constants.Climber.GEAR_RATIO)
+            .velocityConversionFactor(1.0 / Constants.Climber.GEAR_RATIO);
         
         // Configure PID
         config.closedLoop
-            .pid(kP, kI, kD)
-            .velocityFF(kFF)
-            .outputRange(-MAX_SPEED, MAX_SPEED);
+            .pid(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD)
+            .outputRange(-Constants.Climber.MAX_SPEED, Constants.Climber.MAX_SPEED);
+
+        config.closedLoop.feedForward
+            .kV(Constants.Climber.kFF);
         
         // Apply configuration
         climberMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -84,14 +68,14 @@ public class ClimberSubsystem extends SubsystemBase {
      */
     public void setSpeed(double speed) {
         // Clamp speed
-        speed = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, speed));
+        speed = Math.max(-Constants.Climber.MAX_SPEED, Math.min(Constants.Climber.MAX_SPEED, speed));
         
         // Safety check: don't go past limits
-        if (speed > 0 && getPosition() >= MAX_HEIGHT) {
+        if (speed > 0 && getPosition() >= Constants.Climber.MAX_HEIGHT) {
             stop();
             return;
         }
-        if (speed < 0 && getPosition() <= MIN_HEIGHT) {
+        if (speed < 0 && getPosition() <= Constants.Climber.MIN_HEIGHT) {
             stop();
             return;
         }
@@ -105,23 +89,23 @@ public class ClimberSubsystem extends SubsystemBase {
      */
     public void setPosition(double position) {
         // Clamp to limits
-        position = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, position));
+        position = Math.max(Constants.Climber.MIN_HEIGHT, Math.min(Constants.Climber.MAX_HEIGHT, position));
         
-        controller.setReference(position, SparkMax.ControlType.kPosition);
+        controller.setSetpoint(position, SparkMax.ControlType.kPosition);
     }
     
     /**
      * Extend climber to maximum height
      */
     public void extend() {
-        setSpeed(MAX_SPEED);
+        setSpeed(Constants.Climber.MAX_SPEED);
     }
     
     /**
      * Retract climber to minimum height
      */
     public void retract() {
-        setSpeed(-MAX_SPEED);
+        setSpeed(-Constants.Climber.MAX_SPEED);
     }
     
     /**
@@ -151,14 +135,14 @@ public class ClimberSubsystem extends SubsystemBase {
      * Check if climber is at maximum height
      */
     public boolean atMaxHeight() {
-        return getPosition() >= MAX_HEIGHT - 0.5; // 0.5 rotation tolerance
+        return getPosition() >= Constants.Climber.MAX_HEIGHT - 0.5; // 0.5 rotation tolerance
     }
     
     /**
      * Check if climber is at minimum height
      */
     public boolean atMinHeight() {
-        return getPosition() <= MIN_HEIGHT + 0.5;
+        return getPosition() <= Constants.Climber.MIN_HEIGHT + 0.5;
     }
     
     /**
@@ -187,7 +171,7 @@ public class ClimberSubsystem extends SubsystemBase {
      * Note: With one motor driving two gearboxes, binding on one side will show up here
      */
     public boolean isStalling() {
-        return getCurrent() > CURRENT_LIMIT * 0.9;
+        return getCurrent() > Constants.Climber.CURRENT_LIMIT * 0.9;
     }
     
     /**
