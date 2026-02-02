@@ -23,6 +23,7 @@ import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -92,7 +93,7 @@ public class SwerveSubsystem extends SubsystemBase
   // double                         driveGearRatio      = 1.0;
   // double                         wheelDiameterMeters = 4.0;
   // double                         trackWidth          = Units.inchesToMeters(20);
-  DifferentialDrivePoseEstimator differentialDrivePoseEstimator;
+  SwerveDrivePoseEstimator swerveDrivePoseEstimator;
   DifferentialDriveKinematics    differentialDriveKinematics;
   Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
                                                                   Inches.of(-13).in(Meters),
@@ -167,15 +168,15 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
           //TODO: find a substatuite in YAGSL for getswervemoduleposistions
-      // differentialDrivePoseEstimator.update(navx.getRotation2d(), SwerveModule);
+    swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
-    // limelight.getSettings()
-    //          .withRobotOrientation(new Orientation3d(navx.getRotation3d(),
-    //                                                  new AngularVelocity3d(DegreesPerSecond.of(0),
-    //                                                                        DegreesPerSecond.of(0),
-    //                                                                        DegreesPerSecond.of(0))))
-    //          .save();
+    limelight.getSettings()
+             .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
+                                                     new AngularVelocity3d(DegreesPerSecond.of(0),
+                                                                           DegreesPerSecond.of(0),
+                                                                           DegreesPerSecond.of(0))))
+             .save();
 
     // Get the vision estimate.
     Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
@@ -185,7 +186,7 @@ public class SwerveSubsystem extends SubsystemBase
       // and the average ambiguity between tags is less than 30% then we update the pose estimation.
       if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
       {
-        differentialDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
+        swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
                                                             poseEstimate.timestampSeconds);
       }
     });
