@@ -107,6 +107,7 @@ public final class Constants {
     public static final int CURRENT_LIMIT = 40; // Amps
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
+    public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
   }
 
 }

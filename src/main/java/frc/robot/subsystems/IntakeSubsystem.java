@@ -10,9 +10,9 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj2.command.Command;
 
 /**
  * IntakeSubsystem - FRC Intake Subsystem with 2 motors spinning opposite directions
@@ -33,6 +33,9 @@ public class IntakeSubsystem extends SubsystemBase {
   private final SparkClosedLoopController kickerPID;
   private final SparkClosedLoopController starPID;
   
+
+  // ========== Member Variables =========
+  private Debouncer currentSpikeDebouncer= new Debouncer(0.5) ; 
   /**
    * Creates a new IntakeSubsystem
    */
@@ -66,7 +69,8 @@ public class IntakeSubsystem extends SubsystemBase {
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
       .inverted(false)
-      .voltageCompensation(12.0);
+      .voltageCompensation(12.0)
+      .closedLoopRampRate (Constants.Intake.CLOSED_LOOP_RAMP_RATE);
     
     // Configure closed loop control for kicker motor
     kickerConfig.closedLoop
@@ -92,7 +96,8 @@ public class IntakeSubsystem extends SubsystemBase {
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
       .inverted(true) // Inverted to spin opposite direction
-      .voltageCompensation(12.0);
+      .voltageCompensation(12.0)
+      .closedLoopRampRate (Constants.Intake.CLOSED_LOOP_RAMP_RATE);
     
     // Configure closed loop control for star motor
     starConfig.closedLoop
@@ -128,8 +133,8 @@ public class IntakeSubsystem extends SubsystemBase {
    * Turn off both motors
    */
   public void intakeOff() {
-    kickerMotor.set(0);
-    starMotor.set(0);
+    kickerMotor.stopMotor();
+    starMotor.stopMotor();
     System.out.println("Intake OFF");
   }
   
@@ -208,34 +213,11 @@ public class IntakeSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Monitor motor currents and log warnings
-    if (isCurrentSpiking()) {
+    boolean spiking = isCurrentSpiking();
+    if (currentSpikeDebouncer.calculate(spiking)) {
       System.out.println("WARNING: Intake current spike detected!");
     }
   }
   
 
-  
-  // ========== COMMAND FACTORIES ==========
-  
-  /**
-   * Command to run intake while button is held
-   * @return Command that runs intake
-   */
-  public Command intakeCommand() {
-    return runEnd(
-      this::intakeOn,
-      this::intakeOff
-    );
-  }
-  
-  /**
-   * Command to reverse intake (eject balls)
-   * @return Command that reverses intake
-   */
-  public Command reverseIntakeCommand() {
-    return runEnd(
-      this::intakeReverse,
-      this::intakeOff
-    );
-  }
 }
