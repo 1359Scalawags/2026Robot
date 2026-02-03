@@ -94,30 +94,22 @@ public class SwerveSubsystem extends SubsystemBase
   // double                         wheelDiameterMeters = 4.0;
   // double                         trackWidth          = Units.inchesToMeters(20);
   SwerveDrivePoseEstimator swerveDrivePoseEstimator;
-  DifferentialDriveKinematics    differentialDriveKinematics;
+  LimelightPoseEstimator poseEstimator;
   Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
                                                                   Inches.of(-13).in(Meters),
                                                                   Inches.of(9).in(Meters),
                                                                   Rotation3d.kZero);
-  Limelight limelight;
-  LimelightPoseEstimator poseEstimator;
+  Limelight limelight = new Limelight("limelight");
+
 
    public SwerveSubsystem(File directory) { 
-
-    // differentialDriveKinematics = new DifferentialDriveKinematics(trackWidth);
-    // differentialDrivePoseEstimator = new DifferentialDrivePoseEstimator(differentialDriveKinematics,
-    //                                                                     navx.getRotation2d(),
-    //                                                                     0,
-    //                                                                     0,
-    //                                                                     Pose2d.kZero); // Starting at (0,0)
-
-    limelight = new Limelight("limelight");
+ 
     limelight.getSettings()
              .withLimelightLEDMode(LEDMode.PipelineControl)
              .withCameraOffset(cameraOffset)
              .save();
-             
-    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
+
 
 
     boolean blueAlliance = true;
@@ -148,6 +140,8 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
         setupPathPlanner();
+
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
     }
 
     /**
@@ -167,29 +161,37 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-          //TODO: find a substatuite in YAGSL for getswervemoduleposistions
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
     limelight.getSettings()
-             .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
-                                                     new AngularVelocity3d(DegreesPerSecond.of(0),
-                                                                           DegreesPerSecond.of(0),
-                                                                           DegreesPerSecond.of(0))))
-             .save();
+            .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
+                    new AngularVelocity3d(DegreesPerSecond.of(0),
+                            DegreesPerSecond.of(0),
+                            DegreesPerSecond.of(0))))
+            .save();
 
     // Get the vision estimate.
-    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
+    // Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
+    // visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
+    //   // If the average tag distance is less than 4 meters,
+    //   // there are more than 0 tags in view,
+    //   // and the average ambiguity between tags is less than 30% then we update the pose estimation.
+    //   if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
+    //   {
+    //     swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
+    //                                                         poseEstimate.timestampSeconds);
+    //   }
+    // });
+
+    // Get MegaTag2 pose
+    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
+    // If the pose is present
     visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-      // If the average tag distance is less than 4 meters,
-      // there are more than 0 tags in view,
-      // and the average ambiguity between tags is less than 30% then we update the pose estimation.
-      if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
-      {
-        swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
-                                                            poseEstimate.timestampSeconds);
-      }
+        // Add it to the pose estimator.
+        swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
     });
+
 
     limelight.getLatestResults().ifPresent((LimelightResults result) -> {
       for (NeuralClassifier object : result.targets_Classifier)
@@ -205,7 +207,6 @@ public class SwerveSubsystem extends SubsystemBase
       }
     });
   }
-  
 
     @Override
     public void simulationPeriodic() {
