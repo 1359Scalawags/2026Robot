@@ -36,8 +36,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,10 +50,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -101,9 +107,10 @@ public class SwerveSubsystem extends SubsystemBase
                                                                   Rotation3d.kZero);
   Limelight limelight = new Limelight("limelight");
 
+  Pose3d poseA = new Pose3d();
+  Pose3d poseB = new Pose3d();
 
-   public SwerveSubsystem(File directory) { 
- 
+   public SwerveSubsystem(File directory) {
     limelight.getSettings()
              .withLimelightLEDMode(LEDMode.PipelineControl)
              .withCameraOffset(cameraOffset)
@@ -142,6 +149,11 @@ public class SwerveSubsystem extends SubsystemBase
         setupPathPlanner();
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
+
+    StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
+    StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
+
+
     }
 
     /**
@@ -206,6 +218,13 @@ public class SwerveSubsystem extends SubsystemBase
         }
       }
     });
+
+    SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
+    SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
+    SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+
+// publisher.set(poseA);
+// arrayPublisher.set(new Pose3d[] { poseA, poseB};
   }
 
     @Override
