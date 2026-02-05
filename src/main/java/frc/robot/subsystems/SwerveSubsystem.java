@@ -23,6 +23,7 @@ import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -35,8 +36,11 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,10 +50,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
+
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
 import swervelib.SwerveDriveTest;
@@ -92,34 +99,27 @@ public class SwerveSubsystem extends SubsystemBase
   // double                         driveGearRatio      = 1.0;
   // double                         wheelDiameterMeters = 4.0;
   // double                         trackWidth          = Units.inchesToMeters(20);
-  DifferentialDrivePoseEstimator differentialDrivePoseEstimator;
-  DifferentialDriveKinematics    differentialDriveKinematics;
-  Pose3d cameraOffset = new Pose3d(Inches.of(5).in(Meters),
-                                                                  Inches.of(5).in(Meters),
-                                                                  Inches.of(5).in(Meters),
-                                                                  Rotation3d.kZero);
-  Limelight limelight;
+  SwerveDrivePoseEstimator swerveDrivePoseEstimator;
   LimelightPoseEstimator poseEstimator;
+  Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
+                                                                  Inches.of(-13).in(Meters),
+                                                                  Inches.of(9).in(Meters),
+                                                                  Rotation3d.kZero);
+  Limelight limelight = new Limelight("limelight");
 
-   public SwerveSubsystem(File directory) { 
+  Pose3d poseA = new Pose3d();
+  Pose3d poseB = new Pose3d();
 
-    // differentialDriveKinematics = new DifferentialDriveKinematics(trackWidth);
-    // differentialDrivePoseEstimator = new DifferentialDrivePoseEstimator(differentialDriveKinematics,
-    //                                                                     navx.getRotation2d(),
-    //                                                                     0,
-    //                                                                     0,
-    //                                                                     Pose2d.kZero); // Starting at (0,0)
-
-    limelight = new Limelight("limelight");
+   public SwerveSubsystem(File directory) {
     limelight.getSettings()
              .withLimelightLEDMode(LEDMode.PipelineControl)
              .withCameraOffset(cameraOffset)
              .save();
-             
-    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
 
 
-    boolean blueAlliance = false;
+
+    boolean blueAlliance = true;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
                                                                       Meter.of(4)),
                                                     Rotation2d.fromDegrees(0))
@@ -147,6 +147,13 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
         setupPathPlanner();
+
+    swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
+
+    StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
+    StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
+
+
     }
 
     /**
@@ -166,29 +173,37 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
-          //TODO: find a substatuite in YAGSL for getswervemoduleposistions
-      // differentialDrivePoseEstimator.update(navx.getRotation2d(), SwerveModule);
+    swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
-    // limelight.getSettings()
-    //          .withRobotOrientation(new Orientation3d(navx.getRotation3d(),
-    //                                                  new AngularVelocity3d(DegreesPerSecond.of(0),
-    //                                                                        DegreesPerSecond.of(0),
-    //                                                                        DegreesPerSecond.of(0))))
-    //          .save();
+    limelight.getSettings()
+            .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
+                    new AngularVelocity3d(DegreesPerSecond.of(0),
+                            DegreesPerSecond.of(0),
+                            DegreesPerSecond.of(0))))
+            .save();
 
     // Get the vision estimate.
-    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate(); // BotPose.BLUE_MEGATAG2.get(limelight);
+    // Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
+    // visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
+    //   // If the average tag distance is less than 4 meters,
+    //   // there are more than 0 tags in view,
+    //   // and the average ambiguity between tags is less than 30% then we update the pose estimation.
+    //   if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
+    //   {
+    //     swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
+    //                                                         poseEstimate.timestampSeconds);
+    //   }
+    // });
+
+    // Get MegaTag2 pose
+    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
+    // If the pose is present
     visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-      // If the average tag distance is less than 4 meters,
-      // there are more than 0 tags in view,
-      // and the average ambiguity between tags is less than 30% then we update the pose estimation.
-      if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
-      {
-        differentialDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
-                                                            poseEstimate.timestampSeconds);
-      }
+        // Add it to the pose estimator.
+        swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
     });
+
 
     limelight.getLatestResults().ifPresent((LimelightResults result) -> {
       for (NeuralClassifier object : result.targets_Classifier)
@@ -203,8 +218,14 @@ public class SwerveSubsystem extends SubsystemBase
         }
       }
     });
+
+    SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
+    SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
+    SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+
+// publisher.set(poseA);
+// arrayPublisher.set(new Pose3d[] { poseA, poseB};
   }
-  
 
     @Override
     public void simulationPeriodic() {
