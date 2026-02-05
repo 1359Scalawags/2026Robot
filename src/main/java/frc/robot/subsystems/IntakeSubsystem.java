@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -217,6 +218,8 @@ public class IntakeSubsystem extends SubsystemBase {
     if (currentSpikeDebouncer.calculate(spiking)) {
       System.out.println("WARNING: Intake current spike detected!");
     }
+    SmartDashboard.putBoolean("Intake On", kickerMotor.get() != 0 || starMotor.get() != 0); 
+    SmartDashboard.putBoolean("Intake Off", kickerMotor.get() == 0 && starMotor.get() == 0); 
   }
   
 
