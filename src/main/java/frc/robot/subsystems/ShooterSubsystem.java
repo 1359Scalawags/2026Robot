@@ -3,34 +3,60 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static yams.mechanisms.SmartMechanism.gearbox;
+import static yams.mechanisms.SmartMechanism.gearing;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.google.flatbuffers.Constants;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkParameters;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
+import yams.motorcontrollers.SmartMotorController;
+import yams.motorcontrollers.SmartMotorControllerConfig;
+import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
+import yams.motorcontrollers.local.SparkWrapper;
+import frc.robot.Constants.*;
 public class ShooterSubsystem extends SubsystemBase {
 
-  private SparkMax flyWheel;
-  private SparkMax fingerWheel;
+  private final SparkMax flyWheelMotor = new SparkMax(Shooter.flyWheelID, MotorType.kBrushless);
+  private final SparkMax fingerWheelMotor = new SparkMax(Shooter.fingerWheelID, MotorType.kBrushless);
 
-  private double targetSpeed;
-  private SparkClosedLoopController flySpeedPID;
-  private SparkClosedLoopController fingerSpeedPID;
-  SlewRateLimiter shooterLimiter;
+  private final SmartMotorControllerConfig flyWheelConfig = new SmartMotorControllerConfig(this) 
 
+    .withClosedLoopController(0,0,0,RPM.of(0),RotationsPerSecondPerSecond.of(0))
+    .withIdleMode(MotorMode.COAST);
+  
+  private final SmartMotorController flyWheelController = new SparkWrapper(flyWheelMotor, DCMotor.getNeo550(1), flyWheelConfig);
+
+
+  private final SmartMotorControllerConfig fingerWheelConfig = new SmartMotorControllerConfig(this) 
+
+    .withClosedLoopController(0,0,0,RPM.of(0),RotationsPerSecondPerSecond.of(0))
+    .withIdleMode(MotorMode.COAST)
+    .withGearing(0);
+
+  private final SmartMotorController fingerWheelController = new SparkWrapper(fingerWheelMotor, DCMotor.getNEO(1), fingerWheelConfig);
+ 
   enum ShooterSpeed {
     off,
     low,
@@ -39,37 +65,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
   ShooterSpeed currentSpeed;
 
-  /** Creates a new ExampleSubsystem. */
   public ShooterSubsystem() {
-    flyWheel = new SparkMax(Constants.Shooter.flyWheelID, SparkLowLevel.MotorType.kBrushless);
-      flyWheel.configure(SparkMaxConfig.Presets.REV_NEO_2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    fingerWheel = new SparkMax(Constants.Shooter.fingerWheelID, SparkLowLevel.MotorType.kBrushless);
-      fingerWheel.configure(SparkMaxConfig.Presets.REV_NEO_550, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-    currentSpeed = ShooterSpeed.off;
+    
   }
 
   public void spinShootingMotor() {
-    currentSpeed = ShooterSpeed.full;
-
-    // fingerWheel.set(Constants.Shooter.kShootingspeed);
-    // flyWheel.set(-Constants.Shooter.kShootingspeed);
+    
   }
 
   public void ampSpinShootingMotor() {
-    currentSpeed = ShooterSpeed.low;
-
-    // fingerWheel.set(Constants.Shooter.kIdleshootingspeed);
-    // flyWheel.set(-Constants.Shooter.kIdleshootingspeed);
 
   }
 
   public void stopSpinShootingMotor() {
-    currentSpeed = ShooterSpeed.off;
 
-    // fingerWheel.set(Constants.Shooter.kstopshootingspeed);
-    // flyWheel.set(-Constants.Shooter.kstopshootingspeed);
   }
 
   @Override
