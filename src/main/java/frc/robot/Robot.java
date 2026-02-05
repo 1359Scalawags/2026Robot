@@ -38,9 +38,19 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     } else {
       setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      // Prefer an explicit environment variable so we don't block on a GUI/file
+      // dialog when running headless or in CI. If AKIT_LOG_PATH is not set,
+      // skip setting a replay source.
+      String envLogPath = System.getenv("AKIT_LOG_PATH");
+      if (envLogPath != null && !envLogPath.isEmpty()) {
+        String logPath = envLogPath;
+        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+      } else {
+        // No AKIT_LOG_PATH provided. Skipping replay source to avoid an
+        // interactive prompt. To get chooser behavior during development,
+        // set AKIT_LOG_PATH or call LogFileUtil.findReplayLog() manually.
+      }
     }
 
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
