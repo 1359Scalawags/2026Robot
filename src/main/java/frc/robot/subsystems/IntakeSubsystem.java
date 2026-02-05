@@ -218,6 +218,7 @@ public class IntakeSubsystem extends SubsystemBase {
     if (currentSpikeDebouncer.calculate(spiking)) {
       System.out.println("WARNING: Intake current spike detected!");
     }
+    // SmartDashboard updates for drive 
     SmartDashboard.putBoolean("Intake On", kickerMotor.get() != 0 || starMotor.get() != 0); 
     SmartDashboard.putBoolean("Intake Off", kickerMotor.get() == 0 && starMotor.get() == 0); 
   }
