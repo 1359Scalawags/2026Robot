@@ -51,17 +51,19 @@ public final class Constants {
     public static final double MAX_SPEED = 4;
 
     public static class autoAlign {
-      public static final double X_REEF_ALIGNMENT_P = 0;
-      public static final double Y_REEF_ALIGNMENT_P = 0;
-      public static final double ROT_REEF_ALIGNMENT_P = 0;
+      public static final double X_REEF_ALIGNMENT_P = 0.001;
+      public static final double Y_REEF_ALIGNMENT_P = 0.001;
+      public static final double ROT_REEF_ALIGNMENT_P = 0.001;
+
       public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final Time DONT_SEE_TAG_WAIT_TIME = null;
-      public static final Time POSE_VALIDATION_TIME = null;
+      public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 5;
+      public static final double X_SETPOINT_REEF_ALIGNMENT = 1;
+      public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.5;
+      public static final double Y_SETPOINT_REEF_ALIGNMENT = 1;
+      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.5;
+
+      public static final double DONT_SEE_TAG_WAIT_TIME = 1;
+      public static final double POSE_VALIDATION_TIME = 2;
 
     }
   }

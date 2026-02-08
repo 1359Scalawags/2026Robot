@@ -8,12 +8,14 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommandFactory;
 import frc.robot.commands.SwerveCommands.AimAtObject;
+import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
+import java.lang.annotation.Target;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -47,8 +49,8 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
-        private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-        private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        // private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+        // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -155,10 +157,31 @@ public class RobotContainer {
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
-                
+
                 if (RobotBase.isReal()) {
-                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyro()));
+                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                                        () -> m_SwerveSubsystem.zeroGyro()));
+
+                        m_DriverJoystick.button(4).whileTrue(new AlignToTag(m_SwerveSubsystem));
+
+                        Pose2d target = new Pose2d(new Translation2d(1, 1),
+                                        Rotation2d.fromDegrees(90));
+                        // m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+
+                        driveDirectAngle.driveToPose(() -> target,
+                                        new ProfiledPIDController(5,
+                                                        0,
+                                                        0,
+                                                        new Constraints(5, 2)),
+                                        new ProfiledPIDController(5,
+                                                        0,
+                                                        0,
+                                                        new Constraints(Units.degreesToRadians(360),
+                                                                        Units.degreesToRadians(180))));
+
+                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
+
 
                 }
 
@@ -186,6 +209,10 @@ public class RobotContainer {
 
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+
+                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
                         m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
@@ -194,8 +221,8 @@ public class RobotContainer {
                         // m_DriverJoystick.button(3).whileTrue(AimAtObject);
 
                         // Intake controls Assistant Joystick
-                        m_AssistantJoystick.button(3).onTrue(m_IntakeCommandFactory.StartIntake());
-                        m_AssistantJoystick.button(4).onTrue(m_IntakeCommandFactory.StopIntake());
+                        // m_AssistantJoystick.button(3).onTrue(m_IntakeCommandFactory.StartIntake());
+                        // m_AssistantJoystick.button(4).onTrue(m_IntakeCommandFactory.StopIntake());
 
                         // driverXbox.b().whileTrue(
                         // drivebase.driveToPose(

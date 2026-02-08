@@ -22,13 +22,12 @@ public class AlignToTag extends Command {
   private boolean isRightScore;
   private Timer dontSeeTagTimer, stopTimer;
   private final SwerveSubsystem m_SwerveSubsystem;
-  private double tagID = -1;
+  private double tagID = 10;
 
-  public AlignToTag(boolean isRightScore, SwerveSubsystem m_SwerveSubsystem) {
+  public AlignToTag(SwerveSubsystem m_SwerveSubsystem) {
     xController = new PIDController(Constants.swerveDrive.autoAlign.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
     yController = new PIDController(Constants.swerveDrive.autoAlign.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
     rotController = new PIDController(Constants.swerveDrive.autoAlign.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
-    this.isRightScore = isRightScore;
     this.m_SwerveSubsystem = m_SwerveSubsystem;
     addRequirements(m_SwerveSubsystem);
   }
@@ -49,23 +48,23 @@ public class AlignToTag extends Command {
     yController.setSetpoint(isRightScore ? Constants.swerveDrive.autoAlign.Y_SETPOINT_REEF_ALIGNMENT : -Constants.swerveDrive.autoAlign.Y_SETPOINT_REEF_ALIGNMENT);
     yController.setTolerance(Constants.swerveDrive.autoAlign.Y_TOLERANCE_REEF_ALIGNMENT);
 
-    tagID = LimelightHelpers.getFiducialID("");
+    tagID = LimelightHelpers.getFiducialID("limelight");
   }
 
   @Override
   public void execute() {
-    if (LimelightHelpers.getTV("") && LimelightHelpers.getFiducialID("") == tagID) {
+    if (LimelightHelpers.getTV("limelight") && LimelightHelpers.getFiducialID("limelight") == tagID) {
       this.dontSeeTagTimer.reset();
 
-      double[] postions = LimelightHelpers.getBotPose_TargetSpace("");
+      double[] postions = LimelightHelpers.getBotPose_TargetSpace("limelight");
       SmartDashboard.putNumber("x", postions[2]);
 
       double xSpeed = xController.calculate(postions[2]);
-      SmartDashboard.putNumber("xspee", xSpeed);
+      SmartDashboard.putNumber("xspeed", xSpeed);
       double ySpeed = -yController.calculate(postions[0]);
       double rotValue = -rotController.calculate(postions[4]);
 
-      m_SwerveSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotValue, false);
+      m_SwerveSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotValue, true);
 
       if (!rotController.atSetpoint() ||
           !yController.atSetpoint() ||
@@ -73,7 +72,7 @@ public class AlignToTag extends Command {
         stopTimer.reset();
       }
     } else {
-      m_SwerveSubsystem.drive(new Translation2d(), 0, false);
+      m_SwerveSubsystem.drive(new Translation2d(), 0, true);
     }
 
     SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
@@ -86,8 +85,9 @@ public class AlignToTag extends Command {
 
   @Override
   public boolean isFinished() {
+    return false;
     // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
-    return this.dontSeeTagTimer.hasElapsed(Constants.swerveDrive.autoAlign.DONT_SEE_TAG_WAIT_TIME) ||
-        stopTimer.hasElapsed(Constants.swerveDrive.autoAlign.POSE_VALIDATION_TIME);
+    // return this.dontSeeTagTimer.hasElapsed(Constants.swerveDrive.autoAlign.DONT_SEE_TAG_WAIT_TIME) ||
+    //     stopTimer.hasElapsed(Constants.swerveDrive.autoAlign.POSE_VALIDATION_TIME);
   }
 }
