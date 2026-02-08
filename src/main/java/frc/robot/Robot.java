@@ -10,6 +10,9 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.urcl.URCL;
+
+import com.revrobotics.util.StatusLogger;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
-  private Command m_autonomousCommand;
 
+  private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
 
   /**
@@ -30,35 +33,50 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
+  //      // Record metadata
+  //   Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+  //   Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+  //   Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+  //   Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+  //   Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+  //   Logger.recordMetadata(
+  //       "GitDirty",
+  //       switch (BuildConstants.DIRTY) {
+  //         case 0 -> "All changes committed";
+  //         case 1 -> "Uncommitted changes";
+  //         default -> "Unknown";
+  //       });
 
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+  //   // Set up data receivers & replay source
+  //   switch (Constants.currentMode) {
+  //     case REAL:
+  //       // Running on a real robot, log to a USB stick ("/U/logs")
+  //       Logger.addDataReceiver(new WPILOGWriter());
+  //       Logger.addDataReceiver(new NT4Publisher());
+  //       break;
 
-    if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    } else {
-      setUseTiming(false); // Run as fast as possible
-      // Prefer an explicit environment variable so we don't block on a GUI/file
-      // dialog when running headless or in CI. If AKIT_LOG_PATH is not set,
-      // skip setting a replay source.
-      String envLogPath = System.getenv("AKIT_LOG_PATH");
-      if (envLogPath != null && !envLogPath.isEmpty()) {
-        String logPath = envLogPath;
-        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-      } else {
-        // No AKIT_LOG_PATH provided. Skipping replay source to avoid an
-        // interactive prompt. To get chooser behavior during development,
-        // set AKIT_LOG_PATH or call LogFileUtil.findReplayLog() manually.
-      }
-    }
+  //     case SIM:
+  //       // Running a physics simulator, log to NT
+  //       Logger.addDataReceiver(new NT4Publisher());
+  //       break;
 
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
-                    // be added.
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+  //     case REPLAY:
+  //       // Replaying a log, set up replay source
+  //       setUseTiming(false); // Run as fast as possible
+  //       String logPath = LogFileUtil.findReplayLog();
+  //       Logger.setReplaySource(new WPILOGReader(logPath));
+  //       Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+  //       break;
+  //   }
+
+  //   // Initialize URCL
+  //   Logger.registerURCL(URCL.startExternal());
+  //   StatusLogger.disableAutoLogging(); // Disable REVLib's built-in logging
+
+  // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+
+
+       m_robotContainer = new RobotContainer();
   }
 
   /**
