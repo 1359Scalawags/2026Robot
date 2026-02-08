@@ -151,9 +151,16 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
+//----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
+                
+                if (RobotBase.isReal()) {
+                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
+                }
 
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
@@ -195,6 +202,15 @@ public class RobotContainer {
                         // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                         // );
                 }
+
+
+
+
+//---------------------
+
+
+
+
                 if (DriverStation.isTest()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive
                                                                                                  // command above!
