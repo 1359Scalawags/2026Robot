@@ -82,7 +82,7 @@ public class RobotContainer {
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * -1,
                         () -> m_DriverJoystick.getX() * -1)
-                        .withControllerRotationAxis(m_DriverJoystick::getZ)
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() *-1)
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -162,31 +162,33 @@ public class RobotContainer {
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
-
-                        m_DriverJoystick.button(4).whileTrue(new AlignToTag(m_SwerveSubsystem));
-
-
-                        Pose2d target = new Pose2d(new Translation2d(1, 1),
+                        Pose2d target = new Pose2d(new Translation2d(1, 4),
                                         Rotation2d.fromDegrees(90));
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
                         driveDirectAngle.driveToPose(() -> target,
-                                        new ProfiledPIDController(2,
+                                        new ProfiledPIDController(5,
                                                         0,
                                                         0,
-                                                        new Constraints(1, 2)),
-                                        new ProfiledPIDController(2,
+                                                        new Constraints(5, 2)),
+                                        new ProfiledPIDController(5,
                                                         0,
                                                         0,
                                                         new Constraints(Units.degreesToRadians(360),
                                                                         Units.degreesToRadians(180))));
 
+                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+
+                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
+                        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+
                         m_DriverJoystick.button(2)
-                                .whileTrue(Commands.runEnd(
-                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                                        .whileTrue(Commands.runEnd(
+                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
                 }
 
