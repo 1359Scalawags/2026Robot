@@ -45,7 +45,7 @@ public final class Constants {
 
   public static class swerveDrive {
     public static final String robot = "2026robot";
-    public static final String testbot = "YAGSLConfigJSON/Pearl/testbot";
+    public static final String testbot = "YAGSLConfigJSON/testbot";
     public static final String flipper2026 = "YAGSLConfigJSON/Flipper2026";
 
     public static final double MAX_SPEED = 4;

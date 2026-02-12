@@ -11,6 +11,7 @@ import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -36,6 +37,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import static edu.wpi.first.units.Units.RPM;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -76,6 +80,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
+
+                m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
         }
 
         /**
@@ -145,6 +151,16 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+
+                // Schedule `setVelocity` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                m_AssistantJoystick.button(5).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(60)));
+                m_AssistantJoystick.button(6).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(300)));
+                // Schedule `set` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                m_AssistantJoystick.button(7).whileTrue(m_ShooterSubsystem.set(0.3));
+                m_AssistantJoystick.button(8).whileTrue(m_ShooterSubsystem.set(-0.3));
+                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
@@ -156,6 +172,7 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
+
 //----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
