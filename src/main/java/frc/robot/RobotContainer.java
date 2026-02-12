@@ -51,7 +51,9 @@ public class RobotContainer {
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
         private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
-        
+        // TODO: Gavan or Alec; Add Shooter Subystem
+        // TODO: Gavan or Alec; Add Climber Subsystem      
+
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -190,6 +192,9 @@ public class RobotContainer {
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                        // TODO: Gavan or Alec; Bind buttons for Intake system
+                        // TODO: Gavan or Alec; Bind buttons for Climber system
+                        // TODO: Gavan or Alec; Bind buttons for Shooter system
 
                 }
 
@@ -229,22 +234,14 @@ public class RobotContainer {
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
                         // m_DriverJoystick.button(3).whileTrue(AimAtObject);
 
-
-                        // Intake controls Assistant Joystick
-                        // m_AssistantJoystick.button(3).onTrue(m_IntakeCommandFactory.StartIntake());
-                        // m_AssistantJoystick.button(4).onTrue(m_IntakeCommandFactory.StopIntake());
-
-                        
+                        // TODO: Gavan or Alec; Bind buttons for Intake system
+                        // TODO: Gavan or Alec; Bind buttons for Climber system
+                        // TODO: Gavan or Alec; Bind buttons for Shooter system
                         // driverXbox.b().whileTrue(
                         // drivebase.driveToPose(
                         // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                         // );
                 }
-
-
-
-
-//---------------------
 
 
 
