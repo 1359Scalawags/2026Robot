@@ -49,8 +49,9 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
-        // private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-        // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+        private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
