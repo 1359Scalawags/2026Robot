@@ -11,6 +11,7 @@ import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -37,6 +38,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import static edu.wpi.first.units.Units.RPM;
+
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -51,6 +55,7 @@ public class RobotContainer {
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
         // private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -73,6 +78,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
+
+                m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
         }
 
         /**
@@ -142,6 +149,16 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+
+                // Schedule `setVelocity` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                m_AssistantJoystick.button(5).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(60)));
+                m_AssistantJoystick.button(6).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(300)));
+                // Schedule `set` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                m_AssistantJoystick.button(7).whileTrue(m_ShooterSubsystem.set(0.3));
+                m_AssistantJoystick.button(8).whileTrue(m_ShooterSubsystem.set(-0.3));
+                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
@@ -153,6 +170,7 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
+
 //----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
@@ -192,11 +210,7 @@ public class RobotContainer {
 
                 }
 
-                if (RobotBase.isSimulation()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-                } else {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-                }
+
 
                 if (Robot.isSimulation()) {
                         Pose2d target = new Pose2d(new Translation2d(1, 4),
