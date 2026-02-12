@@ -56,7 +56,7 @@ public class RobotContainer {
         private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
         // TODO: Gavan or Alec; Add Shooter Subystem
-        // TODO: Gavan or Alec; Add Climber Subsystem      
+        // TODO:  Gavn or c; Add Climber Subsystem      
 
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
@@ -81,7 +81,7 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
-                m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
+                // TODO: Gavan or Alec; You need to set default commands
         }
 
         /**
@@ -151,15 +151,13 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-
+                // TODO: Gavan or Alec; Bind buttons for Intake system
+                // TODO: Gavan or Alec; Bind buttons for Climber system
+                // TODO: Gavan or Alec; Bind buttons for Shooter system
                 // Schedule `setVelocity` when the Xbox controller's B button is pressed,
                 // cancelling on release.
-                m_AssistantJoystick.button(5).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(60)));
-                m_AssistantJoystick.button(6).whileTrue(m_ShooterSubsystem.setVelocity(RPM.of(300)));
                 // Schedule `set` when the Xbox controller's B button is pressed,
                 // cancelling on release.
-                m_AssistantJoystick.button(7).whileTrue(m_ShooterSubsystem.set(0.3));
-                m_AssistantJoystick.button(8).whileTrue(m_ShooterSubsystem.set(-0.3));
                 
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
@@ -209,10 +207,6 @@ public class RobotContainer {
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-                        // TODO: Gavan or Alec; Bind buttons for Intake system
-                        // TODO: Gavan or Alec; Bind buttons for Climber system
-                        // TODO: Gavan or Alec; Bind buttons for Shooter system
-
                 }
 
                 if (RobotBase.isSimulation()) {
