@@ -45,9 +45,8 @@ public final class Constants {
   }
 
   public static class Shooter {
-
-    public static final int flyWheelID = 0;
-    public static final int fingerWheelID = 0;
+    public static final int flyWheelID = 10;
+    public static final int fingerWheelID = 11;
 
     public static final int shooterMotorPort = 101;
     public static final int feederMotorPort = 102;
@@ -57,27 +56,30 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.07;
+    public static final double DEADBAND = 0.15;
   }
 
   public static class swerveDrive {
     public static final String robot = "2026robot";
-    public static final String testbot = "Pearl/testbot";
+    public static final String testbot = "YAGSLConfigJSON/testbot";
+    public static final String flipper2026 = "YAGSLConfigJSON/Flipper2026";
 
     public static final double MAX_SPEED = 4;
 
     public static class autoAlign {
-      public static final double X_REEF_ALIGNMENT_P = 0;
-      public static final double Y_REEF_ALIGNMENT_P = 0;
-      public static final double ROT_REEF_ALIGNMENT_P = 0;
+      public static final double X_REEF_ALIGNMENT_P = 0.001;
+      public static final double Y_REEF_ALIGNMENT_P = 0.001;
+      public static final double ROT_REEF_ALIGNMENT_P = 0.001;
+
       public static final double ROT_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final double X_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double X_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final double Y_SETPOINT_REEF_ALIGNMENT = 0;
-      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0;
-      public static final Time DONT_SEE_TAG_WAIT_TIME = null;
-      public static final Time POSE_VALIDATION_TIME = null;
+      public static final double ROT_TOLERANCE_REEF_ALIGNMENT = 5;
+      public static final double X_SETPOINT_REEF_ALIGNMENT = 1;
+      public static final double X_TOLERANCE_REEF_ALIGNMENT = 0.5;
+      public static final double Y_SETPOINT_REEF_ALIGNMENT = 1;
+      public static final double Y_TOLERANCE_REEF_ALIGNMENT = 0.5;
+
+      public static final double DONT_SEE_TAG_WAIT_TIME = 1;
+      public static final double POSE_VALIDATION_TIME = 2;
 
     }
   }

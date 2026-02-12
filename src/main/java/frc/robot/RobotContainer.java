@@ -8,12 +8,15 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.IntakeCommandFactory;
 import frc.robot.commands.SwerveCommands.AimAtObject;
+import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
+import java.lang.annotation.Target;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -35,6 +38,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import static edu.wpi.first.units.Units.RPM;
+
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -49,6 +55,9 @@ public class RobotContainer {
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
         private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        // TODO: Gavan or Alec; Add Shooter Subystem
+        // TODO:  Gavn or c; Add Climber Subsystem      
+
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -71,6 +80,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
+
+                // TODO: Gavan or Alec; You need to set default commands
         }
 
         /**
@@ -80,7 +91,7 @@ public class RobotContainer {
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * -1,
                         () -> m_DriverJoystick.getX() * -1)
-                        .withControllerRotationAxis(m_DriverJoystick::getZ)
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() *-1)
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -140,6 +151,14 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+                // TODO: Gavan or Alec; Bind buttons for Intake system
+                // TODO: Gavan or Alec; Bind buttons for Climber system
+                // TODO: Gavan or Alec; Bind buttons for Shooter system
+                // Schedule `setVelocity` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                // Schedule `set` when the Xbox controller's B button is pressed,
+                // cancelling on release.
+                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
@@ -152,8 +171,43 @@ public class RobotContainer {
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
 
+//----------------------
+
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
+
+                if (RobotBase.isReal()) {
+                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
+                        Pose2d target = new Pose2d(new Translation2d(1, 4),
+                                        Rotation2d.fromDegrees(90));
+                        m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+
+                        driveDirectAngle.driveToPose(() -> target,
+                                        new ProfiledPIDController(5,
+                                                        0,
+                                                        0,
+                                                        new Constraints(5, 2)),
+                                        new ProfiledPIDController(5,
+                                                        0,
+                                                        0,
+                                                        new Constraints(Units.degreesToRadians(360),
+                                                                        Units.degreesToRadians(180))));
+
+                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+
+                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
+                        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+
+                        m_DriverJoystick.button(2)
+                                        .whileTrue(Commands.runEnd(
+                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                }
 
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
@@ -179,22 +233,30 @@ public class RobotContainer {
 
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+
+                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                                () -> m_SwerveSubsystem.zeroGyro()));
+
                         m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
                         // m_DriverJoystick.button(3).whileTrue(AimAtObject);
 
-                        // Intake controls Assistant Joystick
-                        m_AssistantJoystick.button(3).onTrue(m_IntakeCommandFactory.StartIntake());
-                        m_AssistantJoystick.button(4).onTrue(m_IntakeCommandFactory.StopIntake());
-
+                        // TODO: Gavan or Alec; Bind buttons for Intake system
+                        // TODO: Gavan or Alec; Bind buttons for Climber system
+                        // TODO: Gavan or Alec; Bind buttons for Shooter system
                         // driverXbox.b().whileTrue(
                         // drivebase.driveToPose(
                         // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                         // );
                 }
+
+
+
+
                 if (DriverStation.isTest()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive
                                                                                                  // command above!

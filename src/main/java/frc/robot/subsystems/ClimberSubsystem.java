@@ -10,6 +10,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -22,6 +23,8 @@ public class ClimberSubsystem extends SubsystemBase {
     
     // Closed Loop Controller
     private final SparkClosedLoopController controller;
+
+    private final DigitalInput climberLimitSwitch;
     
     
     public ClimberSubsystem() {
@@ -50,6 +53,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
         config.closedLoop.feedForward
             .kV(Constants.Climber.kFF);
+
+        climberLimitSwitch = new DigitalInput(1);
         
         // Apply configuration
         climberMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -107,6 +112,18 @@ public class ClimberSubsystem extends SubsystemBase {
     public void retract() {
         setSpeed(-Constants.Climber.MAX_SPEED);
     }
+
+    /** 
+     * Start the climber
+     */
+    public void climberOn() {
+        climberMotor.set(Constants.Climber.MAX_SPEED);
+    }
+
+    public boolean getClimberSwitchState () {
+        return climberLimitSwitch.get();
+  }
+
     
     /**
      * Stop the climber
