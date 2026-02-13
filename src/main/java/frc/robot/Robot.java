@@ -12,8 +12,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.urcl.URCL;
 
-import com.revrobotics.util.StatusLogger;
-
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,58 +24,57 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends LoggedRobot {
 
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
   private Command m_autonomousCommand;
-  private final RobotContainer m_robotContainer;
+
+  public final RobotContainer m_robotContainer;
+  public static final Mode simMode     = Mode.SIM;
+  /// Change to Mode.REPLAY to enable REPLAy.
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
-  //      // Record metadata
-  //   Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-  //   Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-  //   Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-  //   Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-  //   Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-  //   Logger.recordMetadata(
-  //       "GitDirty",
-  //       switch (BuildConstants.DIRTY) {
-  //         case 0 -> "All changes committed";
-  //         case 1 -> "Uncommitted changes";
-  //         default -> "Unknown";
-  //       });
+        switch (currentMode) {
+      case REAL:
+        // Running on a real robot, log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-  //   // Set up data receivers & replay source
-  //   switch (Constants.currentMode) {
-  //     case REAL:
-  //       // Running on a real robot, log to a USB stick ("/U/logs")
-  //       Logger.addDataReceiver(new WPILOGWriter());
-  //       Logger.addDataReceiver(new NT4Publisher());
-  //       break;
+      case SIM:
+        // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-  //     case SIM:
-  //       // Running a physics simulator, log to NT
-  //       Logger.addDataReceiver(new NT4Publisher());
-  //       break;
+      case REPLAY:
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        break;
+    }
 
-  //     case REPLAY:
-  //       // Replaying a log, set up replay source
-  //       setUseTiming(false); // Run as fast as possible
-  //       String logPath = LogFileUtil.findReplayLog();
-  //       Logger.setReplaySource(new WPILOGReader(logPath));
-  //       Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-  //       break;
-  //   }
+    // Initialize URCL
+    Logger.registerURCL(URCL.startExternal());
 
-  //   // Initialize URCL
-  //   Logger.registerURCL(URCL.startExternal());
-  //   StatusLogger.disableAutoLogging(); // Disable REVLib's built-in logging
+    // Start AdvantageKit logger
+    Logger.start();
 
-  // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
-
-
-       m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer();
   }
 
   /**
