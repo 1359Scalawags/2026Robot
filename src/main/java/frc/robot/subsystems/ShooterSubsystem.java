@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -73,8 +74,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         // Feedback Constants (PID Constants)
-        .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
         .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
@@ -93,9 +94,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     kickerSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+        .withClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+        .withSimClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))

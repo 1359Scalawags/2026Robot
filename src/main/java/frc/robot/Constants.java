@@ -40,6 +40,15 @@ public final class Constants {
 
     public static final AngularVelocity testShooterVelocity = RPM.of(800);
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
+
+    //TODO: set these right
+    public static double shooterP = 0;
+    public static double shooterI = 0;
+    public static double shooterD = 0;
+
+    public static double kickerP  = 0;
+    public static double kickerI = 0;
+    public static double kickerD = 0;
   }
 
   public static class OperatorConstants {
@@ -116,6 +125,18 @@ public final class Constants {
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
+
+    //TODO: set these numbers correctly
+    public static double sushiP = 0;
+    public static double sushiI = 0;
+    public static double sushiD = 0;
+    public static double sushiIntakeSpeed = 0;
+
+    public static double starP = 0;
+    public static double starI = 0;
+    public static double starD = 0;
+    public static double starIntakeSpeed = 0;
+
   }
 
 }

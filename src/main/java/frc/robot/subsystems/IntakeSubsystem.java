@@ -67,8 +67,8 @@ public class IntakeSubsystem extends SubsystemBase {
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         // Feedback Constants (PID Constants)
-        .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
         .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
         .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
@@ -88,9 +88,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     starSmcConfig = new SmartMotorControllerConfig(this)
     .withControlMode(ControlMode.CLOSED_LOOP)
-    .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
     DegreesPerSecondPerSecond.of(45))
-    .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
     DegreesPerSecondPerSecond.of(45))
     .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
     .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
