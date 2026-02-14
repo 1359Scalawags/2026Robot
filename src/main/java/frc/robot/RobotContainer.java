@@ -53,7 +53,7 @@ public class RobotContainer {
         // The robot's subsystems and commands are defined here...
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
-                        new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.testbot));
+                        new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
         private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
         // TODO: Gavan or Alec; Add Shooter Subystem
@@ -157,7 +157,7 @@ public class RobotContainer {
 
                 Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
 
-                m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                m_AssistantJoystick.button(1).whileTrue(shootFuel);
 
 
 

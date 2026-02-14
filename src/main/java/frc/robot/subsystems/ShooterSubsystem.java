@@ -118,11 +118,12 @@ public class ShooterSubsystem extends SubsystemBase {
         .withUpperSoftLimit(RPM.of(1000))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+        
     kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
     .withUpperSoftLimit(RPM.of(1000))
-    .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+    .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
 
     shooterWheel = new FlyWheel(shooterConfig);
     kickerWheel = new FlyWheel(kickerConfig);
@@ -166,13 +167,13 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     shooterWheel.updateTelemetry();
-    // kickerWheel.updateTelemetry();
+    kickerWheel.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
     shooterWheel.simIterate();
-    // kickerWheel.simIterate();
+    kickerWheel.simIterate();
     // This method will be called once per scheduler run during simulation
   }
 }
