@@ -4,21 +4,23 @@
 
 package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import frc.robot.Constants.Shooter;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -30,30 +32,26 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-import frc.robot.Constants.*;
-
-import edu.wpi.first.math.Pair;
-
 public class ShooterSubsystem extends SubsystemBase {
 
-  private final SparkMax flyWheelMotor;
-  private final SparkMax fingerWheelMotor;
+  private final SparkMax shooterMotor;
+  private final SparkMax kickerMotor;
 
 
-  private SmartMotorControllerConfig smcConfig;
-  // private SmartMotorControllerConfig smcConfig2;
+  private SmartMotorControllerConfig shooterSmcConfig;
+  private SmartMotorControllerConfig kickerSmcConfig;
 
 
   // Create our SmartMotorController from our Spark and config with the NEO.
-  private SmartMotorController flyWheelSmartMotorController;
-  // private SmartMotorController fingerSmartMotorController;
+  private SmartMotorController shooterSmartMotorController;
+  private SmartMotorController kickerSmartMotorController;
 
 
-  private final FlyWheelConfig flyConfig;
-  // private final FlyWheelConfig fingerrConfig;
+  private final FlyWheelConfig shooterConfig;
+  private final FlyWheelConfig kickerConfig;
 
-  private FlyWheel shooter;
-  // private FlyWheel shooter2;
+  private FlyWheel shooterWheel;
+  private FlyWheel kickerWheel;
 
   enum ShooterSpeed {
     off,
@@ -63,12 +61,16 @@ public class ShooterSubsystem extends SubsystemBase {
 
   ShooterSpeed currentSpeed;
 
+  //TODO: create constants whereveer needed.
   public ShooterSubsystem() {
 
-    flyWheelMotor = new SparkMax(Shooter.flyWheelID, MotorType.kBrushless);
-    fingerWheelMotor = new SparkMax(Shooter.fingerWheelID, MotorType.kBrushless);
+    //Creates the motor objects that control the motors on the real robot
+    shooterMotor = new SparkMax(Shooter.flyWheelID, MotorType.kBrushless);
+    kickerMotor = new SparkMax(Shooter.fingerWheelID, MotorType.kBrushless);
 
-    smcConfig = new SmartMotorControllerConfig(this)
+    //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
+    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
+    shooterSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         // Feedback Constants (PID Constants)
         .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
@@ -88,27 +90,27 @@ public class ShooterSubsystem extends SubsystemBase {
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40))
-        .withFollowers(Pair.of(fingerWheelMotor, false));
+        .withFollowers(Pair.of(kickerMotor, false));
 
-    // smcConfig2 = new SmartMotorControllerConfig(this)
-    // .withControlMode(ControlMode.CLOSED_LOOP)
-    // .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
-    // DegreesPerSecondPerSecond.of(45))
-    // .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
-    // DegreesPerSecondPerSecond.of(45))
-    // .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    // .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    // .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-    // .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-    // .withMotorInverted(false)
-    // .withIdleMode(MotorMode.COAST)
-    // .withStatorCurrentLimit(Amps.of(40));
+    kickerSmcConfig = new SmartMotorControllerConfig(this)
+    .withControlMode(ControlMode.CLOSED_LOOP)
+    .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+    .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+    .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withMotorInverted(false)
+    .withIdleMode(MotorMode.COAST)
+    .withStatorCurrentLimit(Amps.of(40));
 
-    flyWheelSmartMotorController = new SparkWrapper(flyWheelMotor, DCMotor.getNEO(1), smcConfig);
-    // fingerSmartMotorController = new SparkWrapper(fingerWheelMotor,
-    // DCMotor.getNEO(2), smcConfig2);
+    shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
+    kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
 
-    flyConfig = new FlyWheelConfig(flyWheelSmartMotorController)
+    //TODO check these values to see if they are accurate
+    shooterConfig = new FlyWheelConfig(shooterSmartMotorController)
         // Diameter of the flywheel.
         .withDiameter(Inches.of(4))
         // Mass of the flywheel.
@@ -117,14 +119,14 @@ public class ShooterSubsystem extends SubsystemBase {
         .withUpperSoftLimit(RPM.of(1000))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
-    // fingerrConfig = new FlyWheelConfig(fingerSmartMotorController)
-    // .withDiameter(Inches.of(4))
-    // .withMass(Pounds.of(1))
-    // .withUpperSoftLimit(RPM.of(1000))
-    // .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+    kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
+    .withDiameter(Inches.of(4))
+    .withMass(Pounds.of(1))
+    .withUpperSoftLimit(RPM.of(1000))
+    .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
 
-    shooter = new FlyWheel(flyConfig);
-    // shooter2 = new FlyWheel(fingerrConfig);
+    shooterWheel = new FlyWheel(shooterConfig);
+    kickerWheel = new FlyWheel(kickerConfig);
   }
 
     /**
@@ -132,8 +134,8 @@ public class ShooterSubsystem extends SubsystemBase {
    *
    * @return Shooter velocity.
    */
-  public AngularVelocity getVelocity() {
-    return shooter.getSpeed();
+  public AngularVelocity getShooterVelocity() {
+    return shooterWheel.getSpeed();
   }
   /**
    * Set the shooter velocity.
@@ -141,22 +143,30 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param speed Speed to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public Command setVelocity(AngularVelocity speed) {
-    return shooter.setSpeed(speed);
+  public Command setShooterVelocity(AngularVelocity speed) {
+    return shooterWheel.setSpeed(speed);
   }
-  /**
-   * Set the dutycycle of the shooter.
+ /**
+   * Set the kicker velocity to feed fuel into the shooter.
    *
-   * @param dutyCycle DutyCycle to set.
+   * @param speed Speed to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public Command set(double dutyCycle) {
-    return shooter.set(dutyCycle);
+  public Command setKickerVelocity(AngularVelocity speed) {
+    return kickerWheel.setSpeed(speed);
+  }
+//TODO: needs a wait Commmand
+  public Command shootFuel(AngularVelocity shootersSpeed, AngularVelocity kickerSpeed) {
+    return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
+
+      //Alternative way to create this command
+    // return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
+    //         .withName("ShootFuelCommand");
   }
 
   @Override
   public void periodic() {
-    shooter.updateTelemetry();
+    shooterWheel.updateTelemetry();
 
   }
 
