@@ -85,26 +85,25 @@ public class ShooterSubsystem extends SubsystemBase {
         // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
         // your motor.
         // You could also use .withGearing(12) which does the same thing.
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 1)))
         // Motor properties to prevent over currenting.
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40))
-        .withFollowers(Pair.of(kickerMotor, false));
+        .withStatorCurrentLimit(Amps.of(40));
 
     kickerSmcConfig = new SmartMotorControllerConfig(this)
-    .withControlMode(ControlMode.CLOSED_LOOP)
-    .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-    .withMotorInverted(false)
-    .withIdleMode(MotorMode.COAST)
-    .withStatorCurrentLimit(Amps.of(40));
+        .withControlMode(ControlMode.CLOSED_LOOP)
+        .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
+        .withMotorInverted(false)
+        .withIdleMode(MotorMode.COAST)
+        .withStatorCurrentLimit(Amps.of(40));
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
     kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
@@ -157,21 +156,23 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 //TODO: needs a wait Commmand
   public Command shootFuel(AngularVelocity shootersSpeed, AngularVelocity kickerSpeed) {
-    return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
+    // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
 
       //Alternative way to create this command
-    // return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
-    //         .withName("ShootFuelCommand");
+    return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
+            .withName("ShootFuelCommand");
   }
 
   @Override
   public void periodic() {
     shooterWheel.updateTelemetry();
-
+    // kickerWheel.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
+    shooterWheel.simIterate();
+    // kickerWheel.simIterate();
     // This method will be called once per scheduler run during simulation
   }
 }
