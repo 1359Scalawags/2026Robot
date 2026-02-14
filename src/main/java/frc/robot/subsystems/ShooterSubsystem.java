@@ -168,8 +168,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setKickerVelocity(AngularVelocity speed) {
     return kickerWheel.setSpeed(speed);
   }
+  
 //TODO: needs a wait Commmand
-  public Command shootFuel(AngularVelocity shootersSpeed, AngularVelocity kickerSpeed) {
+  public Command shootFuel(AngularVelocity kickerSpeed, AngularVelocity shootersSpeed) {
     // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
 
       //Alternative way to create this command

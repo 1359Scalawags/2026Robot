@@ -167,30 +167,28 @@ public class RobotContainer {
                                 driveDirectAngleKeyboard);
                 
 
-                Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
-
-
                 
                         //=========== Set Default Command ============
                     if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
                         m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
+
                 } else {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
                 }
 
 
-                m_AssistantJoystick.button(1).whileTrue(shootFuel);
+                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
 
-                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
+                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
 
                 m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
 
-                
 
-                 m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-                 m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
-                
+
+                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+
+                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
   
 
 //----------------------
