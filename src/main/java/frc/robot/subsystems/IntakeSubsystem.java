@@ -1,227 +1,172 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.RPM;
 
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.PersistMode;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Shooter;
 import frc.robot.Constants;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
+import yams.mechanisms.config.FlyWheelConfig;
+import yams.mechanisms.velocity.FlyWheel;
+import yams.motorcontrollers.SmartMotorController;
+import yams.motorcontrollers.SmartMotorControllerConfig;
+import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
+import yams.motorcontrollers.local.SparkWrapper;
 
-/**
- * IntakeSubsystem - FRC Intake Subsystem with 2 motors spinning opposite directions
- * Configured for REV SPARK motor controllers with RPM control
- * Uses modern REVLib configuration API
- */
 public class IntakeSubsystem extends SubsystemBase {
-  
-  // ========== MOTOR CONTROLLERS ==========
-  private final SparkMax kickerMotor;
-  private final SparkMax starMotor;
-  
-  // ========== ENCODERS ==========
-  private final RelativeEncoder kickerEncoder;
-  private final RelativeEncoder starEncoder;
-  
-  // ========== CLOSED LOOP CONTROLLERS ==========
-  private final SparkClosedLoopController kickerPID;
-  private final SparkClosedLoopController starPID;
-  
 
-  // ========== Member Variables =========
-  private Debouncer currentSpikeDebouncer= new Debouncer(0.5) ; 
-  /**
-   * Creates a new IntakeSubsystem
-   */
+  private final SparkMax sushiMotor;
+  private final SparkMax starMotor;
+
+
+  private SmartMotorControllerConfig sushiSmcConfig;
+  private SmartMotorControllerConfig starSmcConfig;
+
+
+  // Create our SmartMotorController from our Spark and config with the NEO.
+  private SmartMotorController sushiSmartMotorController;
+  private SmartMotorController starSmartMotorController;
+
+
+  private final FlyWheelConfig sushiConfig;
+  private final FlyWheelConfig starConfig;
+
+  private FlyWheel sushiWheel;
+  private FlyWheel starWheel;
+
+  //TODO: create constants whereveer needed.
   public IntakeSubsystem() {
-    // Initialize kicker motor (spins one direction) - motor type set in constructor
-    kickerMotor = new SparkMax(Constants.Intake.KICKER_MOTOR_CAN_ID, MotorType.kBrushless);
-    
-    // Initialize star motor (spins opposite direction) - motor type set in constructor
-    starMotor = new SparkMax(Constants.Intake.STAR_MOTOR_CAN_ID, MotorType.kBrushless);
-    
-    // Get encoders
-    kickerEncoder = kickerMotor.getEncoder();
-    starEncoder = starMotor.getEncoder();
-    
-    // Get closed loop controllers
-    kickerPID = kickerMotor.getClosedLoopController();
-    starPID = starMotor.getClosedLoopController();
-    
-    // Configure both motors using modern API
-    configureMotors();
+
+    //Creates the motor objects that control the motors on the real robot
+    sushiMotor = new SparkMax(Constants.Intake.sushiMotorID, MotorType.kBrushless);
+    starMotor = new SparkMax(Constants.Intake.starMotorID, MotorType.kBrushless);
+
+    //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
+    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
+    sushiSmcConfig = new SmartMotorControllerConfig(this)
+        .withControlMode(ControlMode.CLOSED_LOOP)
+        // Feedback Constants (PID Constants)
+        .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        // Feedforward Constants
+        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        // Telemetry name and verbosity level
+        .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
+        // Gearing from the motor rotor to final shaft.
+        // In this example GearBox.fromReductionStages(3,4) is the same as
+        // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
+        // your motor.
+        // You could also use .withGearing(12) which does the same thing.
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+        // Motor properties to prevent over currenting.
+        .withMotorInverted(false)
+        .withIdleMode(MotorMode.COAST)
+        .withStatorCurrentLimit(Amps.of(40))
+        .withFollowers(Pair.of(starMotor, false));
+
+    starSmcConfig = new SmartMotorControllerConfig(this)
+    .withControlMode(ControlMode.CLOSED_LOOP)
+    .withClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withSimClosedLoopController(50, 0, 0, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+    .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+    .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withMotorInverted(false)
+    .withIdleMode(MotorMode.COAST)
+    .withStatorCurrentLimit(Amps.of(40));
+
+    sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
+    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
+
+    //TODO check these values to see if they are accurate
+    sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
+        // Diameter of the flywheel.
+        .withDiameter(Inches.of(4))
+        // Mass of the flywheel.
+        .withMass(Pounds.of(1))
+        // Maximum speed of the shooter.
+        .withUpperSoftLimit(RPM.of(1000))
+        // Telemetry name and verbosity for the arm.
+        .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+    starConfig = new FlyWheelConfig(starSmartMotorController)
+    .withDiameter(Inches.of(4))
+    .withMass(Pounds.of(1))
+    .withUpperSoftLimit(RPM.of(1000))
+    .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+
+    sushiWheel = new FlyWheel(sushiConfig);
+    starWheel = new FlyWheel(starConfig);
   }
-  
-  /**
-   * Configure both motors using modern REVLib configuration API
-   * https://docs.revrobotics.com/revlib/spark/configuring-a-spark
+
+    /**
+   * Gets the current velocity of the shooter.
+   *
+   * @return Shooter velocity.
    */
-  private void configureMotors() {
-    // Create configuration object for kicker motor
-    SparkMaxConfig kickerConfig = new SparkMaxConfig();
-    kickerConfig
-      .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
-      .inverted(false)
-      .voltageCompensation(12.0)
-      .closedLoopRampRate (Constants.Intake.CLOSED_LOOP_RAMP_RATE);
-    
-    // Configure closed loop control for kicker motor
-    kickerConfig.closedLoop
-      .p(Constants.Intake.kP)
-      .i(Constants.Intake.kI)
-      .d(Constants.Intake.kD)
-      .outputRange(-1, 1);
-    
-    // Configure feedforward separately using the new API
-    kickerConfig.closedLoop.feedForward
-      .kV(Constants.Intake.kFF);
-    
-    // Apply configuration to kicker motor and persist parameters
-    kickerMotor.configure(
-      kickerConfig, 
-      ResetMode.kResetSafeParameters, 
-      PersistMode.kPersistParameters
-    );
-    
-    // Create configuration object for star motor
-    SparkMaxConfig starConfig = new SparkMaxConfig();
-    starConfig
-      .idleMode(IdleMode.kBrake)
-      .smartCurrentLimit(Constants.Intake.CURRENT_LIMIT)
-      .inverted(true) // Inverted to spin opposite direction
-      .voltageCompensation(12.0)
-      .closedLoopRampRate (Constants.Intake.CLOSED_LOOP_RAMP_RATE);
-    
-    // Configure closed loop control for star motor
-    starConfig.closedLoop
-      .p(Constants.Intake.kP)
-      .i(Constants.Intake.kI)
-      .d(Constants.Intake.kD)
-      .outputRange(-1, 1);
-    
-    // Configure feedforward separately using the new API
-    starConfig.closedLoop.feedForward
-      .kV(Constants.Intake.kFF);
-    
-    // Apply configuration to star motor and persist parameters
-    starMotor.configure(
-      starConfig, 
-      ResetMode.kResetSafeParameters, 
-      PersistMode.kPersistParameters
-    );
-    
-    System.out.println("Intake motors configured successfully for RPM control");
+  public AngularVelocity getSushiVelocity() {
+    return sushiWheel.getSpeed();
   }
-  
   /**
-   * Turn on both motors to intake balls at 1600 RPM
+   * Set the shooter velocity.
+   *
+   * @param speed Speed to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public void intakeOn() {
-    kickerPID.setSetpoint(Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
-    starPID.setSetpoint(Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
-    System.out.println("Intake ON at " + Constants.Intake.INTAKE_SPEED_RPM + " RPM");
+  public Command setSushiVelocity(AngularVelocity speed) {
+    return sushiWheel.setSpeed(speed);
   }
-  
-  /**
-   * Turn off both motors
+ /**
+   * Set the kicker velocity to feed fuel into the shooter.
+   *
+   * @param speed Speed to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public void intakeOff() {
-    kickerMotor.stopMotor();
-    starMotor.stopMotor();
-    System.out.println("Intake OFF");
+  public Command setStarVelocity(AngularVelocity speed) {
+    return starWheel.setSpeed(speed);
   }
-  
-  /**
-   * Reverse both motors (for ejecting balls)
-   */
-  public void intakeReverse() {
-    kickerPID.setSetpoint(-Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
-    starPID.setSetpoint(-Constants.Intake.INTAKE_SPEED_RPM, ControlType.kVelocity);
-    System.out.println("Intake REVERSE at -" + Constants.Intake.INTAKE_SPEED_RPM + " RPM");
+//TODO: needs a wait Commmand
+  public Command intakeOn(AngularVelocity sushiSpeed, AngularVelocity starSpeed) {
+    return Commands.parallel(setSushiVelocity(sushiSpeed), setStarVelocity(starSpeed));
+
+      //Alternative way to create this command
+    // return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
+    //         .withName("ShootFuelCommand");
   }
-  
-  /**
-   * Set custom RPM for both motors
-   * @param rpm Target RPM (positive or negative)
-   */
-  public void setIntakeRPM(double rpm) {
-    kickerPID.setSetpoint(rpm, ControlType.kVelocity);
-    starPID.setSetpoint(rpm, ControlType.kVelocity);
-  }
-  
-  /**
-   * Get the current RPM of the kicker motor
-   * @return RPM
-   */
-  public double getKickerMotorRPM() {
-    return kickerEncoder.getVelocity();
-  }
-  
-  /**
-   * Get the current RPM of the star motor
-   * @return RPM
-   */
-  public double getStarMotorRPM() {
-    return starEncoder.getVelocity();
-  }
-  
-  /**
-   * Get the current draw of the kicker motor
-   * @return Current in amps
-   */
-  public double getKickerMotorCurrent() {
-    return kickerMotor.getOutputCurrent();
-  }
-  
-  /**
-   * Get the current draw of the star motor
-   * @return Current in amps
-   */
-  public double getStarMotorCurrent() {
-    return starMotor.getOutputCurrent();
-  }
-  
-  /**
-   * Check if motors are drawing excessive current (ball jammed)
-   * @return True if current is too high
-   */
-  public boolean isCurrentSpiking() {
-    return getKickerMotorCurrent() > Constants.Intake.CURRENT_THRESHOLD ||
-           getStarMotorCurrent() > Constants.Intake.CURRENT_THRESHOLD;
-  }
-  
-  /**
-   * Check if motors are at target RPM
-   * @return True if both motors are within tolerance
-   */
-  public boolean isAtTargetSpeed() {
-    double kickerError = Math.abs(getKickerMotorRPM() - Constants.Intake.INTAKE_SPEED_RPM);
-    double starError = Math.abs(getStarMotorRPM() - Constants.Intake.INTAKE_SPEED_RPM);
-    return kickerError < Constants.Intake.RPM_TOLERANCE && starError < Constants.Intake.RPM_TOLERANCE;
-  }
-  
-  /**
-   * Periodic function called every 20ms
-   */
+
+
   @Override
   public void periodic() {
-    // Monitor motor currents and log warnings
-    boolean spiking = isCurrentSpiking();
-    if (currentSpikeDebouncer.calculate(spiking)) {
-      System.out.println("WARNING: Intake current spike detected!");
-    }
-    // SmartDashboard updates for drive 
-    SmartDashboard.putBoolean("Intake On", kickerMotor.get() != 0 || starMotor.get() != 0); 
-    SmartDashboard.putBoolean("Intake Off", kickerMotor.get() == 0 && starMotor.get() == 0); 
-  }
-  
+    sushiWheel.updateTelemetry();
 
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run during simulation
+  }
 }
