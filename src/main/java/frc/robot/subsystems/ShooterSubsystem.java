@@ -147,6 +147,18 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setShooterVelocity(AngularVelocity speed) {
     return shooterWheel.setSpeed(speed);
   }
+
+/**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command set(double dutyCycle) {
+    return shooterWheel.set(dutyCycle);
+  }
+
+
  /**
    * Set the kicker velocity to feed fuel into the shooter.
    *

@@ -154,24 +154,6 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-
-                Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
-
-                m_AssistantJoystick.button(1).whileTrue(shootFuel);
-
-
-
-                // TODO: Gavan or Alec; Bind buttons for Intake system
-                // TODO: Gavan or Alec; Bind buttons for Climber system
-                // TODO: Gavan or Alec; Bind buttons for Shooter system
-                // Schedule `setVelocity` when the Xbox controller's B button is pressed,
-                // cancelling on release.
-                // Schedule `set` when the Xbox controller's B button is pressed,
-                // cancelling on release.
-
-                 m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-                 m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
-                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
@@ -183,6 +165,33 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
+                
+
+                Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
+
+
+                
+                        //=========== Set Default Command ============
+                    if (RobotBase.isSimulation()) {
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+                        m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
+                } else {
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                }
+
+
+                m_AssistantJoystick.button(1).whileTrue(shootFuel);
+
+                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
+
+                m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
+
+                
+
+                 m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+                 m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
+                
+  
 
 //----------------------
 
@@ -225,11 +234,7 @@ public class RobotContainer {
                        
                 }
 
-                if (RobotBase.isSimulation()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-                } else {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-                }
+            
 
                 if (Robot.isSimulation()) {
                         Pose2d target = new Pose2d(new Translation2d(1, 4),

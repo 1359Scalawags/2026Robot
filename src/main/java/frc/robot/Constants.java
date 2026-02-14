@@ -42,11 +42,11 @@ public final class Constants {
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
 
     //TODO: set these right
-    public static double shooterP = 0;
+    public static double shooterP = 1;
     public static double shooterI = 0;
     public static double shooterD = 0;
 
-    public static double kickerP  = 0;
+    public static double kickerP  = 1;
     public static double kickerI = 0;
     public static double kickerD = 0;
   }
