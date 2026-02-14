@@ -38,6 +38,7 @@ public final class Constants {
     public static final int shooterMotorPort = 101;
     public static final int feederMotorPort = 102;
 
+<<<<<<< HEAD
     public static final AngularVelocity testShooterVelocity = RPM.of(800);
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
 
@@ -47,6 +48,17 @@ public final class Constants {
     public static double shooterD = 0;
 
     public static double kickerP  = 1;
+=======
+    public static final AngularVelocity testShooterVelocity = RPM.of(1000);
+    public static final AngularVelocity testKickerVelocity = RPM.of(1000);
+
+    //TODO: set these right
+    public static double shooterP = 0;
+    public static double shooterI = 0;
+    public static double shooterD = 0;
+
+    public static double kickerP  = 0;
+>>>>>>> 4e105f3 (Made constants for PID and speed of intake)
     public static double kickerI = 0;
     public static double kickerD = 0;
   }
