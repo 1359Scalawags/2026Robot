@@ -93,8 +93,8 @@ public final class Constants {
   public static class Intake {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int KICKER_MOTOR_CAN_ID = 10;
-    public static final int STAR_MOTOR_CAN_ID = 11;
+    public static final int sushiMotorID = 10;
+    public static final int starMotorID = 11;
 
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
