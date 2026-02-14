@@ -13,15 +13,15 @@ public class IntakeCommandFactory extends SubsystemBase {
         this.IntakeSubsystem = intakeSubsystem;
     }
     
-    // Start the intake command 
-    public Command StartIntake() { 
-        return runOnce(() -> IntakeSubsystem.intakeOn()); 
-    }
+    // // Start the intake command 
+    // public Command StartIntake() { 
+    //     return runOnce(() -> IntakeSubsystem.intakeOn()); 
+    // }
 
-    // Stop the intake command 
-    public Command StopIntake() { 
-        return runOnce(() -> IntakeSubsystem.intakeOff()); 
+    // // Stop the intake command 
+    // public Command StopIntake() { 
+    //     return runOnce(() -> IntakeSubsystem.intakeOff()); 
 
-    }
+    // }
 
 }
