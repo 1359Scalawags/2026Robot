@@ -112,12 +112,12 @@ public class IntakeSubsystem extends SubsystemBase {
         // Maximum speed of the shooter.
         .withUpperSoftLimit(RPM.of(1000))
         // Telemetry name and verbosity for the arm.
-        .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+        .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
     starConfig = new FlyWheelConfig(starSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
     .withUpperSoftLimit(RPM.of(1000))
-    .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+    .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     sushiWheel = new FlyWheel(sushiConfig);
     starWheel = new FlyWheel(starConfig);
@@ -150,12 +150,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return starWheel.setSpeed(speed);
   }
 //TODO: needs a wait Commmand
-  public Command intakeOn(AngularVelocity sushiSpeed, AngularVelocity starSpeed) {
-    return Commands.parallel(setSushiVelocity(sushiSpeed), setStarVelocity(starSpeed));
+  public Command setIntakeSpeed(AngularVelocity sushiSpeed, AngularVelocity starSpeed) {
+       return run(() -> {sushiWheel.setSpeed(sushiSpeed);
+                        starWheel.setSpeed(starSpeed);})
+       
+    // return Commands.parallel(setSushiVelocity(sushiSpeed), setStarVelocity(starSpeed));
 
-      //Alternative way to create this command
-    // return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
-    //         .withName("ShootFuelCommand");
+    //   //Alternative way to create this command
+      .withName("SetIntakeSpeed");
   }
 
 
