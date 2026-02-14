@@ -38,8 +38,8 @@ public final class Constants {
     public static final int shooterMotorPort = 101;
     public static final int feederMotorPort = 102;
 
-    public static final AngularVelocity testShooterVelocity = RPM.of(1000);
-    public static final AngularVelocity testKickerVelocity = RPM.of(1000);
+    public static final AngularVelocity testShooterVelocity = RPM.of(800);
+    public static final AngularVelocity testKickerVelocity = RPM.of(800);
   }
 
   public static class OperatorConstants {
