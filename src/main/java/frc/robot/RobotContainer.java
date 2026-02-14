@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -58,6 +59,8 @@ public class RobotContainer {
         // TODO: Gavan or Alec; Add Shooter Subystem
         // TODO:  Gavn or c; Add Climber Subsystem      
 
+        private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+        
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -151,6 +154,13 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+
+                Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
+
+                m_AssistantJoystick.trigger().whileTrue(shootFuel);
+
+
+
                 // TODO: Gavan or Alec; Bind buttons for Intake system
                 // TODO: Gavan or Alec; Bind buttons for Climber system
                 // TODO: Gavan or Alec; Bind buttons for Shooter system

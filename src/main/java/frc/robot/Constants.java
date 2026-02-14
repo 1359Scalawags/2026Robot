@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.RPM;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Time;
 
 /**
@@ -29,18 +32,21 @@ public final class Constants {
   }
 
   public static class Shooter {
-    public static final int flyWheelID = 10;
-    public static final int fingerWheelID = 11;
+    public static final int flyWheelID = 13;
+    public static final int fingerWheelID = 14;
 
     public static final int shooterMotorPort = 101;
     public static final int feederMotorPort = 102;
+
+    public static final AngularVelocity testShooterVelocity = RPM.of(1000);
+    public static final AngularVelocity testKickerVelocity = RPM.of(1000);
   }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.15;
+    public static final double DEADBAND = 0.25;
   }
 
   public static class swerveDrive {
@@ -93,8 +99,8 @@ public final class Constants {
   public static class Intake {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int KICKER_MOTOR_CAN_ID = 10;
-    public static final int STAR_MOTOR_CAN_ID = 11;
+    public static final int KICKER_MOTOR_CAN_ID = 9;
+    public static final int STAR_MOTOR_CAN_ID = 10;
 
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
