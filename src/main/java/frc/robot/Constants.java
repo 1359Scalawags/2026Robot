@@ -151,9 +151,9 @@ public final class Constants {
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
     //hopper motorFF
-    public static double sushiS = 0;
-    public static double sushiV = 0;
-    public static double sushiA = 0;
+    public static double kS = 0;
+    public static double kV = 0;
+    public static double kA = 0;
 
     // Current and speed thresholds
     public static final int CURRENT_LIMIT = 40; // Amps
@@ -168,14 +168,5 @@ public final class Constants {
 
 
 
-  }
-
-  public static class Hopper {
-    public static double kP = 1;
-    public static double kI = 0;
-    public static double kD = 0;
-    public static double kS = 0;
-    public static double kV = 0;
-    public static double kA = 0;
   }
 }
