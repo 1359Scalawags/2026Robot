@@ -154,6 +154,27 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
+
+
+                //TODO : uncomment when swerve works
+                
+                // Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
+
+                // m_AssistantJoystick.button(1).whileTrue(shootFuel);
+
+
+
+                // // TODO: Gavan or Alec; Bind buttons for Intake system
+                // // TODO: Gavan or Alec; Bind buttons for Climber system
+                // // TODO: Gavan or Alec; Bind buttons for Shooter system
+                // // Schedule `setVelocity` when the Xbox controller's B button is pressed,
+                // // cancelling on release.
+                // // Schedule `set` when the Xbox controller's B button is pressed,
+                // // cancelling on release.
+
+                //  m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+                //  m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
+                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);

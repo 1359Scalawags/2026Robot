@@ -155,17 +155,22 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
+    //hopper motorFF
+    public static double sushiS = 0;
+    public static double sushiV = 0;
+    public static double sushiA = 0;
+
     // Current and speed thresholds
     public static final int CURRENT_LIMIT = 40; // Amps
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
 
-    //TODO: set these numbers correctly
-    public static double sushiP = 0;
-    public static double sushiI = 0;
-    public static double sushiD = 0;
+    
     public static double sushiIntakeSpeed = 0;
+    public static double starIntakeSpeed = 0;
+
+
 
 
   }
