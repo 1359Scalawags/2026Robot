@@ -70,8 +70,8 @@ public class IntakeSubsystem extends SubsystemBase {
         .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
-        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
         // Telemetry name and verbosity level
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         // Gearing from the motor rotor to final shaft.
@@ -92,8 +92,8 @@ public class IntakeSubsystem extends SubsystemBase {
     DegreesPerSecondPerSecond.of(45))
     .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
     DegreesPerSecondPerSecond.of(45))
-    .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+    .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+    .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
     .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
     .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
     .withMotorInverted(false)
