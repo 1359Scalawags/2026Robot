@@ -83,9 +83,9 @@ public ClimberSubsystem() {
   sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
    // Create our SmartMotorController from our Spark and config with the NEO.
-  private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+  SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
-    private ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
+    ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
       .withStartingHeight(Meters.of(Constants.Climber.START_HEIGHT))
       .withHardLimits(Meters.of(Constants.Climber.MIN_HEIGHT), Meters.of(Constants.Climber.MAX_HEIGHT))
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
