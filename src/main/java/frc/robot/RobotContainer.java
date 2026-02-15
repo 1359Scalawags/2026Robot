@@ -54,6 +54,8 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
+
+                        //TODO: uncomment these when swerve works
         // private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
         // private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
         
@@ -151,22 +153,25 @@ public class RobotContainer {
          */
         private void configureBindings() {
 
-                Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
 
-                m_AssistantJoystick.button(1).whileTrue(shootFuel);
+                //TODO : uncomment when swerve works
+                
+                // Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
+
+                // m_AssistantJoystick.button(1).whileTrue(shootFuel);
 
 
 
-                // TODO: Gavan or Alec; Bind buttons for Intake system
-                // TODO: Gavan or Alec; Bind buttons for Climber system
-                // TODO: Gavan or Alec; Bind buttons for Shooter system
-                // Schedule `setVelocity` when the Xbox controller's B button is pressed,
-                // cancelling on release.
-                // Schedule `set` when the Xbox controller's B button is pressed,
-                // cancelling on release.
+                // // TODO: Gavan or Alec; Bind buttons for Intake system
+                // // TODO: Gavan or Alec; Bind buttons for Climber system
+                // // TODO: Gavan or Alec; Bind buttons for Shooter system
+                // // Schedule `setVelocity` when the Xbox controller's B button is pressed,
+                // // cancelling on release.
+                // // Schedule `set` when the Xbox controller's B button is pressed,
+                // // cancelling on release.
 
-                 m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-                 m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
+                //  m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+                //  m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
                 
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
