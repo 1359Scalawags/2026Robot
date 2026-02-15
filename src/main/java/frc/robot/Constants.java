@@ -32,26 +32,6 @@ public final class Constants {
     public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
   }
 
-  public static class Shooter {
-    public static final int flyWheelID = 13;
-    public static final int fingerWheelID = 14;
-
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
-
-    public static final AngularVelocity testShooterVelocity = RPM.of(800);
-    public static final AngularVelocity testKickerVelocity = RPM.of(800);
-
-    //TODO: set these right
-    public static double shooterP = 1;
-    public static double shooterI = 0;
-    public static double shooterD = 0;
-
-    public static double kickerP  = 1;
-    public static double kickerI = 0;
-    public static double kickerD = 0;
-  }
-
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
@@ -84,8 +64,30 @@ public final class Constants {
     }
   }
 
+  public static class Shooter {
+    public static final int flyWheelID = 13;
+    public static final int fingerWheelID = 14;
+
+    public static final int shooterMotorPort = 101;
+    public static final int feederMotorPort = 102;
+
+    public static final AngularVelocity testShooterVelocity = RPM.of(800);
+    public static final AngularVelocity testKickerVelocity = RPM.of(800);
+
+    //TODO: set these right
+    public static double shooterP = 1;
+    public static double shooterI = 0;
+    public static double shooterD = 0;
+
+    public static double kickerP  = 1;
+    public static double kickerI = 0;
+    public static double kickerD = 0;
+  }
+
   public static class Climber {
-    public static final int climberMotorPort = 103;
+    public static final int climberID = 15;
+    
+    // public static final int climberMotorPort = 103;
      // Constants
  // Change to your CAN ID
     
@@ -114,8 +116,35 @@ public final class Constants {
   public static class Intake {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int sushiMotorID = 10;
-    public static final int starMotorID = 11;
+    public static final int sushiMotorID = 9;
+    public static final int starMotorID = 10;
+
+    //TODO: set these numbers correctly
+    public static double sushiP = 0;
+    public static double sushiI = 0;
+    public static double sushiD = 0;
+    public static double sushiIntakeSpeed = 100;
+
+    public static double starP = 0;
+    public static double starI = 0;
+    public static double starD = 0;
+    public static double starIntakeSpeed = 100;
+
+
+    //========= FF valvues for SMC config =========
+    public static double sushiS = 0;
+    public static double sushiV = 0;
+    public static double sushiA = 0;
+
+    public static double starV = 0;
+    public static double starA = 0;
+    public static double starS = 0;
+  }
+
+  public static class Hopper {
+    // ========== CONFIGURATION ==========
+    // CAN IDs for the motor controllers
+    public static final int sushiMotorID = 11;
 
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
@@ -126,23 +155,23 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
+    //hopper motorFF
+    public static double kS = 0;
+    public static double kV = 0;
+    public static double kA = 0;
+
     // Current and speed thresholds
     public static final int CURRENT_LIMIT = 40; // Amps
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
 
-    //TODO: set these numbers correctly
-    public static double sushiP = 0;
-    public static double sushiI = 0;
-    public static double sushiD = 0;
-    public static double sushiIntakeSpeed = 0;
 
-    public static double starP = 0;
-    public static double starI = 0;
-    public static double starD = 0;
+    public static double sushiIntakeSpeed = 0;
     public static double starIntakeSpeed = 0;
 
-  }
 
+
+
+  }
 }

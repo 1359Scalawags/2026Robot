@@ -70,8 +70,8 @@ public class IntakeSubsystem extends SubsystemBase {
         .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
-        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
         // Telemetry name and verbosity level
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         // Gearing from the motor rotor to final shaft.
@@ -83,27 +83,10 @@ public class IntakeSubsystem extends SubsystemBase {
         // Motor properties to prevent over currenting.
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40))
-        .withFollowers(Pair.of(starMotor, false));
-
-    starSmcConfig = new SmartMotorControllerConfig(this)
-    .withControlMode(ControlMode.CLOSED_LOOP)
-    .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-    .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-    .withMotorInverted(false)
-    .withIdleMode(MotorMode.COAST)
-    .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(40));
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
-    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
-    //TODO check these values to see if they are accurate
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         // Diameter of the flywheel.
         .withDiameter(Inches.of(4))
@@ -113,19 +96,38 @@ public class IntakeSubsystem extends SubsystemBase {
         .withUpperSoftLimit(RPM.of(1000))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
+
+    sushiWheel = new FlyWheel(sushiConfig);
+
+    starSmcConfig = new SmartMotorControllerConfig(this)
+    .withControlMode(ControlMode.CLOSED_LOOP)
+    .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
+    DegreesPerSecondPerSecond.of(45))
+    .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+    .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+    .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withMotorInverted(false)
+    .withIdleMode(MotorMode.COAST)
+    .withStatorCurrentLimit(Amps.of(40))
+    .withLooselyCoupledFollowers(sushiSmartMotorController);
+
+    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
+
+    //TODO check these values to see if they are accurate
+    
     starConfig = new FlyWheelConfig(starSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
     .withUpperSoftLimit(RPM.of(1000))
     .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
-    sushiWheel = new FlyWheel(sushiConfig);
     starWheel = new FlyWheel(starConfig);
   }
 
     /**
-   * Gets the current velocity of the shooter.
-   *
    * @return Shooter velocity.
    */
   public AngularVelocity getSushiVelocity() {
@@ -140,6 +142,14 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command setSushiVelocity(AngularVelocity speed) {
     return sushiWheel.setSpeed(speed);
   }
+
+   /**
+   * @return Shooter velocity.
+   */
+  public AngularVelocity getStarVelocity() {
+    return starWheel.getSpeed();
+  }
+
  /**
    * Set the kicker velocity to feed fuel into the shooter.
    *
@@ -149,26 +159,51 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command setStarVelocity(AngularVelocity speed) {
     return starWheel.setSpeed(speed);
   }
-//TODO: needs a wait Commmand
+
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setStarDutyCylce(double dutyCycle) {
+    return starWheel.set(dutyCycle);
+  }
+
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setSushiDutyCycle(double dutyCycle) {
+    return sushiWheel.set(dutyCycle);
+  }
+
+
   public Command setIntakeSpeed(AngularVelocity sushiSpeed, AngularVelocity starSpeed) {
        return run(() -> {sushiWheel.setSpeed(sushiSpeed);
                         starWheel.setSpeed(starSpeed);})
-       
-    // return Commands.parallel(setSushiVelocity(sushiSpeed), setStarVelocity(starSpeed));
+                        .withName("SetIntakeSpeed");
+  }
 
-    //   //Alternative way to create this command
-      .withName("SetIntakeSpeed");
+    public Command stopIntake() {
+    return run(() -> {sushiWheel.set(0);starWheel.set(0);})
+            .withName("Stop Intake");
   }
 
 
   @Override
   public void periodic() {
     sushiWheel.updateTelemetry();
+    starWheel.updateTelemetry();
 
   }
 
   @Override
   public void simulationPeriodic() {
+    sushiWheel.simIterate();
+    starWheel.simIterate();
     // This method will be called once per scheduler run during simulation
   }
 }

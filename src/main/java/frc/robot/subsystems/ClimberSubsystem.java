@@ -20,7 +20,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Constants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.motorcontrollers.SmartMotorControllerConfig;
@@ -37,7 +37,21 @@ import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
 
-  private SmartMotorControllerConfig smcConfig = new SmartMotorControllerConfig(this)
+  private SparkMax spark = new SparkMax(Constants.Climber.climberID, MotorType.kBrushless);
+  
+  private SmartMotorControllerConfig smcConfig;
+  
+   // Create our SmartMotorController from our Spark and config with the NEO.
+  private SmartMotorController sparkSmartMotorController;
+
+    private ElevatorConfig elevconfig;
+
+  // Elevator Mechanism
+  private Elevator elevator;
+
+
+public ClimberSubsystem() {
+  smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
 
   // Mechanism Circumference is the distance traveled by each mechanism rotation converting rotations to meters.
@@ -66,8 +80,7 @@ public class ClimberSubsystem extends SubsystemBase {
   .withClosedLoopRampRate(Seconds.of(0.25))
   .withOpenLoopRampRate(Seconds.of(0.25));
 
- // Vendor motor controller object
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
    // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
@@ -78,9 +91,8 @@ public class ClimberSubsystem extends SubsystemBase {
       .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
       .withMass(Pounds.of(16));
 
-  // Elevator Mechanism
-  private Elevator elevator = new Elevator(elevconfig);
-
+  elevator = new Elevator(elevconfig);
+}
 /**
    * Set the height of the elevator and does not end the command when reached.
    * @param angle Distance to go to.

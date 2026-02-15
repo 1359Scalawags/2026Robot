@@ -40,6 +40,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
+import frc.robot.Constants;
 
 public class HopperSubsystem extends SubsystemBase {
 
@@ -58,11 +59,9 @@ public class HopperSubsystem extends SubsystemBase {
     smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
   // Feedback Constants (PID Constants)
-  .withClosedLoopController(1, 0, 0)
-  .withSimClosedLoopController(1, 0, 0)
-  // Feedforward Constants
-  .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-  .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+  .withClosedLoopController(Constants.Hopper.kP, Constants.Hopper.kI, Constants.Hopper.kD)
+  .withSimClosedLoopController(Constants.Hopper.kP, Constants.Hopper.kI, Constants.Hopper.kD)
+  .withSimFeedforward(new SimpleMotorFeedforward(Constants.Hopper.kS, Constants.Hopper.kV, Constants.Hopper.kA))
   // Telemetry name and verbosity level
   .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
   // Gearing from the motor rotor to final shaft.

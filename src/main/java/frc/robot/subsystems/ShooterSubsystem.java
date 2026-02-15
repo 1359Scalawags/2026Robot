@@ -154,10 +154,19 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param dutyCycle DutyCycle to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public Command set(double dutyCycle) {
+  public Command setShooterDutyCycle(double dutyCycle) {
     return shooterWheel.set(dutyCycle);
   }
 
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setKickerDutyCycle(double dutyCycle) {
+    return shooterWheel.set(dutyCycle);
+  }
 
  /**
    * Set the kicker velocity to feed fuel into the shooter.
@@ -176,6 +185,11 @@ public class ShooterSubsystem extends SubsystemBase {
       //Alternative way to create this command
     return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
             .withName("ShootFuelCommand");
+  }
+
+  public Command stopShooter() {
+    return run(() -> {kickerWheel.set(0);shooterWheel.set(0);})
+            .withName("Stop Shooter");
   }
 
   @Override
