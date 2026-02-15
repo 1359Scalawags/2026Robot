@@ -3,13 +3,15 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.IntakeCommandFactory;
 import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.commands.SwerveCommands.AlignToTag;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -54,9 +56,11 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
-        // private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-        // private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
-        
+        private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+        private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+        // private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        // private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
+
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -164,28 +168,25 @@ public class RobotContainer {
                 
 
                 
-                        //=========== Set Default Command ============
+                        //=========== Set Default Command  for swerve ============
                     if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-                        // m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
-
+                        m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.stopShooter());
+                        m_IntakeSubsystem.setDefaultCommand(m_IntakeSubsystem.stopIntake());
                 } else {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
                 }
 
 
-                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
-
-                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
-
-                // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
+                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
+                m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(500)));
+                m_AssistantJoystick.button(4).whileTrue(m_ShooterSubsystem.setShooterDutyCycle(0.3));
 
 
-
-                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-
-                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-  
+                m_AssistantJoystick.button(5).whileTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+                m_AssistantJoystick.button(6).whileTrue(m_IntakeSubsystem.setStarVelocity(RPM.of(Constants.Intake.starIntakeSpeed)));
+                m_AssistantJoystick.button(7).whileTrue(m_IntakeSubsystem.setSushiVelocity(RPM.of(Constants.Intake.sushiIntakeSpeed)));
+                
 
 //----------------------
 
