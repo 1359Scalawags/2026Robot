@@ -165,8 +165,8 @@ public class RobotContainer {
                 // Schedule `set` when the Xbox controller's B button is pressed,
                 // cancelling on release.
 
-                 m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-                 m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
+                //  m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
+                //  m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
                 
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
