@@ -126,14 +126,13 @@ public final class Constants {
 
 
     //========= FF valvues for SMC config =========
-    public static double starV = 0;
-    public static double starA = 0;
-    public static double starS = 0;
-
     public static double sushiS = 0;
     public static double sushiV = 0;
     public static double sushiA = 0;
 
+    public static double starV = 0;
+    public static double starA = 0;
+    public static double starS = 0;
   }
 
   public static class Hopper {
