@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RPM;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 
 /**
@@ -100,7 +101,12 @@ public final class Constants {
     // Position limits (in rotations of the output shaft)
     public static final double MAX_HEIGHT = 100.0; // Adjust based on your mechanism
     public static final double MIN_HEIGHT = 0.0;
-    
+    public static final double START_HEIGHT = 0.5;
+
+    public static final double ks = 0;
+    public static final double kg = 0;
+    public static final double kv =0; 
+
     // Speeds
     public static final double MAX_SPEED = 0.8; // 80% max speed
   }
