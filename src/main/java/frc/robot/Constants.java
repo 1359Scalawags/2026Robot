@@ -113,21 +113,6 @@ public final class Constants {
     public static final int sushiMotorID = 9;
     public static final int starMotorID = 10;
 
-    // Motor speed in RPM
-    public static final double INTAKE_SPEED_RPM = 1600;
-
-    // PID Constants (tune these based on your robot's performance)
-    public static final double kP = 0.0001;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
-    public static final double kFF = 0.000156; // Feed-forward for NEO motors
-
-    // Current and speed thresholds
-    public static final int CURRENT_LIMIT = 40; // Amps
-    public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
-    public static final double RPM_TOLERANCE = 100.0; // RPM
-    public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
-
     //TODO: set these numbers correctly
     public static double sushiP = 0;
     public static double sushiI = 0;
