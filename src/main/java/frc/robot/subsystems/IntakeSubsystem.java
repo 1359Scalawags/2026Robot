@@ -93,7 +93,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // Mass of the flywheel.
         .withMass(Pounds.of(1))
         // Maximum speed of the shooter.
-        .withUpperSoftLimit(RPM.of(1000))
+        .withUpperSoftLimit(RPM.of(Constants.Intake.sushiMaxSpeed))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
@@ -121,7 +121,7 @@ public class IntakeSubsystem extends SubsystemBase {
     starConfig = new FlyWheelConfig(starSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
-    .withUpperSoftLimit(RPM.of(1000))
+    .withUpperSoftLimit(RPM.of(Constants.Intake.starMaxSpeed))
     .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     starWheel = new FlyWheel(starConfig);

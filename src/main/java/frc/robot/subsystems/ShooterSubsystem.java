@@ -77,8 +77,8 @@ public class ShooterSubsystem extends SubsystemBase {
         .withClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withSimClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
-        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
         // Telemetry name and verbosity level
         .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
         // Gearing from the motor rotor to final shaft.
@@ -98,8 +98,8 @@ public class ShooterSubsystem extends SubsystemBase {
             DegreesPerSecondPerSecond.of(45))
         .withSimClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(new SimpleMotorFeedforward(0, 0, 0))
-        .withSimFeedforward(new SimpleMotorFeedforward(0, 0, 0))
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
         .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
         .withMotorInverted(false)
@@ -116,14 +116,14 @@ public class ShooterSubsystem extends SubsystemBase {
         // Mass of the flywheel.
         .withMass(Pounds.of(1))
         // Maximum speed of the shooter.
-        .withUpperSoftLimit(RPM.of(1000))
+        .withUpperSoftLimit(RPM.of(Constants.Shooter.shooterMaxSpeed))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
     kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
-    .withUpperSoftLimit(RPM.of(1000))
+    .withUpperSoftLimit(RPM.of(Constants.Shooter.kickerMaxSpeed))
     .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
 
     shooterWheel = new FlyWheel(shooterConfig);

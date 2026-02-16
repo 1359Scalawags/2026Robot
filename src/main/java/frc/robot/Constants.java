@@ -82,6 +82,17 @@ public final class Constants {
     public static double kickerP  = 0.001;
     public static double kickerI = 0;
     public static double kickerD = 0;
+
+    public static double shooterS = 0.0004;
+    public static double shooterV = 0;
+    public static double shooterA = 0;
+
+    public static double kickerS = 0.0004;
+    public static double kickerV = 0;
+    public static double kickerA = 0;
+
+    public static double shooterMaxSpeed = 2500;
+    public static double kickerMaxSpeed = 2500;
   }
 
   public static class Climber {
@@ -120,6 +131,7 @@ public final class Constants {
     public static final int starMotorID = 10;
 
     //TODO: set these numbers correctly
+
     public static double sushiP = 0;
     public static double sushiI = 0;
     public static double sushiD = 0;
@@ -132,13 +144,19 @@ public final class Constants {
 
 
     //========= FF valvues for SMC config =========
-    public static double sushiS = 0;
+    public static double sushiS = 0.0004;
     public static double sushiV = 0;
     public static double sushiA = 0;
 
+    public static double starS = 0.0004;
     public static double starV = 0;
     public static double starA = 0;
-    public static double starS = 0;
+
+    public static double sushiMaxSpeed = 2500;
+    public static double starMaxSpeed = 2500;
+
+
+
   }
 
   public static class Hopper {
