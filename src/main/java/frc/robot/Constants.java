@@ -75,11 +75,11 @@ public final class Constants {
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
 
     //TODO: set these right
-    public static double shooterP = 0.1;
+    public static double shooterP = 1;
     public static double shooterI = 0;
     public static double shooterD = 0;
 
-    public static double kickerP  = 0.1;
+    public static double kickerP  = 1;
     public static double kickerI = 0;
     public static double kickerD = 0;
 
@@ -127,28 +127,28 @@ public final class Constants {
   public static class Intake {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int sushiMotorID = 9;
-    public static final int starMotorID = 10;
+    public static final int sushiMotorID = 10;
+    public static final int starMotorID = 9;
 
     //TODO: set these numbers correctly
 
-    public static double sushiP = 0;
+    public static double sushiP = 0.00016541;
     public static double sushiI = 0;
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0.1;
+    public static double starP = 0.00016541;
     public static double starI = 0;
     public static double starD = 0;
     public static double starIntakeSpeed = 500;
 
 
     //========= FF valvues for SMC config =========
-    public static double sushiS = 0.0004;
+    public static double sushiS = 0;
     public static double sushiV = 0;
     public static double sushiA = 0;
 
-    public static double starS = 0.0004;
+    public static double starS = 0;
     public static double starV = 0;
     public static double starA = 0;
 

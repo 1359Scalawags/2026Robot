@@ -14,14 +14,17 @@ import static edu.wpi.first.units.Units.RPM;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
+
 import frc.robot.Constants;
+
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -66,11 +69,11 @@ public class IntakeSubsystem extends SubsystemBase {
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         // Feedback Constants (PID Constants)
-        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
         .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         // Feedforward Constants
-        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
-        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS, Constants.Intake.sushiV, Constants.Intake.sushiA))
+        // .withFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
+        // .withSimFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
         // Telemetry name and verbosity level
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         // Gearing from the motor rotor to final shaft.
@@ -78,7 +81,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
         // your motor.
         // You could also use .withGearing(12) which does the same thing.
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 1)))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         // Motor properties to prevent over currenting.
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
@@ -92,13 +95,13 @@ public class IntakeSubsystem extends SubsystemBase {
         .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD,
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
-        .withSimFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+        // .withFeedforward(
+        //     new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+        // .withSimFeedforward(
+        //     new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
         .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
-        .withMotorInverted(false)
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
+        .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40));
     // .withLooselyCoupledFollowers(sushiSmartMotorController);
@@ -110,7 +113,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // Diameter of the flywheel.
         .withDiameter(Inches.of(4))
         // Mass of the flywheel.
-        .withMass(Pounds.of(1))
+        .withMass(Pounds.of(5))
         // Maximum speed of the shooter.
         .withUpperSoftLimit(RPM.of(Constants.Intake.sushiMaxSpeed))
         // Telemetry name and verbosity for the arm.
@@ -119,7 +122,7 @@ public class IntakeSubsystem extends SubsystemBase {
     starConfig = new FlyWheelConfig(starSmartMotorController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(1))
-        .withUpperSoftLimit(RPM.of(1000))
+        .withUpperSoftLimit(RPM.of(2000))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     sushiWheel = new FlyWheel(sushiConfig);   

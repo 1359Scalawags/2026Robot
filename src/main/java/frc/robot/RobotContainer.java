@@ -61,7 +61,7 @@ public class RobotContainer {
         // TODO: Gavan or Alec; Add Shooter Subystem
         // TODO:  Gavn or c; Add Climber Subsystem      
 
-        private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+        // private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
         
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
@@ -193,12 +193,12 @@ public class RobotContainer {
                 }
 
 
-                m_AssistantJoystick.button(1).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
+                // m_AssistantJoystick.button(1).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
 
-                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
-                m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.setKickerVelocity(RPM.of(100)));
-                m_AssistantJoystick.button(4).whileTrue(m_IntakeSubsystem.setStarVelocity(RPM.of(100)));
-                m_AssistantJoystick.button(5).whileTrue(m_IntakeSubsystem.setSushiVelocity(RPM.of(100)));
+                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
+                // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.setKickerVelocity(RPM.of(100)));
+                m_AssistantJoystick.button(4).whileTrue(m_IntakeSubsystem.setStarVelocity(RPM.of(500)));
+                m_AssistantJoystick.button(5).whileTrue(m_IntakeSubsystem.setSushiVelocity(RPM.of(500)));
 
 
 
