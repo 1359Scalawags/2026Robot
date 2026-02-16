@@ -201,9 +201,9 @@ public class RobotContainer {
                 }
 
 
-                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
+                m_AssistantJoystick.button(1).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
 
-                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
+                m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
 
                 // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
 
