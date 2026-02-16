@@ -112,7 +112,7 @@ public class IntakeSubsystem extends SubsystemBase {
         // Mass of the flywheel.
         .withMass(Pounds.of(1))
         // Maximum speed of the shooter.
-        .withUpperSoftLimit(RPM.of(1000))
+        .withUpperSoftLimit(RPM.of(Constants.Intake.sushiMaxSpeed))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 

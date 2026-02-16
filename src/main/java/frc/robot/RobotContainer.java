@@ -158,17 +158,9 @@ public class RobotContainer {
         private void configureBindings() {
 
 
-                //TODO : uncomment when swerve works
-                
-                // Command shootFuel = m_ShooterSubsystem.shootFuel(Constants.Shooter.testShooterVelocity, Constants.Shooter.testKickerVelocity);
-
-                // m_AssistantJoystick.button(1).whileTrue(shootFuel);
+                //TODO : uncomment when swerve work
 
 
-
-                // // TODO: Gavan or Alec; Bind buttons for Intake system
-                // // TODO: Gavan or Alec; Bind buttons for Climber system
-                // // TODO: Gavan or Alec; Bind buttons for Shooter system
                 // // Schedule `setVelocity` when the Xbox controller's B button is pressed,
                 // // cancelling on release.
                 // // Schedule `set` when the Xbox controller's B button is pressed,
