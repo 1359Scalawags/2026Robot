@@ -57,7 +57,7 @@ public class RobotContainer {
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
         private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-        private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
         // TODO: Gavan or Alec; Add Shooter Subystem
         // TODO:  Gavn or c; Add Climber Subsystem      
 
@@ -194,7 +194,7 @@ public class RobotContainer {
                         //=========== Set Default Command  for swerve ============
                     if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
-                        m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
+                        // m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
 
                 } else {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
@@ -205,7 +205,7 @@ public class RobotContainer {
 
                 // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
 
-                m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
+                // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
 
 
 
