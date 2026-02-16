@@ -54,14 +54,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private FlyWheel shooterWheel;
   private FlyWheel kickerWheel;
 
-  enum ShooterSpeed {
-    off,
-    low,
-    full
-  }
-
-  ShooterSpeed currentSpeed;
-
   //TODO: create constants whereveer needed.
   public ShooterSubsystem() {
 
@@ -129,7 +121,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterWheel = new FlyWheel(shooterConfig);
     kickerWheel = new FlyWheel(kickerConfig);
   }
-
+  
     /**
    * Gets the current velocity of the shooter.
    *
@@ -138,6 +130,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public AngularVelocity getShooterVelocity() {
     return shooterWheel.getSpeed();
   }
+
   /**
    * Set the shooter velocity.
    *
@@ -146,6 +139,16 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public Command setShooterVelocity(AngularVelocity speed) {
     return shooterWheel.setSpeed(speed);
+  }
+
+    /**
+   * Set the shooter velocity.
+   *
+   * @param speed Speed to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setKickerVelocity(AngularVelocity speed) {
+    return kickerWheel.setSpeed(speed);
   }
 
 /**
@@ -168,15 +171,6 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterWheel.set(dutyCycle);
   }
 
- /**
-   * Set the kicker velocity to feed fuel into the shooter.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setKickerVelocity(AngularVelocity speed) {
-    return kickerWheel.setSpeed(speed);
-  }
   
 //TODO: needs a wait Commmand
   public Command shootFuel(AngularVelocity kickerSpeed, AngularVelocity shootersSpeed) {

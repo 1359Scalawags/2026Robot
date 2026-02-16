@@ -79,7 +79,7 @@ public final class Constants {
     public static double shooterI = 0;
     public static double shooterD = 0;
 
-    public static double kickerP  = 1;
+    public static double kickerP  = 0.1;
     public static double kickerI = 0;
     public static double kickerD = 0;
   }
@@ -120,12 +120,12 @@ public final class Constants {
     public static final int starMotorID = 10;
 
     //TODO: set these numbers correctly
-    public static double sushiP = 0;
+    public static double sushiP = 0.1;
     public static double sushiI = 0;
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 100;
 
-    public static double starP = 0;
+    public static double starP = 0.1;
     public static double starI = 0;
     public static double starD = 0;
     public static double starIntakeSpeed = 100;

@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
+
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -13,7 +14,6 @@ import static edu.wpi.first.units.Units.RPM;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -21,7 +21,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.Shooter;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
@@ -79,13 +78,33 @@ public class IntakeSubsystem extends SubsystemBase {
         // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
         // your motor.
         // You could also use .withGearing(12) which does the same thing.
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 1)))
         // Motor properties to prevent over currenting.
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40));
 
+    starSmcConfig = new SmartMotorControllerConfig(this)
+        .withControlMode(ControlMode.CLOSED_LOOP)
+        .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD,
+            DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD,
+            DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        .withFeedforward(
+            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+        .withSimFeedforward(
+            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
+        .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
+        .withMotorInverted(false)
+        .withIdleMode(MotorMode.COAST)
+        .withStatorCurrentLimit(Amps.of(40));
+    // .withLooselyCoupledFollowers(sushiSmartMotorController);
+
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
+    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         // Diameter of the flywheel.
@@ -97,50 +116,20 @@ public class IntakeSubsystem extends SubsystemBase {
         // Telemetry name and verbosity for the arm.
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
-    sushiWheel = new FlyWheel(sushiConfig);
-
-    starSmcConfig = new SmartMotorControllerConfig(this)
-    .withControlMode(ControlMode.CLOSED_LOOP)
-    .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD, DegreesPerSecond.of(90),
-    DegreesPerSecondPerSecond.of(45))
-    .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
-    .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
-    .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-    .withMotorInverted(false)
-    .withIdleMode(MotorMode.COAST)
-    .withStatorCurrentLimit(Amps.of(40))
-    .withLooselyCoupledFollowers(sushiSmartMotorController);
-
-    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
-
-    //TODO check these values to see if they are accurate
-    
     starConfig = new FlyWheelConfig(starSmartMotorController)
-    .withDiameter(Inches.of(4))
-    .withMass(Pounds.of(1))
-    .withUpperSoftLimit(RPM.of(1000))
-    .withTelemetry("starMech", TelemetryVerbosity.HIGH);
+        .withDiameter(Inches.of(4))
+        .withMass(Pounds.of(1))
+        .withUpperSoftLimit(RPM.of(1000))
+        .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
+    sushiWheel = new FlyWheel(sushiConfig);   
     starWheel = new FlyWheel(starConfig);
   }
-
-    /**
+  /**
    * @return Shooter velocity.
    */
   public AngularVelocity getSushiVelocity() {
     return sushiWheel.getSpeed();
-  }
-  /**
-   * Set the shooter velocity.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setSushiVelocity(AngularVelocity speed) {
-    return sushiWheel.setSpeed(speed);
   }
 
    /**
@@ -160,6 +149,15 @@ public class IntakeSubsystem extends SubsystemBase {
     return starWheel.setSpeed(speed);
   }
 
+   /**
+   * Set the kicker velocity to feed fuel into the shooter.
+   *
+   * @param speed Speed to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setSushiVelocity(AngularVelocity speed) {
+    return sushiWheel.setSpeed(speed);
+  }
   /**
    * Set the dutycycle of the shooter.
    *
