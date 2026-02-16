@@ -12,9 +12,10 @@ import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.intake.IntakeStar;
+import frc.robot.subsystems.intake.IntakeSushi;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
@@ -56,7 +57,9 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
-        private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+        private final IntakeStar m_IntakeStar = new IntakeStar();
+        private final IntakeSushi m_IntakeSushi = new IntakeSushi();
+
         // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
         // TODO: Gavan or Alec; Add Shooter Subystem
         // TODO:  Gavn or c; Add Climber Subsystem      
@@ -156,19 +159,6 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-
-
-                //TODO : uncomment when swerve work
-
-
-                // // Schedule `setVelocity` when the Xbox controller's B button is pressed,
-                // // cancelling on release.
-                // // Schedule `set` when the Xbox controller's B button is pressed,
-                // // cancelling on release.
-
-                //  m_DriverJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-                //  m_DriverJoystick.button(7).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(0),RPM.of(0)));
-                
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
@@ -181,11 +171,14 @@ public class RobotContainer {
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
                 
+                
 
                 
                         //=========== Set Default Command  for swerve ============
                     if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
                         // m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
 
                 } else {
@@ -193,23 +186,12 @@ public class RobotContainer {
                 }
 
 
-                // m_AssistantJoystick.button(1).whileTrue(m_ShooterSubsystem.shootFuel(RPM.of(200),RPM.of(200)));
-
-                // m_AssistantJoystick.button(2).whileTrue(m_ShooterSubsystem.setShooterVelocity(RPM.of(100)));
-                // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.setKickerVelocity(RPM.of(100)));
-                m_AssistantJoystick.button(4).whileTrue(m_IntakeSubsystem.setStarVelocity(RPM.of(500)));
-                m_AssistantJoystick.button(5).whileTrue(m_IntakeSubsystem.setSushiVelocity(RPM.of(500)));
-
-
-
-                // m_AssistantJoystick.button(3).whileTrue(m_ShooterSubsystem.set(0.3));
-
-
-
-                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-
-                //  m_AssistantJoystick.button(6).onTrue(m_IntakeSubsystem.setIntakeSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed),RPM.of(Constants.Intake.starIntakeSpeed)));
-  
+                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
+                        m_IntakeStar.setStarVelocity(RPM.of(500)),
+                        m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")
+                        ));
+                m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(200)));
+                m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity(RPM.of(200)));
 
 //----------------------
 
