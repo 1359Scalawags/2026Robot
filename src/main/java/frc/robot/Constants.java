@@ -67,18 +67,18 @@ public final class Constants {
     public static final int flyWheelID = 13;
     public static final int fingerWheelID = 14;
 
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
+    // public static final int shooterMotorPort = 101;
+    // public static final int feederMotorPort = 102;
 
     public static final AngularVelocity testShooterVelocity = RPM.of(800);
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
 
     //TODO: set these right
-    public static double shooterP = 1;
+    public static double shooterP = 0.001;
     public static double shooterI = 0;
     public static double shooterD = 0;
 
-    public static double kickerP  = 1;
+    public static double kickerP  = 0.001;
     public static double kickerI = 0;
     public static double kickerD = 0;
   }
@@ -117,12 +117,12 @@ public final class Constants {
     public static double sushiP = 0;
     public static double sushiI = 0;
     public static double sushiD = 0;
-    public static double sushiIntakeSpeed = 100;
+    public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0;
+    public static double starP = 0.001;
     public static double starI = 0;
     public static double starD = 0;
-    public static double starIntakeSpeed = 100;
+    public static double starIntakeSpeed = 500;
 
 
     //========= FF valvues for SMC config =========

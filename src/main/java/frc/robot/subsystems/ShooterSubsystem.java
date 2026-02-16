@@ -145,7 +145,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
   public Command setShooterVelocity(AngularVelocity speed) {
-    return shooterWheel.setSpeed(speed);
+    return shooterWheel.setSpeed(speed).withName("Shooter Wheel set Vel");
   }
 
 /**
@@ -155,7 +155,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
   public Command setShooterDutyCycle(double dutyCycle) {
-    return shooterWheel.set(dutyCycle);
+    return shooterWheel.set(dutyCycle).withName("Shooter Wheel set Duty");
   }
 
   /**

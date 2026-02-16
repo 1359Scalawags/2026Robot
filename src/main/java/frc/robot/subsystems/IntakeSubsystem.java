@@ -108,11 +108,11 @@ public class IntakeSubsystem extends SubsystemBase {
     .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
     .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
     .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
     .withMotorInverted(false)
     .withIdleMode(MotorMode.COAST)
-    .withStatorCurrentLimit(Amps.of(40))
-    .withLooselyCoupledFollowers(sushiSmartMotorController);
+    .withStatorCurrentLimit(Amps.of(40));
+    // .withLooselyCoupledFollowers(sushiSmartMotorController);
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
