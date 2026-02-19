@@ -132,25 +132,25 @@ public final class Constants {
 
     //TODO: set these numbers correctly
 
-    public static double sushiP = 0.00055;
+    public static double sushiP = 0.00029668;
     public static double sushiI = 0;
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0.005;
+    public static double starP = 0.0055968;
     public static double starI = 0;
     public static double starD = 0;
     public static double starIntakeSpeed = 500;
 
 
     //========= FF valvues for SMC config =========
-    public static double sushiS = 0.27937;
-    public static double sushiV = 0.089836;
-    public static double sushiA = 0.014557;
+    public static double sushiS = 0.73419;
+    public static double sushiV = 0.099382;
+    public static double sushiA = 0.026093;
 
-    public static double starS = 0.27937;
-    public static double starV = 0.089836;
-    public static double starA = 0.014557;
+    public static double starS = 0.67913;
+    public static double starV = 0.10296;
+    public static double starA = 0.034396;
 
     public static double sushiMaxSpeed = 2500;
     public static double starMaxSpeed = 2500;
