@@ -10,6 +10,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -19,10 +22,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
-
 import frc.robot.Constants;
-
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -66,7 +66,7 @@ public class IntakeStar extends SubsystemBase {
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withFeedforward(
-            new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
+            new SimpleMotorFeedforward(Constants.Intake.starS,Constants.Intake.starV,Constants.Intake.starA))
         .withSimFeedforward(
             new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
         .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
@@ -80,7 +80,7 @@ public class IntakeStar extends SubsystemBase {
     starConfig = new FlyWheelConfig(starSmartMotorController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(1))
-        .withUpperSoftLimit(RPM.of(2000))
+        .withSoftLimit(RPM.of(-1500), RPM.of(1500))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     starWheel = new FlyWheel(starConfig);
@@ -112,7 +112,9 @@ public class IntakeStar extends SubsystemBase {
     return starWheel.set(dutyCycle);
   }
 
-
+   public Command sysId() {
+      return starWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+    }
 
   @Override
   public void periodic() {

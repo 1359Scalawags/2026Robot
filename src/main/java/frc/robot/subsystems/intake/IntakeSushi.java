@@ -10,6 +10,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -62,8 +65,8 @@ public class IntakeSushi extends SubsystemBase {
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
         .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
-        .withSimFeedforward(new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         .withMotorInverted(false)
@@ -76,7 +79,7 @@ public class IntakeSushi extends SubsystemBase {
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(1))
-        .withUpperSoftLimit(RPM.of(Constants.Intake.sushiMaxSpeed))
+        .withSoftLimit(RPM.of(-1500), RPM.of(1500))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
     sushiWheel = new FlyWheel(sushiConfig);   
@@ -108,6 +111,11 @@ public class IntakeSushi extends SubsystemBase {
     return sushiWheel.set(dutyCycle);
   }
 
+    public Command sysId() {
+      return sushiWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+    }
+
+
   @Override
   public void periodic() {
     sushiWheel.updateTelemetry();
@@ -119,3 +127,4 @@ public class IntakeSushi extends SubsystemBase {
     sushiWheel.simIterate();
   }
 }
+
