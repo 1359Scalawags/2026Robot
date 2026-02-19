@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -93,7 +96,7 @@ public class Kicker extends SubsystemBase {
   public Command setKickerVelocity(AngularVelocity speed) {
     return kickerWheel.setSpeed(speed);
   }
-  
+
 //TODO: needs a wait Commmand
   public Command runKicker(AngularVelocity kickerSpeed) {
     // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
@@ -107,6 +110,11 @@ public class Kicker extends SubsystemBase {
     return run(() -> {kickerWheel.set(0);})
             .withName("Stop Kicker");
   }
+
+  public Command sysId() {
+    return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+  }
+
 
   @Override
   public void periodic() {

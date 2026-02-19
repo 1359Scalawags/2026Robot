@@ -9,6 +9,9 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -134,6 +137,11 @@ public class Shooter extends SubsystemBase {
     return run(() -> {shooterWheel.set(0);})
             .withName("Stop Shooter");
   }
+  
+  public Command sysId() {
+    return shooterWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+  }
+
 
   @Override
   public void periodic() {
