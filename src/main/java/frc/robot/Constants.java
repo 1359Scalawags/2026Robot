@@ -132,12 +132,12 @@ public final class Constants {
 
     //TODO: set these numbers correctly
 
-    public static double sushiP = 0.00029668;
+    public static double sushiP = 0.029668;
     public static double sushiI = 0;
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0.0055968;
+    public static double starP = 0.1; //From sysID - 0.055968
     public static double starI = 0;
     public static double starD = 0;
     public static double starIntakeSpeed = 500;

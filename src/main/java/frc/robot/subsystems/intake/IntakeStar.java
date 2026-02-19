@@ -68,7 +68,7 @@ public class IntakeStar extends SubsystemBase {
         .withFeedforward(
             new SimpleMotorFeedforward(Constants.Intake.starS,Constants.Intake.starV,Constants.Intake.starA))
         .withSimFeedforward(
-            new SimpleMotorFeedforward(0.27937, 0.089836, 0.014557))
+            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
         .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
         .withMotorInverted(true)

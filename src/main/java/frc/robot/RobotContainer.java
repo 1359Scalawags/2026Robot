@@ -183,6 +183,8 @@ public class RobotContainer {
 
                 } else {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
                 }
 
 
