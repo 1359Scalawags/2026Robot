@@ -6,20 +6,22 @@ package frc.robot;
 import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.Kicker;
+import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.intake.IntakeStar;
-import frc.robot.subsystems.intake.IntakeSushi;
+import frc.robot.subsystems.IntakeSubsystem.Star;
+import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
 import java.lang.annotation.Target;
+
+import javax.print.attribute.standard.Finishings;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
@@ -44,7 +46,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static edu.wpi.first.units.Units.RPM;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -57,15 +58,17 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
-        private final IntakeStar m_IntakeStar = new IntakeStar();
-        private final IntakeSushi m_IntakeSushi = new IntakeSushi();
+        private final Star m_IntakeStar = new Star();
+        private final Sushi m_IntakeSushi = new Sushi();
 
-        // private final IntakeCommandFactory m_IntakeCommandFactory = new IntakeCommandFactory(m_IntakeSubsystem);
+        // private final IntakeCommandFactory m_IntakeCommandFactory = new
+        // IntakeCommandFactory(m_IntakeSubsystem);
         // TODO: Gavan or Alec; Add Shooter Subystem
-        // TODO:  Gavn or c; Add Climber Subsystem      
+        // TODO: Gavn or c; Add Climber Subsystem
 
-        // private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
-        
+        // private final Shooter m_Shooter = new Shooter();
+        // private final Kicker m_Kicker = new Kicker();
+
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
@@ -99,7 +102,7 @@ public class RobotContainer {
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * -1,
                         () -> m_DriverJoystick.getX() * -1)
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() *-1)
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1)
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -170,12 +173,9 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngleKeyboard);
-                
-                
 
-                
-                        //=========== Set Default Command  for swerve ============
-                    if (RobotBase.isSimulation()) {
+                // =========== Set Default Command for swerve ============
+                if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -187,25 +187,23 @@ public class RobotContainer {
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
                 }
 
-
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
-                        m_IntakeStar.setStarVelocity(RPM.of(500)),
-                        m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")
-                        ));
+                                m_IntakeStar.setStarVelocity(RPM.of(500)),
+                                m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
                 m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(200)));
                 m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity(RPM.of(200)));
-                
+
                 m_AssistantJoystick.button(8).onTrue(m_IntakeStar.sysId());
                 m_AssistantJoystick.button(9).onTrue(m_IntakeSushi.sysId());
 
-//----------------------
+                // ----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
 
                 if (RobotBase.isReal()) {
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyro()));
+                                        () -> m_SwerveSubsystem.zeroGyro()));
 
                         Pose2d target = new Pose2d(new Translation2d(1, 4),
                                         Rotation2d.fromDegrees(90));
@@ -226,20 +224,16 @@ public class RobotContainer {
                                         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyro()));
+                                        () -> m_SwerveSubsystem.zeroGyro()));
 
                         m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
-
 
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
-                       
                 }
-
-            
 
                 if (Robot.isSimulation()) {
                         Pose2d target = new Pose2d(new Translation2d(1, 4),
@@ -261,7 +255,7 @@ public class RobotContainer {
                                         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyro()));
+                                        () -> m_SwerveSubsystem.zeroGyro()));
 
                         m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
 
@@ -279,9 +273,6 @@ public class RobotContainer {
                         // new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                         // );
                 }
-
-
-
 
                 if (DriverStation.isTest()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive

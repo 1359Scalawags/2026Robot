@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.ShooterSubsystem;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Shooter;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -33,33 +32,27 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class Shooter extends SubsystemBase {
 
   private final SparkMax shooterMotor;
-  private final SparkMax kickerMotor;
 
 
   private SmartMotorControllerConfig shooterSmcConfig;
-  private SmartMotorControllerConfig kickerSmcConfig;
 
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController shooterSmartMotorController;
-  private SmartMotorController kickerSmartMotorController;
 
 
   private final FlyWheelConfig shooterConfig;
-  private final FlyWheelConfig kickerConfig;
 
   private FlyWheel shooterWheel;
-  private FlyWheel kickerWheel;
 
   //TODO: create constants whereveer needed.
-  public ShooterSubsystem() {
+  public Shooter() {
 
     //Creates the motor objects that control the motors on the real robot
-    shooterMotor = new SparkMax(Shooter.flyWheelID, MotorType.kBrushless);
-    kickerMotor = new SparkMax(Shooter.fingerWheelID, MotorType.kBrushless);
+    shooterMotor = new SparkMax(Constants.Shooter.flyWheelID, MotorType.kBrushless);    
 
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
@@ -84,22 +77,7 @@ public class ShooterSubsystem extends SubsystemBase {
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40));
 
-    kickerSmcConfig = new SmartMotorControllerConfig(this)
-        .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
-        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
-        .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
-        .withMotorInverted(false)
-        .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
-
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
-    kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
 
     //TODO check these values to see if they are accurate
     shooterConfig = new FlyWheelConfig(shooterSmartMotorController)
@@ -112,14 +90,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
-    kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
-    .withDiameter(Inches.of(4))
-    .withMass(Pounds.of(1))
-    .withUpperSoftLimit(RPM.of(Constants.Shooter.kickerMaxSpeed))
-    .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
-
     shooterWheel = new FlyWheel(shooterConfig);
-    kickerWheel = new FlyWheel(kickerConfig);
   }
   
     /**
@@ -140,17 +111,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command setShooterVelocity(AngularVelocity speed) {
     return shooterWheel.setSpeed(speed).withName("Shooter Wheel set Vel");
   }
-
-    /**
-   * Set the shooter velocity.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setKickerVelocity(AngularVelocity speed) {
-    return kickerWheel.setSpeed(speed);
-  }
-
 /**
    * Set the dutycycle of the shooter.
    *
@@ -161,41 +121,28 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterWheel.set(dutyCycle).withName("Shooter Wheel set Duty");
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setKickerDutyCycle(double dutyCycle) {
-    return shooterWheel.set(dutyCycle);
-  }
-
-  
 //TODO: needs a wait Commmand
-  public Command shootFuel(AngularVelocity kickerSpeed, AngularVelocity shootersSpeed) {
+  public Command shootFuel(AngularVelocity shootersSpeed) {
     // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
 
       //Alternative way to create this command
-    return run(() -> {kickerWheel.setSpeed(kickerSpeed);shooterWheel.setSpeed(shootersSpeed);})
+    return run(() -> {shooterWheel.setSpeed(shootersSpeed);})
             .withName("ShootFuelCommand");
   }
 
   public Command stopShooter() {
-    return run(() -> {kickerWheel.set(0);shooterWheel.set(0);})
+    return run(() -> {shooterWheel.set(0);})
             .withName("Stop Shooter");
   }
 
   @Override
   public void periodic() {
     shooterWheel.updateTelemetry();
-    kickerWheel.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
     shooterWheel.simIterate();
-    kickerWheel.simIterate();
     // This method will be called once per scheduler run during simulation
   }
 }
