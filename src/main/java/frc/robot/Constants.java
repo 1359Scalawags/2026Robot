@@ -4,7 +4,11 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.RPM;
+
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.RobotBase;
 
@@ -44,19 +48,11 @@ public final class Constants {
     public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
   }
 
-  public static class Shooter {
-    public static final int flyWheelID = 10;
-    public static final int fingerWheelID = 11;
-
-    public static final int shooterMotorPort = 101;
-    public static final int feederMotorPort = 102;
-  }
-
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.15;
+    public static final double DEADBAND = 0.25;
   }
 
   public static class swerveDrive {
@@ -84,8 +80,41 @@ public final class Constants {
     }
   }
 
+  public static class Shooter {
+    public static final int flyWheelID = 13;
+    public static final int fingerWheelID = 14;
+
+    // public static final int shooterMotorPort = 101;
+    // public static final int feederMotorPort = 102;
+
+    public static final AngularVelocity testShooterVelocity = RPM.of(800);
+    public static final AngularVelocity testKickerVelocity = RPM.of(800);
+
+    //TODO: set these right
+    public static double shooterP = 0.01375;
+    public static double shooterI = 0;
+    public static double shooterD = 0;
+
+    public static double kickerP  = 0.01;
+    public static double kickerI = 0;
+    public static double kickerD = 0;
+
+    public static double shooterS = 0.16811;
+    public static double shooterV = 0.12113;
+    public static double shooterA = 0.041532;
+
+    public static double kickerS = 0.0004;
+    public static double kickerV = 0;
+    public static double kickerA = 0;
+
+    public static double shooterMaxSpeed = 2500;
+    public static double kickerMaxSpeed = 2500;
+  }
+
   public static class Climber {
-    public static final int climberMotorPort = 103;
+    public static final int climberID = 15;
+    
+    // public static final int climberMotorPort = 103;
      // Constants
  // Change to your CAN ID
     
@@ -101,7 +130,12 @@ public final class Constants {
     // Position limits (in rotations of the output shaft)
     public static final double MAX_HEIGHT = 100.0; // Adjust based on your mechanism
     public static final double MIN_HEIGHT = 0.0;
-    
+    public static final double START_HEIGHT = 0.5;
+
+    public static final double ks = 0;
+    public static final double kg = 0;
+    public static final double kv =0; 
+
     // Speeds
     public static final double MAX_SPEED = 0.8; // 80% max speed
   }
@@ -109,8 +143,42 @@ public final class Constants {
   public static class Intake {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int KICKER_MOTOR_CAN_ID = 10;
-    public static final int STAR_MOTOR_CAN_ID = 11;
+    public static final int sushiMotorID = 10;
+    public static final int starMotorID = 9;
+
+    //TODO: set these numbers correctly
+
+    public static double sushiP = 0.045874; //0.029668
+    public static double sushiI = 0;
+    public static double sushiD = 0;
+    public static double sushiIntakeSpeed = 500;
+
+    public static double starP = 0.035; //From sysID - 0.055968, 0.029853
+    public static double starI = 0.0;
+    public static double starD = 0.001;
+    public static double starIntakeSpeed = 500;
+
+
+    //========= FF valvues for SMC config =========
+    public static double sushiS = 0.41655;
+    public static double sushiV = 0.12963;
+    public static double sushiA = 0.038507;
+
+    public static double starS = 0.66508;
+    public static double starV = 0.10476;
+    public static double starA = 0.03396;
+
+    public static double sushiMaxSpeed = 2500;
+    public static double starMaxSpeed = 2500;
+
+
+
+  }
+
+  public static class Hopper {
+    // ========== CONFIGURATION ==========
+    // CAN IDs for the motor controllers
+    public static final int sushiMotorID = 11;
 
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
@@ -121,11 +189,23 @@ public final class Constants {
     public static final double kD = 0.0;
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
+    //hopper motorFF
+    public static double kS = 0;
+    public static double kV = 0;
+    public static double kA = 0;
+
     // Current and speed thresholds
     public static final int CURRENT_LIMIT = 40; // Amps
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
-  }
 
+
+    public static double sushiIntakeSpeed = 0;
+    public static double starIntakeSpeed = 0;
+
+
+
+
+  }
 }

@@ -1,218 +1,139 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
-import frc.robot.Constants;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkClosedLoopController;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Pounds;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Inches;
+
+import yams.motorcontrollers.local.SparkWrapper;
+import yams.motorcontrollers.SmartMotorController;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
+import yams.gearing.GearBox;
+import yams.gearing.MechanismGearing;
+import yams.motorcontrollers.SmartMotorControllerConfig;
+import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
+import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
+import edu.wpi.first.units.measure.Distance;
+import yams.mechanisms.config.ElevatorConfig;
+import yams.mechanisms.positional.Elevator;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import frc.robot.Constants;
+
 
 public class ClimberSubsystem extends SubsystemBase {
-    
-    // Hardware - single motor driving two gearboxes
-    private final SparkMax climberMotor;
-    
-    // Encoder
-    private final RelativeEncoder encoder;
-    
-    // Closed Loop Controller
-    private final SparkClosedLoopController controller;
 
-    private final DigitalInput climberLimitSwitch;
-    
-    
-    public ClimberSubsystem() {
-        // Initialize motor
-        climberMotor = new SparkMax(Constants.Climber.climberMotorPort, MotorType.kBrushless);
-        
-        // Create configuration
-        SparkMaxConfig config = new SparkMaxConfig();
-        
-        // Configure motor
-        config
-            .idleMode(IdleMode.kBrake)
-            .smartCurrentLimit(Constants.Climber.CURRENT_LIMIT)
-            .inverted(false); // Change if needed
-        
-        // Configure encoder conversion factors
-        // Since one motor drives two gearboxes, the encoder tracks both sides
-        config.encoder
-            .positionConversionFactor(1.0 / Constants.Climber.GEAR_RATIO)
-            .velocityConversionFactor(1.0 / Constants.Climber.GEAR_RATIO);
-        
-        // Configure PID
-        config.closedLoop
-            .pid(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD)
-            .outputRange(-Constants.Climber.MAX_SPEED, Constants.Climber.MAX_SPEED);
+  private SparkMax spark = new SparkMax(Constants.Climber.climberID, MotorType.kBrushless);
+  
+  private SmartMotorControllerConfig smcConfig;
+  
+   // Create our SmartMotorController from our Spark and config with the NEO.
+  private SmartMotorController sparkSmartMotorController;
 
-        config.closedLoop.feedForward
-            .kV(Constants.Climber.kFF);
+    private ElevatorConfig elevconfig;
 
-        climberLimitSwitch = new DigitalInput(1);
-        
-        // Apply configuration
-        climberMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        
-        // Get encoder and controller
-        encoder = climberMotor.getEncoder();
-        controller = climberMotor.getClosedLoopController();
-        
-        // Reset encoder position
-        resetEncoder();
+  // Elevator Mechanism
+  private Elevator elevator;
+
+
+public ClimberSubsystem() {
+  smcConfig = new SmartMotorControllerConfig(this)
+  .withControlMode(ControlMode.CLOSED_LOOP)
+
+  // Mechanism Circumference is the distance traveled by each mechanism rotation converting rotations to meters.
+  .withMechanismCircumference(Meters.of(Inches.of(0.25).in(Meters) * 22))
+
+  // Feedback Constants (PID Constants)
+  .withClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+  .withSimClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+
+  // Feedforward Constants
+  .withFeedforward(new ElevatorFeedforward(Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
+  .withSimFeedforward(new ElevatorFeedforward( Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
+
+  // Telemetry name and verbosity level
+  .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
+
+  // Gearing from the motor rotor to final shaft.
+  // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
+  // You could also use .withGearing(12) which does the same thing.
+  .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+
+  // Motor properties to prevent over currenting.
+  .withMotorInverted(false)
+  .withIdleMode(MotorMode.BRAKE)
+  .withStatorCurrentLimit(Amps.of(40))
+  .withClosedLoopRampRate(Seconds.of(0.25))
+  .withOpenLoopRampRate(Seconds.of(0.25));
+
+  sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+
+   // Create our SmartMotorController from our Spark and config with the NEO.
+  SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+
+    ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
+      .withStartingHeight(Meters.of(Constants.Climber.START_HEIGHT))
+      .withHardLimits(Meters.of(Constants.Climber.MIN_HEIGHT), Meters.of(Constants.Climber.MAX_HEIGHT))
+      .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
+      .withMass(Pounds.of(16));
+
+  elevator = new Elevator(elevconfig);
+}
+/**
+   * Set the height of the elevator and does not end the command when reached.
+   * @param angle Distance to go to.
+   * @return a Command
+   */
+  public Command setHeight(Distance height) {
+     return elevator.setHeight(height);
     }
-    
-    /**
-     * Set climber speed manually (open loop control)
-     * @param speed -1.0 to 1.0 (negative = down, positive = up)
-     */
-    public void setSpeed(double speed) {
-        // Clamp speed
-        speed = Math.max(-Constants.Climber.MAX_SPEED, Math.min(Constants.Climber.MAX_SPEED, speed));
-        
-        // Safety check: don't go past limits
-        if (speed > 0 && getPosition() >= Constants.Climber.MAX_HEIGHT) {
-            stop();
-            return;
-        }
-        if (speed < 0 && getPosition() <= Constants.Climber.MIN_HEIGHT) {
-            stop();
-            return;
-        }
-        
-        climberMotor.set(speed);
-    }
-    
-    /**
-     * Move to a specific position (closed loop control)
-     * @param position Target position in output shaft rotations
-     */
-    public void setPosition(double position) {
-        // Clamp to limits
-        position = Math.max(Constants.Climber.MIN_HEIGHT, Math.min(Constants.Climber.MAX_HEIGHT, position));
-        
-        controller.setSetpoint(position, SparkMax.ControlType.kPosition);
-    }
-    
-    /**
-     * Extend climber to maximum height
-     */
-    public void extend() {
-        setSpeed(Constants.Climber.MAX_SPEED);
-    }
-    
-    /**
-     * Retract climber to minimum height
-     */
-    public void retract() {
-        setSpeed(-Constants.Climber.MAX_SPEED);
+  
+  /**
+   * Set the height of the elevator and ends the command when reached, but not the closed loop controller.
+   * @param angle Distance to go to.
+   * @return A Command
+   */
+  public Command setHeightAndStop(Distance height) { 
+    return elevator.setHeight(height);
+  }
+  
+  /**
+   * Move the elevator up and down.
+   * @param dutycycle [-1, 1] speed to set the elevator too.
+   */
+  public Command set(double dutycycle) {
+     return elevator.set(dutycycle);
     }
 
-    /** 
-     * Start the climber
-     */
-    public void climberOn() {
-        climberMotor.set(Constants.Climber.MAX_SPEED);
-    }
-
-    public boolean getClimberSwitchState () {
-        return climberLimitSwitch.get();
+  /**
+   * Run sysId on the {@link Elevator}
+   */
+  public Command sysId() { 
+    return elevator.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(4));
   }
 
-    
-    /**
-     * Stop the climber
-     */
-    public void stop() {
-        climberMotor.stopMotor();
-    }
-    
-    /**
-     * Get current position of the climber
-     * @return Position in output shaft rotations
-     */
-    public double getPosition() {
-        return encoder.getPosition();
-    }
-    
-    /**
-     * Get current velocity of the climber
-     * @return Velocity in output shaft RPM
-     */
-    public double getVelocity() {
-        return encoder.getVelocity();
-    }
-    
-    /**
-     * Check if climber is at maximum height
-     */
-    public boolean atMaxHeight() {
-        return getPosition() >= Constants.Climber.MAX_HEIGHT - 0.5; // 0.5 rotation tolerance
-    }
-    
-    /**
-     * Check if climber is at minimum height
-     */
-    public boolean atMinHeight() {
-        return getPosition() <= Constants.Climber.MIN_HEIGHT + 0.5;
-    }
-    
-    /**
-     * Reset encoder position to zero
-     */
-    public void resetEncoder() {
-        encoder.setPosition(0);
-    }
-    
-    /**
-     * Get motor current draw
-     */
-    public double getCurrent() {
-        return climberMotor.getOutputCurrent();
-    }
-    
-    /**
-     * Get motor temperature
-     */
-    public double getTemperature() {
-        return climberMotor.getMotorTemperature();
-    }
-    
-    /**
-     * Check if motor is drawing excessive current (possible jam/collision)
-     * Note: With one motor driving two gearboxes, binding on one side will show up here
-     */
-    public boolean isStalling() {
-        return getCurrent() > Constants.Climber.CURRENT_LIMIT * 0.9;
-    }
-    
-    /**
-     * Check if motor is overheating
-     */
-    public boolean isOverheating() {
-        return getTemperature() > 80.0; // Celsius
-    }
-    
     @Override
-    public void periodic() {
-        // Update telemetry
-        SmartDashboard.putNumber("Climber Position", getPosition());
-        SmartDashboard.putNumber("Climber Velocity", getVelocity());
-        SmartDashboard.putNumber("Climber Current", getCurrent());
-        SmartDashboard.putNumber("Climber Temperature", getTemperature());
-        SmartDashboard.putBoolean("Climber At Max", atMaxHeight());
-        SmartDashboard.putBoolean("Climber At Min", atMinHeight());
-        SmartDashboard.putBoolean("Climber Stalling", isStalling());
-        SmartDashboard.putBoolean("Climber Overheating", isOverheating());
-        
-        // Safety: Stop if stalling or overheating
-        if (isStalling() || isOverheating()) {
-            stop();
-        }
+  public void periodic() {
+    elevator.updateTelemetry();
+  }
+
+  @Override
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run during simulation
+    elevator.simIterate();
     }
 }
