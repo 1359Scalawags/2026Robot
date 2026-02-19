@@ -75,17 +75,17 @@ public final class Constants {
     public static final AngularVelocity testKickerVelocity = RPM.of(800);
 
     //TODO: set these right
-    public static double shooterP = 1;
+    public static double shooterP = 0.01375;
     public static double shooterI = 0;
     public static double shooterD = 0;
 
-    public static double kickerP  = 1;
+    public static double kickerP  = 0.01;
     public static double kickerI = 0;
     public static double kickerD = 0;
 
-    public static double shooterS = 0.0004;
-    public static double shooterV = 0;
-    public static double shooterA = 0;
+    public static double shooterS = 0.16811;
+    public static double shooterV = 0.12113;
+    public static double shooterA = 0.041532;
 
     public static double kickerS = 0.0004;
     public static double kickerV = 0;
@@ -132,25 +132,25 @@ public final class Constants {
 
     //TODO: set these numbers correctly
 
-    public static double sushiP = 0.029668;
+    public static double sushiP = 0.045874; //0.029668
     public static double sushiI = 0;
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0.055968; //From sysID - 0.055968
+    public static double starP = 0.029853; //From sysID - 0.055968
     public static double starI = 0;
     public static double starD = 0;
     public static double starIntakeSpeed = 500;
 
 
     //========= FF valvues for SMC config =========
-    public static double sushiS = 0.73419;
-    public static double sushiV = 0.099382;
-    public static double sushiA = 0.026093;
+    public static double sushiS = 0.41655;
+    public static double sushiV = 0.12963;
+    public static double sushiA = 0.038507;
 
-    public static double starS = 0.67913;
-    public static double starV = 0.10296;
-    public static double starA = 0.034396;
+    public static double starS = 0.66508;
+    public static double starV = 0.10476;
+    public static double starA = 0.03396;
 
     public static double sushiMaxSpeed = 2500;
     public static double starMaxSpeed = 2500;

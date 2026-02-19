@@ -60,6 +60,8 @@ public class RobotContainer {
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
         private final Star m_IntakeStar = new Star();
         private final Sushi m_IntakeSushi = new Sushi();
+        private final Shooter m_Shooter = new Shooter();
+        private final Kicker m_Kicker = new Kicker();
 
         // private final IntakeCommandFactory m_IntakeCommandFactory = new
         // IntakeCommandFactory(m_IntakeSubsystem);
@@ -177,14 +179,21 @@ public class RobotContainer {
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
-                        // m_ShooterSubsystem.setDefaultCommand(m_ShooterSubsystem.set(0));
+
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                 } else {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
                 }
 
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
@@ -194,8 +203,14 @@ public class RobotContainer {
                 m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(200)));
                 m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity(RPM.of(200)));
 
+                m_AssistantJoystick.button(13).whileTrue(m_Shooter.setShooterVelocity(RPM.of(200)));
+                m_AssistantJoystick.button(12).whileTrue(m_Kicker.setKickerVelocity(RPM.of(200)));
+                
                 m_AssistantJoystick.button(8).onTrue(m_IntakeStar.sysId());
                 m_AssistantJoystick.button(9).onTrue(m_IntakeSushi.sysId());
+
+                m_AssistantJoystick.button(14).onTrue(m_Shooter.sysId());
+                m_AssistantJoystick.button(15).onTrue(m_Kicker.sysId());
 
                 // ----------------------
 

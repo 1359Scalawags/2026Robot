@@ -16,12 +16,10 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
@@ -74,11 +72,11 @@ public class Shooter extends SubsystemBase {
         // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
         // your motor.
         // You could also use .withGearing(12) which does the same thing.
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 1)))
+        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         // Motor properties to prevent over currenting.
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(35));
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
 
@@ -89,7 +87,7 @@ public class Shooter extends SubsystemBase {
         // Mass of the flywheel.
         .withMass(Pounds.of(1))
         // Maximum speed of the shooter.
-        .withUpperSoftLimit(RPM.of(Constants.Shooter.shooterMaxSpeed))
+        .withSoftLimit(RPM.of(-4000), RPM.of(4000))
         // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
@@ -124,22 +122,18 @@ public class Shooter extends SubsystemBase {
     return shooterWheel.set(dutyCycle).withName("Shooter Wheel set Duty");
   }
 
-//TODO: needs a wait Commmand
-  public Command shootFuel(AngularVelocity shootersSpeed) {
-    // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
-
-      //Alternative way to create this command
-    return run(() -> {shooterWheel.setSpeed(shootersSpeed);})
-            .withName("ShootFuelCommand");
-  }
-
-  public Command stopShooter() {
-    return run(() -> {shooterWheel.set(0);})
-            .withName("Stop Shooter");
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setShooterDutyCylce(double dutyCycle) {
+    return shooterWheel.set(dutyCycle);
   }
   
   public Command sysId() {
-    return shooterWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+    return shooterWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
   }
 
 

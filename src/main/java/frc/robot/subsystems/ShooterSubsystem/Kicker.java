@@ -16,12 +16,10 @@ import static edu.wpi.first.units.Units.Seconds;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
@@ -71,7 +69,7 @@ public class Kicker extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(25));
 
     kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
 
@@ -80,7 +78,7 @@ public class Kicker extends SubsystemBase {
     kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
     .withDiameter(Inches.of(4))
     .withMass(Pounds.of(1))
-    .withUpperSoftLimit(RPM.of(Constants.Shooter.kickerMaxSpeed))
+    .withSoftLimit(RPM.of(-1500), RPM.of(1500))
     .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
 
     kickerWheel = new FlyWheel(kickerConfig);
@@ -97,22 +95,18 @@ public class Kicker extends SubsystemBase {
     return kickerWheel.setSpeed(speed);
   }
 
-//TODO: needs a wait Commmand
-  public Command runKicker(AngularVelocity kickerSpeed) {
-    // return Commands.parallel(setShooterVelocity(shootersSpeed), setKickerVelocity(kickerSpeed));
-
-      //Alternative way to create this command
-    return run(() -> {kickerWheel.setSpeed(kickerSpeed);})
-            .withName("RunKicker");
-  }
-
-  public Command stopKciker() {
-    return run(() -> {kickerWheel.set(0);})
-            .withName("Stop Kicker");
+  /**
+   * Set the dutycycle of the shooter.
+   *
+   * @param dutyCycle DutyCycle to set.
+   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
+   */
+  public Command setKickerDutyCylce(double dutyCycle) {
+    return kickerWheel.set(dutyCycle);
   }
 
   public Command sysId() {
-    return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+    return kickerWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
   }
 
 
