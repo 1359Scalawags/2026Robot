@@ -79,7 +79,7 @@ public class Sushi extends SubsystemBase {
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(1))
-        .withSoftLimit(RPM.of(-1500), RPM.of(1500))
+        .withSoftLimit(RPM.of(-2000), RPM.of(2000))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
     sushiWheel = new FlyWheel(sushiConfig);   
@@ -112,7 +112,7 @@ public class Sushi extends SubsystemBase {
   }
 
     public Command sysId() {
-      return sushiWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+      return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
     }
 
 

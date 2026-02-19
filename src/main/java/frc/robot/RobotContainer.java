@@ -190,6 +190,7 @@ public class RobotContainer {
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
                                 m_IntakeStar.setStarVelocity(RPM.of(500)),
                                 m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
+                                
                 m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(200)));
                 m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity(RPM.of(200)));
 

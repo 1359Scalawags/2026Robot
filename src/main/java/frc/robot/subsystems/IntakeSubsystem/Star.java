@@ -80,7 +80,7 @@ public class Star extends SubsystemBase {
     starConfig = new FlyWheelConfig(starSmartMotorController)
         .withDiameter(Inches.of(4))
         .withMass(Pounds.of(1))
-        .withSoftLimit(RPM.of(-1500), RPM.of(1500))
+        .withSoftLimit(RPM.of(-2500), RPM.of(2500))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     starWheel = new FlyWheel(starConfig);
@@ -113,7 +113,7 @@ public class Star extends SubsystemBase {
   }
 
    public Command sysId() {
-      return starWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(5));
+      return starWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
     }
 
   @Override
