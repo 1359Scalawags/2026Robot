@@ -77,8 +77,8 @@ public class Sushi extends SubsystemBase {
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
 
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
+        .withDiameter(Inches.of(2))
+        .withMass(Pounds.of(1.07))
         .withSoftLimit(RPM.of(-2000), RPM.of(2000))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 

@@ -78,8 +78,8 @@ public class Star extends SubsystemBase {
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
     starConfig = new FlyWheelConfig(starSmartMotorController)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
+        .withDiameter(Inches.of(2))
+        .withMass(Pounds.of(0.375))
         .withSoftLimit(RPM.of(-2500), RPM.of(2500))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
