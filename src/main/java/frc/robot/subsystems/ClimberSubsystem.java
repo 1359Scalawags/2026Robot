@@ -18,6 +18,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 import yams.motorcontrollers.SmartMotorController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -28,6 +29,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.wpilibj.DigitalInput;
 import yams.mechanisms.config.ElevatorConfig;
 import yams.mechanisms.positional.Elevator;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -44,54 +46,45 @@ public class ClimberSubsystem extends SubsystemBase {
    // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController;
 
-    private ElevatorConfig elevconfig;
+  private ElevatorConfig elevconfig;
+
+  Debouncer currentDebouncer  = new Debouncer(0.4); // Current threshold is only detected if exceeded for 0.4 seconds.
+
 
   // Elevator Mechanism
-  private Elevator elevator;
+  private Elevator climber;
+
+  private DigitalInput limitSwitch;
 
 
 public ClimberSubsystem() {
+
+  limitSwitch = new DigitalInput(0);
+
   smcConfig = new SmartMotorControllerConfig(this)
-  .withControlMode(ControlMode.CLOSED_LOOP)
-
-  // Mechanism Circumference is the distance traveled by each mechanism rotation converting rotations to meters.
-  .withMechanismCircumference(Meters.of(Inches.of(0.25).in(Meters) * 22))
-
-  // Feedback Constants (PID Constants)
-  .withClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
-  .withSimClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
-
-  // Feedforward Constants
-  .withFeedforward(new ElevatorFeedforward(Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
-  .withSimFeedforward(new ElevatorFeedforward( Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
-
-  // Telemetry name and verbosity level
-  .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
-
-  // Gearing from the motor rotor to final shaft.
-  // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
-  // You could also use .withGearing(12) which does the same thing.
-  .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-
-  // Motor properties to prevent over currenting.
-  .withMotorInverted(false)
-  .withIdleMode(MotorMode.BRAKE)
-  .withStatorCurrentLimit(Amps.of(40))
-  .withClosedLoopRampRate(Seconds.of(0.25))
-  .withOpenLoopRampRate(Seconds.of(0.25));
+    .withControlMode(ControlMode.CLOSED_LOOP)
+    .withMechanismCircumference(Meters.of(Inches.of(0.25).in(Meters) * 22))
+    .withClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+    .withSimClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.5), MetersPerSecondPerSecond.of(0.5))
+    .withFeedforward(new ElevatorFeedforward(Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
+    .withSimFeedforward(new ElevatorFeedforward( Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
+    .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
+    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withMotorInverted(false)
+    .withIdleMode(MotorMode.BRAKE)
+    .withStatorCurrentLimit(Amps.of(35))
+    .withClosedLoopRampRate(Seconds.of(0.25))
+    .withOpenLoopRampRate(Seconds.of(0.25));
 
   sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
-   // Create our SmartMotorController from our Spark and config with the NEO.
-  SmartMotorController sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+  elevconfig = new ElevatorConfig(sparkSmartMotorController)
+    .withStartingHeight(Meters.of(Constants.Climber.START_HEIGHT))
+    .withHardLimits(Meters.of(Constants.Climber.MIN_HEIGHT), Meters.of(Constants.Climber.MAX_HEIGHT))
+    .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
+    .withMass(Pounds.of(16));
 
-    ElevatorConfig elevconfig = new ElevatorConfig(sparkSmartMotorController)
-      .withStartingHeight(Meters.of(Constants.Climber.START_HEIGHT))
-      .withHardLimits(Meters.of(Constants.Climber.MIN_HEIGHT), Meters.of(Constants.Climber.MAX_HEIGHT))
-      .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
-      .withMass(Pounds.of(16));
-
-  elevator = new Elevator(elevconfig);
+  climber = new Elevator(elevconfig);
 }
 /**
    * Set the height of the elevator and does not end the command when reached.
@@ -99,7 +92,7 @@ public ClimberSubsystem() {
    * @return a Command
    */
   public Command setHeight(Distance height) {
-     return elevator.setHeight(height);
+     return climber.setHeight(height);
     }
   
   /**
@@ -108,7 +101,7 @@ public ClimberSubsystem() {
    * @return A Command
    */
   public Command setHeightAndStop(Distance height) { 
-    return elevator.setHeight(height);
+    return climber.setHeight(height);
   }
   
   /**
@@ -116,24 +109,42 @@ public ClimberSubsystem() {
    * @param dutycycle [-1, 1] speed to set the elevator too.
    */
   public Command set(double dutycycle) {
-     return elevator.set(dutycycle);
+     return climber.set(dutycycle);
     }
 
+  public boolean limitSwitchState() {
+    return limitSwitch.get();
+  }
   /**
    * Run sysId on the {@link Elevator}
    */
   public Command sysId() { 
-    return elevator.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(4));
+    return climber.sysId(Volts.of(7), Volts.of(2).per(Second), Seconds.of(4));
   }
 
     @Override
   public void periodic() {
-    elevator.updateTelemetry();
+
+  limitSwitchState();
+
+  if (limitSwitchState() == true) {
+    spark.getEncoder().setPosition(0);
+  }
+
+  if (spark.get() < 0) {
+    if (limitSwitchState() == true) {
+      climber.set(0);
+      spark.getEncoder().setPosition(0);
+    }
+  }
+
+    climber.updateTelemetry();
+
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
-    elevator.simIterate();
+    climber.simIterate();
     }
 }
