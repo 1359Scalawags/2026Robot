@@ -45,6 +45,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 
 /**
@@ -63,6 +66,7 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
+        private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
         // private final IntakeCommandFactory m_IntakeCommandFactory = new
         // IntakeCommandFactory(m_IntakeSubsystem);
@@ -186,7 +190,7 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
-                } else {
+                } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
@@ -194,32 +198,43 @@ public class RobotContainer {
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+
+                } else if (DriverStation.isTest()) {
+
+                m_AssistantJoystick.button(12).whileTrue(m_ClimberSubsystem.sysId());
+
+                m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
+                m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
+
+                m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
+                m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
+
                 }
 
 
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
-                //                 m_IntakeStar.setStarVelocity(RPM.of(500)),
-                //                 m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
-
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setVolatage(5), m_IntakeSushi.setVolatage(5)));
+                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
+                                m_IntakeStar.setStarVelocity(RPM.of(500)),
+                                m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
                 
                 m_AssistantJoystick.trigger().whileTrue(Commands.parallel((m_Shooter.setShooterDutyCycle(0.7)),m_Kicker.setKickerDutyCylce(0.5)));
 
-                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
+                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
               
 
-                m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity());
-                m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity());
+                // m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity());
+                // m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity());
 
-                m_AssistantJoystick.button(13).onTrue(m_Shooter.setShooterVelocity());
-                m_AssistantJoystick.button(12).onTrue(m_Kicker.setKickerVelocity());
+                m_AssistantJoystick.button(5).onTrue(m_Shooter.setShooterVelocity());
+                m_AssistantJoystick.button(6).onTrue(m_Kicker.setKickerVelocity());
 
-                m_AssistantJoystick.button(8).onTrue(m_IntakeStar.sysId());
-                m_AssistantJoystick.button(9).onTrue(m_IntakeSushi.sysId());
+                m_AssistantJoystick.button(8).onTrue(m_ClimberSubsystem.set(0.3));
+                m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.set(-0.3));
 
-                m_AssistantJoystick.button(14).onTrue(m_Shooter.sysId());
-                m_AssistantJoystick.button(15).onTrue(m_Kicker.sysId());
+                m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
 
+
+
+               
                 // ----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,

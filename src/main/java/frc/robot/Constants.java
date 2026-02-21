@@ -115,7 +115,7 @@ public final class Constants {
     // Position limits (in rotations of the output shaft)
     public static final double MAX_HEIGHT = 15; // Adjust based on your mechanism
     public static final double MIN_HEIGHT = 0.0;
-    public static final double START_HEIGHT = 0.5;
+    public static final double START_HEIGHT = 0;
 
     public static final double ks = 0;
     public static final double kg = 0;
