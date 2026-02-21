@@ -25,6 +25,7 @@ import javax.print.attribute.standard.Finishings;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -101,9 +102,9 @@ public class RobotContainer {
          * controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> m_DriverJoystick.getY() * -1,
-                        () -> m_DriverJoystick.getX() * -1)
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1)
+                        () -> m_DriverJoystick.getY() * -1 * driverGetThrottle(),
+                        () -> m_DriverJoystick.getX() * -1 * driverGetThrottle())
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * driverGetThrottle())
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -123,8 +124,8 @@ public class RobotContainer {
                         .allianceRelativeControl(false);
 
         SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> -m_DriverJoystick.getY(),
-                        () -> -m_DriverJoystick.getX())
+                        () -> -m_DriverJoystick.getY() * driverGetThrottle(),
+                        () -> -m_DriverJoystick.getX() * driverGetThrottle())
                         .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
                                         2))
                         .deadband(OperatorConstants.DEADBAND)
@@ -315,6 +316,10 @@ public class RobotContainer {
                         // m_SwerveSubsystem).repeatedly());
                         // m_DriverJoystick.rightBumper().onTrue(Commands.none());
                 }
+        }
+
+        public double driverGetThrottle() {
+                return MathUtil.clamp((m_DriverJoystick.getThrottle() +1)/2, 0.1, 1);
         }
 
         /**
