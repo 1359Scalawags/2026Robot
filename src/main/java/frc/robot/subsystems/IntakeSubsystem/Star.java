@@ -20,6 +20,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -85,31 +86,23 @@ public class Star extends SubsystemBase {
 
     starWheel = new FlyWheel(starConfig);
   }
-   /**
-   * @return Shooter velocity.
-   */
+
   public AngularVelocity getStarVelocity() {
     return starWheel.getSpeed();
   }
 
- /**
-   * Set the kicker velocity to feed fuel into the shooter.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+
   public Command setStarVelocity(AngularVelocity speed) {
     return starWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+
   public Command setStarDutyCylce(double dutyCycle) {
     return starWheel.set(dutyCycle);
+  }
+
+  public Command setVolatage(double volts) {
+    return starWheel.setVoltage(Volts.of(volts));
   }
 
    public Command sysId() {
