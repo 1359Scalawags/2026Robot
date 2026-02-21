@@ -73,8 +73,8 @@ public class Sushi extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(35));
-        // .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(1000));
+        .withStatorCurrentLimit(Amps.of(35))
+        .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(1000));
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
 

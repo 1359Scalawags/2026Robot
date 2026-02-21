@@ -22,7 +22,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -76,8 +75,8 @@ public class Star extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
-        // .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(10000));
+        .withStatorCurrentLimit(Amps.of(40))
+        .withTrapezoidalProfile(RotationsPerSecond.of(Constants.Intake.starMaxVelocity), RotationsPerSecondPerSecond.of(Constants.Intake.starMaxAcceleration));
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
