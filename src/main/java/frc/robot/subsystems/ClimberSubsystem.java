@@ -69,7 +69,7 @@ public ClimberSubsystem() {
     .withFeedforward(new ElevatorFeedforward(Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
     .withSimFeedforward(new ElevatorFeedforward( Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
     .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
-    .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
+    .withGearing(new MechanismGearing(GearBox.fromStages("125:1")))
     .withMotorInverted(false)
     .withIdleMode(MotorMode.BRAKE)
     .withStatorCurrentLimit(Amps.of(35))
