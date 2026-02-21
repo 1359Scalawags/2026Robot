@@ -12,6 +12,9 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
+
+import java.util.Set;
+
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -88,13 +91,6 @@ public class Kicker extends SubsystemBase {
     kickerWheel = new FlyWheel(kickerConfig);
   }
 
-
-    /**
-   * Set the shooter velocity.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
   public Command setKickerVelocity() {
     return kickerWheel.setSpeed(RPM.of(Constants.Shooter.kickerSpeed));
   }
@@ -103,12 +99,7 @@ public class Kicker extends SubsystemBase {
     return kickerWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+  // Set the dutycycle of the shooter.
   public Command setKickerDutyCylce(double dutyCycle) {
     return kickerWheel.set(dutyCycle);
   }
