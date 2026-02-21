@@ -111,9 +111,13 @@ public class Sushi extends SubsystemBase {
     return sushiWheel.set(dutyCycle);
   }
 
-    public Command sysId() {
-      return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-    }
+  public Command setVolatage(double volts) {
+    return sushiWheel.setVoltage(Volts.of(volts));
+  }
+
+  public Command sysId() {
+    return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  }
 
 
   @Override

@@ -93,7 +93,6 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
-
                 // TODO: Gavan or Alec; You need to set default commands
         }
 
