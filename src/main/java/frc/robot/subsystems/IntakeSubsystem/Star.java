@@ -76,7 +76,7 @@ public class Star extends SubsystemBase {
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40))
-        .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(10000));
+        .withTrapezoidalProfile(RotationsPerSecond.of(Constants.Intake.starMaxVelocity), RotationsPerSecondPerSecond.of(Constants.Intake.starMaxAcceleration));
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 

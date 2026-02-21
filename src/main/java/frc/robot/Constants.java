@@ -138,10 +138,12 @@ public final class Constants {
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500; //RPM
 
-    public static double starP = 0.002; //From sysID - 0.055968, 0.029853
-    public static double starI = 0.00001;
-    public static double starD = 0.1;
+    public static double starP = 0.015; //From sysID - 0.055968, 0.029853
+    public static double starI = 0.00000001;
+    public static double starD = 0.15;
     public static double starIntakeSpeed = 1500; //RPM
+    public static double starMaxAcceleration = 3000;
+    public static double starMaxVelocity = 3500;
 
 
     //========= FF valvues for SMC config =========
