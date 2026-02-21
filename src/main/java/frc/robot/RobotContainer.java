@@ -196,15 +196,15 @@ public class RobotContainer {
                 }
 
 
-                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
-                                m_IntakeStar.setStarVelocity(RPM.of(500)),
-                                m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
+                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
+                //                 m_IntakeStar.setStarVelocity(RPM.of(500)),
+                //                 m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
 
                 // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setVolatage(5), m_IntakeSushi.setVolatage(5)));
                 
-                m_AssistantJoystick.trigger().whileTrue(Commands.parallel((m_Shooter.setShooterDutyCycle(0.5)),m_Kicker.setKickerDutyCylce(0.5)));
+                m_AssistantJoystick.trigger().whileTrue(Commands.parallel((m_Shooter.setShooterDutyCycle(0.7)),m_Kicker.setKickerDutyCylce(0.5)));
 
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
+                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
               
 
                 m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(1200)));
