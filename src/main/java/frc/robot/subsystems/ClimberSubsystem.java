@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
@@ -37,6 +38,7 @@ import com.revrobotics.spark.SparkMax;
 import frc.robot.Constants;
 
 
+
 public class ClimberSubsystem extends SubsystemBase {
 
   private SparkMax spark = new SparkMax(Constants.Climber.climberID, MotorType.kBrushless);
@@ -47,9 +49,6 @@ public class ClimberSubsystem extends SubsystemBase {
   private SmartMotorController sparkSmartMotorController;
 
   private ElevatorConfig elevconfig;
-
-  Debouncer currentDebouncer  = new Debouncer(0.4); // Current threshold is only detected if exceeded for 0.4 seconds.
-
 
   // Elevator Mechanism
   private Elevator climber;
@@ -80,8 +79,8 @@ public ClimberSubsystem() {
 
   elevconfig = new ElevatorConfig(sparkSmartMotorController)
     .withStartingHeight(Meters.of(Constants.Climber.START_HEIGHT))
-    .withHardLimits(Meters.of(Constants.Climber.MIN_HEIGHT), Meters.of(Constants.Climber.MAX_HEIGHT))
-    .withTelemetry("Elevator", TelemetryVerbosity.HIGH)
+    .withHardLimits(Meters.of(Inches.of(Constants.Climber.MIN_HEIGHT).in(Meters)), Meters.of(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)))
+    .withTelemetry("Climber", TelemetryVerbosity.HIGH)
     .withMass(Pounds.of(16));
 
   climber = new Elevator(elevconfig);

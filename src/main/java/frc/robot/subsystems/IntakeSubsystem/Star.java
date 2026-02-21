@@ -76,8 +76,8 @@ public class Star extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
-        // .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(10000));
+        .withStatorCurrentLimit(Amps.of(40))
+        .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(10000));
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
