@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -24,7 +25,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import frc.robot.Constants;
 
@@ -93,22 +93,16 @@ public class Sushi extends SubsystemBase {
     return sushiWheel.getSpeed();
   }
 
-   /**
-   * Set the kicker velocity to feed fuel into the shooter.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setSushiVelocity(AngularVelocity speed) {
+  // Set the kicker velocity to feed fuel into the shooter.
+  public Command setSushiVelocity() {
+    return sushiWheel.setSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed));
+  }
+
+    public Command setSushiVelocity(AngularVelocity speed) {
     return sushiWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+  // Set the dutycycle of the shooter.
   public Command setSushiDutyCycle(double dutyCycle) {
     return sushiWheel.set(dutyCycle);
   }

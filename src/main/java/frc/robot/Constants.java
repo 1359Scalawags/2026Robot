@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.RPM;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
@@ -78,10 +80,12 @@ public final class Constants {
     public static double shooterP = 0.01375;
     public static double shooterI = 0;
     public static double shooterD = 0;
+    public static double shooterSpeed = 2500;
 
     public static double kickerP  = 0.01;
     public static double kickerI = 0;
     public static double kickerD = 0;
+    public static double kickerSpeed = 500;
 
     public static double shooterS = 0.16811;
     public static double shooterV = 0.12113;
@@ -90,9 +94,6 @@ public final class Constants {
     public static double kickerS = 0.0004;
     public static double kickerV = 0;
     public static double kickerA = 0;
-
-    public static double shooterMaxSpeed = 2500;
-    public static double kickerMaxSpeed = 2500;
   }
 
   public static class Climber {
@@ -135,12 +136,12 @@ public final class Constants {
     public static double sushiP = 0.045874; //0.029668
     public static double sushiI = 0;
     public static double sushiD = 0;
-    public static double sushiIntakeSpeed = 500;
+    public static double sushiIntakeSpeed = 500; //RPM
 
     public static double starP = 0.002; //From sysID - 0.055968, 0.029853
     public static double starI = 0.00001;
     public static double starD = 0.1;
-    public static double starIntakeSpeed = 500;
+    public static double starIntakeSpeed = 1500; //RPM
 
 
     //========= FF valvues for SMC config =========

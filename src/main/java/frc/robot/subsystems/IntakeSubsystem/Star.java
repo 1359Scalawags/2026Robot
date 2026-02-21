@@ -95,6 +95,10 @@ public class Star extends SubsystemBase {
   }
 
 
+  public Command setStarVelocity() {
+    return starWheel.setSpeed(RPM.of(Constants.Intake.starIntakeSpeed));
+  }
+
   public Command setStarVelocity(AngularVelocity speed) {
     return starWheel.setSpeed(speed);
   }

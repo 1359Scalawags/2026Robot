@@ -95,7 +95,11 @@ public class Kicker extends SubsystemBase {
    * @param speed Speed to set.
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
-  public Command setKickerVelocity(AngularVelocity speed) {
+  public Command setKickerVelocity() {
+    return kickerWheel.setSpeed(RPM.of(Constants.Shooter.kickerSpeed));
+  }
+
+    public Command setKickerVelocity(AngularVelocity speed) {
     return kickerWheel.setSpeed(speed);
   }
 
