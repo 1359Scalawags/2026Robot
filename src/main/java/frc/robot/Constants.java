@@ -137,9 +137,9 @@ public final class Constants {
     public static double sushiD = 0;
     public static double sushiIntakeSpeed = 500;
 
-    public static double starP = 0.0014; //From sysID - 0.055968, 0.029853
-    public static double starI = 0.0;
-    public static double starD = 0.01;
+    public static double starP = 0.002; //From sysID - 0.055968, 0.029853
+    public static double starI = 0.00001;
+    public static double starD = 0.1;
     public static double starIntakeSpeed = 500;
 
 
