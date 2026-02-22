@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -38,6 +39,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Seconds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -188,14 +190,18 @@ public class RobotContainer {
                 } else if (DriverStation.isTest()) {
         }
 
-                // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
-                // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
-                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity).withName("IntakeFuel")));
+                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
+                                .withName("IntakeFuel"));
                 
-                // m_AssistantJoystick.trigger().whileTrue(Commands.parallel((m_Shooter.setShooterDutyCycle(0.7)),m_Kicker.setKickerDutyCylce(0.5)));
+                m_AssistantJoystick.trigger().whileTrue(Commands.parallel(
+                        (m_Shooter.setShooterVelocity(Constants.Shooter.shooterMaxVelocity)),
+                                Commands.sequence(
+                                        new WaitCommand(Seconds.of(1.0))), 
+                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity))
+                                        .withName("ShootFuel"));
 
                 // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
               
@@ -205,10 +211,10 @@ public class RobotContainer {
 
                 m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.3));
                 m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.3));
-
                 m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
 
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
+
 
                 // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
 
@@ -217,6 +223,9 @@ public class RobotContainer {
 
                 // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
                 // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
+                
+                // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+                // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
                
                 // ----------------------
