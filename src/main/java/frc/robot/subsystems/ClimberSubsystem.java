@@ -131,19 +131,21 @@ public ClimberSubsystem() {
 
     @Override
   public void periodic() {
+      final boolean lstate = getlimitSwitchState();
 
-    // getlimitSwitchState();
-    SmartDashboard.putBoolean("limitSwitch state", getlimitSwitchState());
-    if (getlimitSwitchState() == true) {
-      spark.getEncoder().setPosition(0);
-    }
+      // Publish limit switch state to SmartDashboard for debugging
+      SmartDashboard.putBoolean("Climber/LimitSwitch", lstate);
 
-    if (spark.get() < 0) {
-      if (getlimitSwitchState() == true) {
-        climber.set(0);
+      if (lstate == true) {
         spark.getEncoder().setPosition(0);
       }
-    }
+
+      if (spark.get() < 0) {
+        if (lstate == true) {
+          climber.set(0);
+          spark.getEncoder().setPosition(0);
+        }
+      }
 
       climber.updateTelemetry();
 
