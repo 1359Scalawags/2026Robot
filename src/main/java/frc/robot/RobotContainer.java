@@ -198,6 +198,8 @@ public class RobotContainer {
 
                 }
 
+                m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+                m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
                                 m_IntakeStar.setStarVelocity(RPM.of(2000)),
@@ -221,11 +223,11 @@ public class RobotContainer {
 
                 // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
 
-                // m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
-                // m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
+                m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
+                m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
 
-                // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
-                // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
+                m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
+                m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
 
                
                 // ----------------------

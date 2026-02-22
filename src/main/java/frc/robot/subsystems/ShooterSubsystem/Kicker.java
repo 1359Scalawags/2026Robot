@@ -105,7 +105,7 @@ public class Kicker extends SubsystemBase {
   }
 
   public Command sysId() {
-    return kickerWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+    return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(20));
   }
 
 
