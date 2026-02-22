@@ -64,7 +64,7 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
-        // private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 
         // private final IntakeCommandFactory m_IntakeCommandFactory = new
         // IntakeCommandFactory(m_IntakeSubsystem);
@@ -102,9 +102,10 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
+                // SmartDashboard.putBoolean("limitSwitch state", m_ClimberSubsystem.getlimitSwitchState());
+                // SmartDashboard.putData("LimSwitch", m_ClimberSubsystem.lim);
                 // TODO: Gavan or Alec; You need to set default commands
         }
-
         /**
          * Converts driver input into a field-relative ChassisSpeeds that is
          * controlled by angular velocity.
@@ -203,6 +204,8 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
+                        m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+
                 } else if (DriverStation.isTest()) {
 
 
@@ -227,8 +230,8 @@ public class RobotContainer {
                 m_AssistantJoystick.button(5).onTrue(m_Shooter.setShooterVelocity());
                 m_AssistantJoystick.button(6).onTrue(m_Kicker.setKickerVelocity());
 
-                // m_AssistantJoystick.button(8).onTrue(m_ClimberSubsystem.set(0.3));
-                // m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.set(-0.3));
+                m_AssistantJoystick.button(8).onTrue(m_ClimberSubsystem.set(0.1));
+                m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.set(-0.1));
 
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
 
