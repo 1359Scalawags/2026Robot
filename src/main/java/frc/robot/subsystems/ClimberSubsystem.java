@@ -31,6 +31,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import yams.mechanisms.config.ElevatorConfig;
 import yams.mechanisms.positional.Elevator;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -123,21 +124,23 @@ public ClimberSubsystem() {
 
     @Override
   public void periodic() {
+      final boolean lstate = limitSwitchState();
 
-  limitSwitchState();
+      // Publish limit switch state to SmartDashboard for debugging
+      SmartDashboard.putBoolean("Climber/LimitSwitch", lstate);
 
-  if (limitSwitchState() == true) {
-    spark.getEncoder().setPosition(0);
-  }
+      if (lstate == true) {
+        spark.getEncoder().setPosition(0);
+      }
 
-  if (spark.get() < 0) {
-    if (limitSwitchState() == true) {
-      climber.set(0);
-      spark.getEncoder().setPosition(0);
-    }
-  }
+      if (spark.get() < 0) {
+        if (lstate == true) {
+          climber.set(0);
+          spark.getEncoder().setPosition(0);
+        }
+      }
 
-    climber.updateTelemetry();
+      climber.updateTelemetry();
 
   }
 
