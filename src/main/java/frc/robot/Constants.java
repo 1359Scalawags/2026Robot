@@ -91,9 +91,9 @@ public final class Constants {
     public static double shooterV = 0.12113;
     public static double shooterA = 0.041532;
 
-    public static double kickerS = 0.0004;
-    public static double kickerV = 0;
-    public static double kickerA = 0;
+    public static double kickerS = 0.16811;
+    public static double kickerV = 0.12113;
+    public static double kickerA = 0.041532;
   }
 
   public static class Climber {
