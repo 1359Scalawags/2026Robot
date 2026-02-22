@@ -12,6 +12,9 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
+
+import java.util.function.BooleanSupplier;
+
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Inches;
 
@@ -31,6 +34,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import yams.mechanisms.config.ElevatorConfig;
 import yams.mechanisms.positional.Elevator;
@@ -54,12 +58,10 @@ public class ClimberSubsystem extends SubsystemBase {
   // Elevator Mechanism
   private Elevator climber;
 
-  private DigitalInput limitSwitch;
+  private DigitalInput limitSwitch = new DigitalInput(0);;
 
 
 public ClimberSubsystem() {
-
-  limitSwitch = new DigitalInput(0);
 
   smcConfig = new SmartMotorControllerConfig(this)
     .withControlMode(ControlMode.CLOSED_LOOP)
@@ -85,6 +87,10 @@ public ClimberSubsystem() {
     .withMass(Pounds.of(16));
 
   climber = new Elevator(elevconfig);
+
+  Shuffleboard.getTab("Arm").add("LimitSwitch", limitSwitch);
+
+  SmartDashboard.putBoolean("limSwitch2", getlimitSwitchState());
 }
 /**
    * Set the height of the elevator and does not end the command when reached.
@@ -115,6 +121,7 @@ public ClimberSubsystem() {
   public boolean getlimitSwitchState() {
     return limitSwitch.get();
   }
+
   /**
    * Run sysId on the {@link Elevator}
    */
