@@ -80,9 +80,9 @@ public class RobotContainer {
                         Constants.OperatorConstants.AssistJoystick);
 
         private final DoubleSupplier throttleSupplier = () -> {
-                double raw = m_DriverJoystick.getRawAxis(3);
+                double raw = m_DriverJoystick.getRawAxis(3) * -1;
                 double scaled = (raw + 1) / 2.0;
-                return MathUtil.clamp(scaled, 0.1, 1.0);
+                return MathUtil.clamp(scaled, 0.25, 1.0);
         };
         
         private final SendableChooser<Command> autoChooser;
@@ -110,9 +110,9 @@ public class RobotContainer {
          * controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
-                        () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble())
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * throttleSupplier.getAsDouble())
+                        () -> m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
+                        () -> m_DriverJoystick.getX() * throttleSupplier.getAsDouble())
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * throttleSupplier.getAsDouble())
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -134,29 +134,18 @@ public class RobotContainer {
         SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> -m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
                         () -> -m_DriverJoystick.getX() * throttleSupplier.getAsDouble())
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
-                                        2) * throttleSupplier.getAsDouble())
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * throttleSupplier.getAsDouble())
                         .deadband(OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
         // Derive the heading axis with math!
         SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-                        .withControllerHeadingAxis(() -> Math.sin(
-                                        m_DriverJoystick.getRawAxis(
-                                                        2)
-                                                        * Math.PI)
-                                        * (Math.PI
-                                                        * 2),
-                                        () -> Math.cos(
-                                                        m_DriverJoystick.getRawAxis(
-                                                                        2)
-                                                                        * Math.PI)
-                                                        * (Math.PI
-                                                                        * 2))
+                        .withControllerHeadingAxis(
+                        () -> Math.sin(m_DriverJoystick.getRawAxis(2) * Math.PI) * throttleSupplier.getAsDouble(),
+                        () -> Math.cos(m_DriverJoystick.getRawAxis(2) * Math.PI) * throttleSupplier.getAsDouble())
                         .headingWhile(true)
                         .translationHeadingOffset(true)
-                        .translationHeadingOffset(Rotation2d.fromDegrees(
-                                        0));
+                        .translationHeadingOffset(Rotation2d.fromDegrees(0));
 
         /**
          * Use this method to define your trigger->command mappings. Triggers can be
@@ -173,7 +162,7 @@ public class RobotContainer {
          */
         private void configureBindings() {
                 Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
-                Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
+                Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
                 Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                                 driveDirectAngle);
@@ -186,7 +175,7 @@ public class RobotContainer {
 
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -195,7 +184,7 @@ public class RobotContainer {
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                 } else if (RobotBase.isReal()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -318,7 +307,7 @@ public class RobotContainer {
                 }
 
                 if (DriverStation.isTest()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive
                                                                                                  // command above!
 
                         // m_DriverJoystick.x().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock,

@@ -38,7 +38,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.25;
+    public static final double DEADBAND = 0.20;
   }
 
   public static class swerveDrive {
