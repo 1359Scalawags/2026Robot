@@ -196,10 +196,7 @@ public class RobotContainer {
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
                 } else if (DriverStation.isTest()) {
-
-
-
-                }
+        }
 
                 m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
@@ -219,8 +216,8 @@ public class RobotContainer {
                 m_AssistantJoystick.button(5).onTrue(m_Shooter.setShooterVelocity());
                 m_AssistantJoystick.button(6).onTrue(m_Kicker.setKickerVelocity());
 
-                m_AssistantJoystick.button(8).onTrue(m_ClimberSubsystem.set(0.1));
-                m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.set(-0.1));
+                m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.3));
+                m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.3));
 
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
 
