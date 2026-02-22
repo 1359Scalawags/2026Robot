@@ -9,11 +9,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.Set;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -81,8 +77,8 @@ public class Shooter extends SubsystemBase {
         // Motor properties to prevent over currenting.
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(35));
-        // .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(1000));
+        .withStatorCurrentLimit(Amps.of(35))
+        .withTrapezoidalProfile(Constants.Shooter.shooterMaxVelocity,Constants.Shooter.shooterMaxAcceleration);
 
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
@@ -103,10 +99,6 @@ public class Shooter extends SubsystemBase {
   
   public AngularVelocity getShooterVelocity() {
     return shooterWheel.getSpeed();
-  }
-
-  public Command setShooterVelocity() {
-    return shooterWheel.setSpeed(RPM.of(Constants.Shooter.shooterSpeed)).withName("Shooter Wheel set Vel");
   }
 
     public Command setShooterVelocity(AngularVelocity speed) {

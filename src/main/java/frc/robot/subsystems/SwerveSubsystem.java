@@ -5,7 +5,6 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
-import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -17,12 +16,8 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
-import com.studica.frc.AHRS;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,8 +25,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelPositions;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -50,12 +43,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Flow.Publisher;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
-import org.littletonrobotics.junction.Logger;
 
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;

@@ -10,8 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -76,7 +74,7 @@ public class Star extends SubsystemBase {
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(40))
-        .withTrapezoidalProfile(RotationsPerSecond.of(Constants.Intake.starMaxVelocity), RotationsPerSecondPerSecond.of(Constants.Intake.starMaxAcceleration));
+        .withTrapezoidalProfile(Constants.Intake.starMaxVelocity, Constants.Intake.starMaxAcceleration);
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
@@ -91,11 +89,6 @@ public class Star extends SubsystemBase {
 
   public AngularVelocity getStarVelocity() {
     return starWheel.getSpeed();
-  }
-
-
-  public Command setStarVelocity() {
-    return starWheel.setSpeed(RPM.of(Constants.Intake.starIntakeSpeed));
   }
 
   public Command setStarVelocity(AngularVelocity speed) {

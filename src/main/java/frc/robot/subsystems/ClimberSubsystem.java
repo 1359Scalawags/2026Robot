@@ -5,15 +5,12 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.function.BooleanSupplier;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Inches;
@@ -22,9 +19,7 @@ import yams.motorcontrollers.local.SparkWrapper;
 import yams.motorcontrollers.SmartMotorController;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
@@ -41,8 +36,6 @@ import yams.mechanisms.config.ElevatorConfig;
 import yams.mechanisms.positional.Elevator;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import frc.robot.Constants;
-
 
 
 public class ClimberSubsystem extends SubsystemBase {

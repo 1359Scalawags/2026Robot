@@ -5,13 +5,14 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.units.measure.Time;
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -28,8 +29,6 @@ import edu.wpi.first.units.measure.Time;
 public final class Constants {
   public static class FieldConstants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
-      // public static final Translation2d kSpeakerPositionBLUE = new Translation2d();
-      // public static final Translation2d kSpeakerPositionRED = new Translation2d();
     public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
     public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
   }
@@ -42,7 +41,6 @@ public final class Constants {
   }
 
   public static class swerveDrive {
-    public static final String robot = "2026robot";
     public static final String testbot = "YAGSLConfigJSON/testbot";
     public static final String flipper2026 = "YAGSLConfigJSON/Flipper2026";
 
@@ -67,33 +65,46 @@ public final class Constants {
   }
 
   public static class Shooter {
+      // ========== CONFIGURATION ==========
+      // CAN IDs for the motor controllers
     public static final int flyWheelID = 13;
     public static final int fingerWheelID = 14;
 
-    // public static final int shooterMotorPort = 101;
-    // public static final int feederMotorPort = 102;
 
-    public static final AngularVelocity testShooterVelocity = RPM.of(800);
-    public static final AngularVelocity testKickerVelocity = RPM.of(800);
+      // ======== Shooter Speed =======
+    public static final AngularVelocity shooterVelocity = RPM.of(3550);
+    public static final AngularVelocity kickerVelocity = RPM.of(1000);
 
-    //TODO: set these right
-    public static double shooterP = 0.01375;
-    public static double shooterI = 0;
-    public static double shooterD = 0;
-    public static double shooterSpeed = 2500;
 
-    public static double kickerP  = 0.01;
-    public static double kickerI = 0;
-    public static double kickerD = 0;
-    public static double kickerSpeed = 500;
+     // ====== Trapazoidal Profile =======
+    public static final AngularVelocity shooterMaxVelocity = RotationsPerSecond.of(3550);
+    public static final AngularAcceleration shooterMaxAcceleration = RotationsPerSecondPerSecond.of(20000);
 
-    public static double shooterS = 0.16811;
-    public static double shooterV = 0.12113;
-    public static double shooterA = 0.041532;
+    public static final AngularVelocity kickerMaxVelocity = RotationsPerSecond.of(2000);
+    public static final AngularAcceleration kickerMaxAcceleration = RotationsPerSecondPerSecond.of(1250);
 
-    public static double kickerS = 0.16811;
-    public static double kickerV = 0.12113;
-    public static double kickerA = 0.041532;
+
+      // =========  PID & FF values for ShooterWheel ==============
+    public static final double shooterP = 0.025;
+    public static final double shooterI = 0;
+    public static final double shooterD = 0.001;
+    public static final double shooterSpeed = 2500;
+
+    public static final double shooterS = 0.16811;
+    public static final double shooterV = 0.12113;
+    public static final double shooterA = 0.041532;
+
+
+          // =========  PID & FF values for KickerWheel ==============
+      //TODO This mechanisim needs to be coupled tighter, too much backlash in system to get a good tuning,
+          //needs to be retuneed once mechanism is fixed and functioning properly
+    public static final double kickerP  = 0.03;
+    public static final double kickerI = 0.000035;
+    public static final double kickerD = 0.5;
+
+    public static final double kickerS = 0.5;
+    public static final double kickerV = 0.12113;
+    public static final double kickerA = 0.041532;
   }
 
   public static class Climber {
@@ -126,41 +137,46 @@ public final class Constants {
   }
 
   public static class Intake {
+
     // ========== CONFIGURATION ==========
-    // CAN IDs for the motor controllers
+      // CAN IDs for the motor controllers
     public static final int sushiMotorID = 10;
     public static final int starMotorID = 9;
 
-    //TODO: set these numbers correctly
 
-    public static double sushiP = 0.045874; //0.029668
-    public static double sushiI = 0;
-    public static double sushiD = 0;
-    public static double sushiIntakeSpeed = 500; //RPM
+      // ======= Intake Speeds ======
+    public static AngularVelocity sushiVelocity = RotationsPerSecond.of(1500);
+    public static AngularVelocity starVelocity = RotationsPerSecond.of(3000);
 
-    public static double starP = 0.015; //From sysID - 0.055968, 0.029853
-    public static double starI = 0.00000001;
-    public static double starD = 0.15;
-    public static double starIntakeSpeed = 1500; //RPM
-    public static double starMaxAcceleration = 3000;
-    public static double starMaxVelocity = 3500;
+      // ====== Trapazoidal Profile =======
+    public static final AngularVelocity starMaxVelocity = RotationsPerSecond.of(2500);
+    public static final AngularAcceleration starMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
+
+    public static final AngularVelocity sushiMaxVelocity = RotationsPerSecond.of(2000);
+    public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(1000);
 
 
-    //========= FF valvues for SMC config =========
-    public static double sushiS = 0.41655;
-    public static double sushiV = 0.12963;
-    public static double sushiA = 0.038507;
+      // =========  PID & FF values for SushiWheel ==============
+    public static final double sushiP = 0.045874; //0.029668
+    public static final double sushiI = 0;
+    public static final double sushiD = 0.001;
 
-    public static double starS = 0.66508;
-    public static double starV = 0.10476;
-    public static double starA = 0.03396;
-
-    public static double sushiMaxSpeed = 2500;
-    public static double starMaxSpeed = 2500;
+    public static final double sushiS = 0.41655;
+    public static final double sushiV = 0.12963;
+    public static final double sushiA = 0.038507;
 
 
+      // =========  PID & FF values for StarWheel ==============
+          //Star motor is agrresivly tunned to help stop fuel getting stuck
+    public static final double starP = 0.035; //From sysID - 0.055968, 0.029853
+    public static final double starI = 0.000001;
+    public static final double starD = 1.3;
 
+    public static final double starS = 0.66508;
+    public static final double starV = 0.10476;
+    public static final double starA = 0.03396;
   }
+
 
   public static class Hopper {
     // ========== CONFIGURATION ==========
@@ -170,6 +186,11 @@ public final class Constants {
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
 
+    // Trap profile
+    public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
+    public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
+
+
     // PID Constants (tune these based on your robot's performance)
     public static final double kP = 0.0001;
     public static final double kI = 0.0;
@@ -177,22 +198,14 @@ public final class Constants {
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
     //hopper motorFF
-    public static double kS = 0;
-    public static double kV = 0;
-    public static double kA = 0;
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
 
     // Current and speed thresholds
     public static final int CURRENT_LIMIT = 40; // Amps
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
-
-
-    public static double sushiIntakeSpeed = 0;
-    public static double starIntakeSpeed = 0;
-
-
-
-
   }
 }

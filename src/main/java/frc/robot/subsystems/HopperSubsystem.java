@@ -71,7 +71,8 @@ public class HopperSubsystem extends SubsystemBase {
   // Motor properties to prevent over currenting.
   .withMotorInverted(false)
   .withIdleMode(MotorMode.COAST)
-  .withStatorCurrentLimit(Amps.of(20));
+  .withStatorCurrentLimit(Amps.of(20))
+  .withTrapezoidalProfile(Constants.Hopper.hopperMaxVelocity, Constants.Hopper.hopperMaxAcceleration );
 
   sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 

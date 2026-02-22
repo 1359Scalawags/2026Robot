@@ -9,11 +9,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
-
-import java.util.Set;
 
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
@@ -74,8 +70,8 @@ public class Kicker extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromStages("4:1")))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(25));
-        // .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(1000));
+        .withStatorCurrentLimit(Amps.of(25))
+        .withTrapezoidalProfile(Constants.Shooter.kickerMaxVelocity, Constants.Shooter.kickerMaxAcceleration);
 
 
     kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
@@ -89,10 +85,6 @@ public class Kicker extends SubsystemBase {
     .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
 
     kickerWheel = new FlyWheel(kickerConfig);
-  }
-
-  public Command setKickerVelocity() {
-    return kickerWheel.setSpeed(RPM.of(Constants.Shooter.kickerSpeed));
   }
 
     public Command setKickerVelocity(AngularVelocity speed) {

@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Second;
@@ -65,8 +64,10 @@ public class Sushi extends SubsystemBase {
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
-        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+           RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
+        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+            DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
@@ -74,7 +75,7 @@ public class Sushi extends SubsystemBase {
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
-        .withTrapezoidalProfile(RotationsPerSecond.of(100), RotationsPerSecondPerSecond.of(1000));
+        .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
 
@@ -91,11 +92,6 @@ public class Sushi extends SubsystemBase {
    */
   public AngularVelocity getSushiVelocity() {
     return sushiWheel.getSpeed();
-  }
-
-  // Set the kicker velocity to feed fuel into the shooter.
-  public Command setSushiVelocity() {
-    return sushiWheel.setSpeed(RPM.of(Constants.Intake.sushiIntakeSpeed));
   }
 
     public Command setSushiVelocity(AngularVelocity speed) {
