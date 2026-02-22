@@ -19,12 +19,10 @@ import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
-import java.lang.annotation.Target;
-
-import javax.print.attribute.standard.Finishings;
-
+import java.util.function.DoubleSupplier;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -81,6 +79,12 @@ public class RobotContainer {
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
                         Constants.OperatorConstants.AssistJoystick);
 
+        private final DoubleSupplier throttleSupplier = () -> {
+                double raw = m_DriverJoystick.getRawAxis(3);
+                double scaled = (raw + 1) / 2.0;
+                return MathUtil.clamp(scaled, 0.1, 1.0);
+        };
+        
         private final SendableChooser<Command> autoChooser;
 
         /**
@@ -106,9 +110,9 @@ public class RobotContainer {
          * controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> m_DriverJoystick.getY() * -1 * driverGetThrottle(),
-                        () -> m_DriverJoystick.getX() * -1 * driverGetThrottle())
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * driverGetThrottle())
+                        () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
+                        () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble())
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * throttleSupplier.getAsDouble())
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -128,10 +132,10 @@ public class RobotContainer {
                         .allianceRelativeControl(false);
 
         SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> -m_DriverJoystick.getY() * driverGetThrottle(),
-                        () -> -m_DriverJoystick.getX() * driverGetThrottle())
+                        () -> -m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
+                        () -> -m_DriverJoystick.getX() * throttleSupplier.getAsDouble())
                         .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
-                                        2))
+                                        2) * throttleSupplier.getAsDouble())
                         .deadband(OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
