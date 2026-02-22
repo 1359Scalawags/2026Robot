@@ -137,6 +137,15 @@ public ClimberSubsystem() {
       // Publish limit switch state to SmartDashboard for debugging
       SmartDashboard.putBoolean("Climber/LimitSwitch", lstate);
 
+        // Publish current climber height (meters and inches)
+        try {
+          SmartDashboard.putNumber("Climber/HeightMeters", climber.getHeight().in(Meters));
+          SmartDashboard.putNumber("Climber/HeightInches", climber.getHeight().in(Inches));
+        } catch (Exception e) {
+          // If the mechanism isn't initialized yet or getHeight() isn't available,
+          // don't crash — just skip publishing.
+        }
+
       if (lstate == true) {
         spark.getEncoder().setPosition(0);
       }
