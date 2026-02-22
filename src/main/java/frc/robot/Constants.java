@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -209,7 +208,10 @@ public final class Constants {
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
   }
 
-  public static class Commands {
+  public static class Limelight {
+    public static final double TARGET_HEIGHT_METERS = 1.124;
+    public static final double CAMERA_HEIGHT_METERS = 0.3048;
+    public static final double CAMERA_PITCH_DEGREES = 0.0;
 
   }
 }
