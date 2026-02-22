@@ -219,15 +219,17 @@ public class RobotContainer {
                 m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.3));
                 m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.3));
 
+                m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
+
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
 
                 // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
 
-                m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
-                m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
+                // m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
+                // m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
 
-                m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
-                m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
+                // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
+                // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
 
                
                 // ----------------------
