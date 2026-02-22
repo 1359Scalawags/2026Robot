@@ -199,7 +199,7 @@ public class RobotContainer {
                 Command shootFuel = Commands.parallel(
                         (m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity)),
                                 Commands.sequence(
-                                        new WaitCommand(Seconds.of(1.5)),
+                                        new WaitCommand(Seconds.of(0.75)),
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
 
                 Command intakeFuel = Commands.parallel(
@@ -246,8 +246,8 @@ public class RobotContainer {
                 // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
 
 
-                m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.5));
-                m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.5));
+                m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.7));
+                m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.7));
                 m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
 
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
