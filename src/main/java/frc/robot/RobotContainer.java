@@ -79,26 +79,15 @@ public class RobotContainer {
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and
          * commands.
          */
         public RobotContainer() {
                 configureBindings();
 
-                // NamedCommands.registerCommand("ShootFuel", Commands.race(
-                //         new WaitCommand(Seconds.of(10)).andThen(Commands.sequence(m_Shooter.setShooterVelocity, m_Shooter.setShooterVelocity)),
-                //         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
-                //         Commands.sequence(
-                //                 new WaitCommand(Seconds.of(1.5)),
-                //                 m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)
-                //         )
-                // ));
-                
-                // Commands.ParallelRaceGroup.addCommands(new WaitCommand(Seconds.of(7)));
-                // Commands.ParallelRaceGroup (
-                //         (m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity)),
-                //                 Commands.sequence(
-                //                         new WaitCommand(Seconds.of(1.5)),
-                //                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity))));
+                // set limelight pipeline (use double-quoted string for Java)
+                m_limelight.setPipeline(1);
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -108,16 +97,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
-
-                
-
-                
-                // SmartDashboard.putBoolean("limitSwitch state", m_ClimberSubsystem.getlimitSwitchState());
-                // SmartDashboard.putData("LimSwitch", m_ClimberSubsystem.lim);
-        }
-        /**
-         * Converts driver input into a field-relative ChassisSpeeds that is
-         * controlled by angular velocity.
+                }
+         /* controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
