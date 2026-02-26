@@ -83,10 +83,15 @@ public class RobotContainer {
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and
          * commands.
          */
         public RobotContainer() {
                 configureBindings();
+
+                // set limelight pipeline (use double-quoted string for Java)
+                m_limelight.setPipeline(1);
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -96,10 +101,8 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
-        }
-        /**
-         * Converts driver input into a field-relative ChassisSpeeds that is
-         * controlled by angular velocity.
+                }
+         /* controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
