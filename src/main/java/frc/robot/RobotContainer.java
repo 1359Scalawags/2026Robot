@@ -40,6 +40,8 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.math.util.Units;
+
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -215,20 +217,12 @@ public class RobotContainer {
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
 
-                // m_AssistantJoystick.button(3). whileTrue();
-                        
-                // Commands.sequence(new WaitCommand(Seconds.of(10.0))), m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
-
-
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
-
 
                 m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.7));
                 m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.7));
                 m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
 
-                // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
-
+                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
 
                 // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
 
@@ -238,17 +232,11 @@ public class RobotContainer {
                 // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
                 // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
 
-                m_AssistantJoystick.button(12).onTrue(m_HopperSubsystem.sysId());
-                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
+                // m_AssistantJoystick.button(12).onTrue(m_HopperSubsystem.sysId());
                 
                 // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
-               
-                // ----------------------
-
-                // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
-                // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
 
                 if (RobotBase.isReal()) {
                         m_DriverJoystick.button(1).onTrue(Commands.runOnce(
@@ -286,36 +274,30 @@ public class RobotContainer {
 
                 }
 
-                if (Robot.isSimulation()) {
-                        Pose2d target = new Pose2d(new Translation2d(1, 4),
-                                        Rotation2d.fromDegrees(90));
-                        m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+if (Robot.isSimulation())
+    {
+      Pose2d target = new Pose2d(new Translation2d(1, 4),
+                                 Rotation2d.fromDegrees(90));
+      m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
-                        driveDirectAngleKeyboard.driveToPose(() -> target,
-                                        new ProfiledPIDController(5,
-                                                        0,
-                                                        0,
-                                                        new Constraints(5, 2)),
-                                        new ProfiledPIDController(5,
-                                                        0,
-                                                        0,
-                                                        new Constraints(Units.degreesToRadians(360),
-                                                                        Units.degreesToRadians(180))));
-
-                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-
-                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
-
-                        m_DriverJoystick.button(1).whileTrue(m_HopperSubsystem.runHopper(RPM.of(Constants.Hopper.HOPPER_SPEED_RPM)));
-
-                        m_DriverJoystick.button(2)
-                                        .whileTrue(Commands.runEnd(
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-                        // m_DriverJoystick.button(3).whileTrue(AimAtObject);
-                }
+      driveDirectAngleKeyboard.driveToPose(() -> target,
+                                           new ProfiledPIDController(5,
+                                                                     0,
+                                                                     0,
+                                                                     new Constraints(5, 2)),
+                                           new ProfiledPIDController(5,
+                                                                     0,
+                                                                     0,
+                                                                     new Constraints(Units.degreesToRadians(360),
+                                                                                     Units.degreesToRadians(180)) 
+                                           ));
+      m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+//       m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+      m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                                                () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                                                () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+    }
 
                 if (DriverStation.isTest()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive
