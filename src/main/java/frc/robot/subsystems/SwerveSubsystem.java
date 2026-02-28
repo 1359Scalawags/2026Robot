@@ -141,8 +141,8 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 
-    StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
-    StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
+    // StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
+    // StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
     }
 
     public void setupLimelight(){
@@ -184,40 +184,67 @@ public class SwerveSubsystem extends SubsystemBase
             .save();
 
 
-    // Get MegaTag2 pose
-    Optional<PoseEstimate> visionEstimate = limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
-    // If the pose is present
-    visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-        // Add it to the pose estimator.
-        if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3) {
-           swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), 
-           poseEstimate.timestampSeconds);
-      } 
-    });
+ // limelight.getLatestResults().ifPresent((LimelightResults result) -> {  //limelight stuff
+    //   for (NeuralClassifier object : result.targets_Classifier)
+    //   {
+    //     // Classifier says its a note.
+    //     if (object.className.equals("algae"))
+    //     {
+    //       if (object.ty > 2 && object.ty < 1)
+    //       {
+    //         // do stuff
+    //       }
+    //     }
+    //   }
+    // });
+//   }
 
 
-    limelight.getLatestResults().ifPresent((LimelightResults result) -> {  //limelight stuff
-      for (NeuralClassifier object : result.targets_Classifier)
+      Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
+      Optional<LimelightResults> results       = limelight.getLatestResults();
+      if (results.isPresent()/* && poseEstimates.isPresent()*/)
       {
-        // Classifier says its a note.
-        if (object.className.equals("algae"))
+        LimelightResults result       = results.get();
+        PoseEstimate     poseEstimate = poseEstimates.get();
+        SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
+        SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
+        SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
+        SmartDashboard.putNumber("Avg Distance", poseEstimate.avgTagDist);
+        SmartDashboard.putNumber("Avg Tag Area", poseEstimate.avgTagArea);
+        SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
+        SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
+        SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
+        SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
+        SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
+        if (result.valid)
         {
-          if (object.ty > 2 && object.ty < 1)
+          // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
+          Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
+          double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
+          if (distanceToPose < 0.5 || (outofAreaReading > 10) || (outofAreaReading > 10 && !initialReading))
           {
-            // do stuff
+            if (!initialReading)
+            {
+              initialReading = true;
+            }
+            outofAreaReading = 0;
+            // System.out.println(usefulPose.toString());
+            swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
+            // System.out.println(result.timestamp_LIMELIGHT_publish);
+            // System.out.println(result.timestamp_RIOFPGA_capture);
+            swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
+          } else
+          {
+            outofAreaReading += 1;
           }
+  //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
       }
-    });
+    }
 
-    SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-    SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-    SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
 
-// publisher.set(poseA);
-// arrayPublisher.set(new Pose3d[] { poseA, poseB};
-  }
-
+   
     @Override
     public void simulationPeriodic() {
     }
