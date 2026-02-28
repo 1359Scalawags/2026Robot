@@ -181,13 +181,13 @@ public class RobotContainer {
                 //                 driveDirectAngleKeyboard);
                 Command shootFuel = Commands.parallel(
                         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
-                        m_HopperSubsystem.set(0.5),
+                        m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
                                         new WaitCommand(Seconds.of(0.75)),
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
 
                 Command intakeFuel = Commands.parallel(
-                                m_HopperSubsystem.set(0.5),
+                                m_HopperSubsystem.set(0.75),
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
@@ -201,13 +201,18 @@ public class RobotContainer {
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0.15));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
-                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(m_HopperSubsystem.set(0.5), new WaitCommand(Seconds.of(1.5))));
+                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(
+                        Commands.race(m_HopperSubsystem.set(0.65), new WaitCommand(1)), 
+                        Commands.race(m_HopperSubsystem.set(0), new WaitCommand(1))));
 
+                        // m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(m_HopperSubsystem.set(0.1), 
+                        // m_HopperSubsystem.set(0), 
+                        // new WaitCommand(Seconds.of(2.5))));
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
@@ -220,6 +225,10 @@ public class RobotContainer {
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+
+                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(
+                        Commands.race(m_HopperSubsystem.set(0.75), new WaitCommand(1)), 
+                        Commands.race(m_HopperSubsystem.set(0), new WaitCommand(1))));
 
                 } else if (DriverStation.isTest()) {
         }
