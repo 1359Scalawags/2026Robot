@@ -17,6 +17,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,7 +33,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,6 +45,7 @@ import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
@@ -74,34 +78,27 @@ import limelight.networktables.target.pipeline.NeuralClassifier;
 
 public class SwerveSubsystem extends SubsystemBase
 {
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
 
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
+  SwerveDrivePoseEstimator swerveDrivePoseEstimator; 
 
-  // SparkMax left, right;
-  // RelativeEncoder leftEncoder, rightEncoder;
-  // AHRS navx;
-
-  // double                         driveGearRatio      = 1.0;
-  // double                         wheelDiameterMeters = 4.0;
-  // double                         trackWidth          = Units.inchesToMeters(20);
-  SwerveDrivePoseEstimator swerveDrivePoseEstimator; //limelight stuff
   LimelightPoseEstimator poseEstimator;
-  Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
-                                                                  Inches.of(-13).in(Meters),
-                                                                  Inches.of(9).in(Meters),
-                                                                  Rotation3d.kZero);
   Limelight limelight = new Limelight("limelight-top");
+  LimelightPoseEstimator limelightPoseEstimator;
+  Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
+                                   Units.inchesToMeters(12),
+                                   Units.inchesToMeters(10.5),
+                                   new Rotation3d(0, 0, Units.degreesToRadians(45)));
 
-  Pose3d poseA = new Pose3d();
-  Pose3d poseB = new Pose3d();
+
+  Pose2d estimatedPose;
+
+    private int     outofAreaReading = 0;
+    private boolean initialReading = false;
+
+  private final Field2d m_field = new Field2d();
+
+
 
    public SwerveSubsystem(File directory) {
     limelight.getSettings()  //Limelight stuff
@@ -128,6 +125,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
+
+    setupLimelight();
+
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,
@@ -143,9 +143,18 @@ public class SwerveSubsystem extends SubsystemBase
 
     StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
     StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
-
-
     }
+
+    public void setupLimelight(){
+      swerveDrive.stopOdometryThread();
+      limelight.getSettings()
+               .withPipelineIndex(0)
+               .withCameraOffset(cameraOffset)
+               .withAprilTagIdFilter(List.of())
+               .save();
+      limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+    }
+
 
     /**
      * Construct the swerve drive.
