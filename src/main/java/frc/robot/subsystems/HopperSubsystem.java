@@ -63,7 +63,7 @@ public class HopperSubsystem extends SubsystemBase {
   .withSimFeedforward(new SimpleMotorFeedforward(Constants.Hopper.kS, Constants.Hopper.kV, Constants.Hopper.kA))
   .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
   .withGearing(new MechanismGearing(GearBox.fromStages("20:1")))
-  .withMotorInverted(true)
+  .withMotorInverted(false)
   .withIdleMode(MotorMode.COAST)
   .withStatorCurrentLimit(Amps.of(20))
   .withTrapezoidalProfile(Constants.Hopper.hopperMaxVelocity, Constants.Hopper.hopperMaxAcceleration );
