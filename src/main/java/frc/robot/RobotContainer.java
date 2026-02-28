@@ -185,14 +185,12 @@ public class RobotContainer {
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0.15));
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
-                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(
-                        Commands.race(m_HopperSubsystem.set(0.65), new WaitCommand(1)), 
-                        Commands.race(m_HopperSubsystem.set(0), new WaitCommand(1))));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -200,16 +198,14 @@ public class RobotContainer {
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0.15));
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
-                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(
-                        Commands.race(m_HopperSubsystem.set(0.75), new WaitCommand(1)), 
-                        Commands.race(m_HopperSubsystem.set(0), new WaitCommand(1))));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                 } else if (DriverStation.isTest()) {
         }
