@@ -5,6 +5,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -26,6 +27,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -62,7 +64,7 @@ public class RobotContainer {
         private final Kicker m_Kicker = new Kicker();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
         private final LimelightSubsystem m_limelight = new LimelightSubsystem();
-
+        private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
 
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
@@ -213,8 +215,6 @@ public class RobotContainer {
 
                 } else if (DriverStation.isTest()) {
         }
-
-
                 m_AssistantJoystick.button(2).whileTrue(intakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
@@ -309,7 +309,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+                        m_DriverJoystick.button(1).whileTrue(m_HopperSubsystem.runHopper(RPM.of(Constants.Hopper.HOPPER_SPEED_RPM)));
 
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(

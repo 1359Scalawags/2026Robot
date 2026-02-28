@@ -16,8 +16,6 @@ import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Inches;
 
-
-
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
@@ -28,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 
 import yams.mechanisms.SmartMechanism;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -46,8 +45,8 @@ public class HopperSubsystem extends SubsystemBase {
 
   private SmartMotorControllerConfig smcConfig;
 
-  // Vendor motor controller object
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  // Vendor motor controller object (use constant CAN ID to avoid duplicates)
+  private SparkMax spark = new SparkMax(Constants.Hopper.hopperMotorID, MotorType.kBrushless);
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController;
@@ -63,7 +62,7 @@ public class HopperSubsystem extends SubsystemBase {
   .withSimClosedLoopController(Constants.Hopper.kP, Constants.Hopper.kI, Constants.Hopper.kD)
   .withSimFeedforward(new SimpleMotorFeedforward(Constants.Hopper.kS, Constants.Hopper.kV, Constants.Hopper.kA))
   // Telemetry name and verbosity level
-  .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
+  .withTelemetry("HopperMotor", TelemetryVerbosity.HIGH)
   // Gearing from the motor rotor to final shaft.
   // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
   // You could also use .withGearing(12) which does the same thing.
@@ -154,6 +153,7 @@ public class HopperSubsystem extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+    
     hopper.simIterate();
   }
 }

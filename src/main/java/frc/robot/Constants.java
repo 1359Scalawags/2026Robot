@@ -180,10 +180,10 @@ public final class Constants {
   public static class Hopper {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int sushiMotorID = 11;
+    public static final int hopperMotorID = 11;
 
     // Motor speed in RPM
-    public static final double INTAKE_SPEED_RPM = 1600;
+    public static final double HOPPER_SPEED_RPM = 1600;
 
     // Trap profile
     public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
