@@ -98,7 +98,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                                   Inches.of(-13).in(Meters),
                                                                   Inches.of(9).in(Meters),
                                                                   Rotation3d.kZero);
-  Limelight limelight = new Limelight("limelight"); //limelight stuff
+  Limelight limelight = new Limelight("limelight-top");
 
   Pose3d poseA = new Pose3d();
   Pose3d poseB = new Pose3d();
@@ -137,7 +137,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
-        setupPathPlanner();
+    setupPathPlanner();
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 
@@ -174,25 +174,16 @@ public class SwerveSubsystem extends SubsystemBase
                             DegreesPerSecond.of(0))))
             .save();
 
-    // Get the vision estimate.
-    // Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
-    // visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-    //   // If the average tag distance is less than 4 meters,
-    //   // there are more than 0 tags in view,
-    //   // and the average ambiguity between tags is less than 30% then we update the pose estimation.
-    //   if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3)
-    //   {
-    //     swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(),
-    //                                                         poseEstimate.timestampSeconds);
-    //   }
-    // });
 
     // Get MegaTag2 pose
-    Optional<PoseEstimate> visionEstimate = poseEstimator.getPoseEstimate();
+    Optional<PoseEstimate> visionEstimate = limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
     // If the pose is present
     visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
         // Add it to the pose estimator.
-        swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), poseEstimate.timestampSeconds);
+        if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3) {
+           swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), 
+           poseEstimate.timestampSeconds);
+      } 
     });
 
 

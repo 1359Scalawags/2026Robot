@@ -1,6 +1,10 @@
 package frc.robot.subsystems.LimelightSubsystem;
 
+import java.util.OptionalDouble;
+import frc.robot.Constants;
+import frc.robot.subsystems.LimelightSubsystem.LimelightHelpers;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import limelight.networktables.LimelightPoseEstimator;
@@ -39,6 +43,15 @@ public class LimelightSubsystem extends SubsystemBase {
     public double getYawToTag() {
         Pose3d botPose = LimelightHelpers.getBotPose3d_TargetSpace(limelightName);
         return Math.toDegrees(botPose.getRotation().getZ());
+    }
+    public void setPipeline(int pipeline) {
+            // Clamp to a safe range (Limelight supports pipelines 0..9 typically)
+            int p = Math.max(0, Math.min(9, pipeline));
+            NetworkTableInstance.getDefault()
+                            .getTable(limelightName)
+                            .getEntry("pipeline")
+                            .setNumber(p);
+            SmartDashboard.putNumber("Limelight/Pipeline", p);
     }
 
     @Override

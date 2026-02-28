@@ -36,7 +36,7 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
     public static final int DriverJoystick = 0;
     public static final int AssistJoystick = 1;
-    public static final double DEADBAND = 0.20;
+    public static final double DEADBAND = 0.10;
   }
 
   public static class swerveDrive {
@@ -71,12 +71,12 @@ public final class Constants {
 
 
       // ======== Shooter Speed =======
-    public static final AngularVelocity shooterVelocity = RPM.of(3550);
+    public static final AngularVelocity shooterVelocity = RPM.of(3000);
     public static final AngularVelocity kickerVelocity = RPM.of(1000);
 
 
      // ====== Trapazoidal Profile =======
-    public static final AngularVelocity shooterMaxVelocity = RotationsPerSecond.of(3550);
+    public static final AngularVelocity shooterMaxVelocity = RotationsPerSecond.of(3000);
     public static final AngularAcceleration shooterMaxAcceleration = RotationsPerSecondPerSecond.of(20000);
 
     public static final AngularVelocity kickerMaxVelocity = RotationsPerSecond.of(2000);
@@ -183,7 +183,7 @@ public final class Constants {
     public static final int jigglerMotorID = 11;
 
     // Motor speed in RPM
-    public static final double INTAKE_SPEED_RPM = 1600;
+    public static final double HOPPER_SPEED_RPM = 1600;
 
     // Trap profile
     public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
