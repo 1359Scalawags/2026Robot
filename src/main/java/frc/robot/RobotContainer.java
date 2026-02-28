@@ -59,7 +59,7 @@ public class RobotContainer {
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
-        private final LimelightSubsystem m_limelight = new LimelightSubsystem();
+        private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
 
         // private final IntakeCommandFactory m_IntakeCommandFactory = new
         // IntakeCommandFactory(m_IntakeSubsystem);

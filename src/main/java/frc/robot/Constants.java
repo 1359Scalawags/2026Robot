@@ -180,7 +180,7 @@ public final class Constants {
   public static class Hopper {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int sushiMotorID = 11;
+    public static final int jigglerMotorID = 11;
 
     // Motor speed in RPM
     public static final double INTAKE_SPEED_RPM = 1600;
@@ -212,6 +212,6 @@ public final class Constants {
     public static final double TARGET_HEIGHT_METERS = 1.124;
     public static final double CAMERA_HEIGHT_METERS = 0.3048;
     public static final double CAMERA_PITCH_DEGREES = 0.0;
-
+    public static final String limelight_Name = "limelight-top";
   }
 }
