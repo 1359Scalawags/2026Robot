@@ -60,6 +60,8 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+//limelight stuff
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
@@ -90,19 +92,19 @@ public class SwerveSubsystem extends SubsystemBase
   // double                         driveGearRatio      = 1.0;
   // double                         wheelDiameterMeters = 4.0;
   // double                         trackWidth          = Units.inchesToMeters(20);
-  SwerveDrivePoseEstimator swerveDrivePoseEstimator;
+  SwerveDrivePoseEstimator swerveDrivePoseEstimator; //limelight stuff
   LimelightPoseEstimator poseEstimator;
   Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
                                                                   Inches.of(-13).in(Meters),
                                                                   Inches.of(9).in(Meters),
                                                                   Rotation3d.kZero);
-  Limelight limelight = new Limelight("limelight");
+  Limelight limelight = new Limelight("limelight"); //limelight stuff
 
   Pose3d poseA = new Pose3d();
   Pose3d poseB = new Pose3d();
 
    public SwerveSubsystem(File directory) {
-    limelight.getSettings()
+    limelight.getSettings()  //Limelight stuff
              .withLimelightLEDMode(LEDMode.PipelineControl)
              .withCameraOffset(cameraOffset)
              .save();
@@ -167,7 +169,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
-    limelight.getSettings()
+    limelight.getSettings()  //limelight stuff
             .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
                     new AngularVelocity3d(DegreesPerSecond.of(0),
                             DegreesPerSecond.of(0),
@@ -196,7 +198,7 @@ public class SwerveSubsystem extends SubsystemBase
     });
 
 
-    limelight.getLatestResults().ifPresent((LimelightResults result) -> {
+    limelight.getLatestResults().ifPresent((LimelightResults result) -> {  //limelight stuff
       for (NeuralClassifier object : result.targets_Classifier)
       {
         // Classifier says its a note.
@@ -789,7 +791,7 @@ public class SwerveSubsystem extends SubsystemBase
   // "proportional control" is a control algorithm in which the output is proportional to the error.
   // in this case, we are going to return an angular velocity that is proportional to the 
   // "tx" value from the Limelight.
-  double limelight_aim_proportional()
+  double limelight_aim_proportional()  //limelight stuff
   {    
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
@@ -814,7 +816,7 @@ public class SwerveSubsystem extends SubsystemBase
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()
+  double limelight_range_proportional()  //limelight stuff
   {    
     double kP = .1;
     double targetingForwardSpeed = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0) * kP;
