@@ -180,12 +180,14 @@ public class RobotContainer {
                 // Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                 //                 driveDirectAngleKeyboard);
                 Command shootFuel = Commands.parallel(
-                        (m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity)),
+                        m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
+                        m_HopperSubsystem.set(0.5),
                                 Commands.sequence(
                                         new WaitCommand(Seconds.of(0.75)),
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
 
                 Command intakeFuel = Commands.parallel(
+                                m_HopperSubsystem.set(0.5),
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
@@ -202,6 +204,10 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
+                        m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
@@ -210,6 +216,8 @@ public class RobotContainer {
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
@@ -241,6 +249,9 @@ public class RobotContainer {
 
                 // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
                 // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
+
+                m_AssistantJoystick.button(12).onTrue(m_HopperSubsystem.sysId());
+                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
                 
                 // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
