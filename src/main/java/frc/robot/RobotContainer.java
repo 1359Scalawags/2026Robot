@@ -206,7 +206,7 @@ public class RobotContainer {
 
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
-                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+                        m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(m_HopperSubsystem.set(0.5), new WaitCommand(Seconds.of(1.5))));
 
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -214,7 +214,7 @@ public class RobotContainer {
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0.15));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
