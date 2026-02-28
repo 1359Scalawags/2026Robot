@@ -47,7 +47,7 @@ public class HopperSubsystem extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig;
 
   // Vendor motor controller object
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  private SparkMax spark = new SparkMax(Constants.Hopper.jigglerMotorID, MotorType.kBrushless);
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController;

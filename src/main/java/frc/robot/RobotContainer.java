@@ -7,6 +7,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Star;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
@@ -58,7 +59,8 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
-        private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        // private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
         private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
 
         // private final IntakeCommandFactory m_IntakeCommandFactory = new
@@ -185,7 +187,7 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
-                        m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+                        // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
                 } else if (DriverStation.isTest()) {
         }
@@ -209,9 +211,11 @@ public class RobotContainer {
                 // m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity());
 
 
-                m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.3));
-                m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.3));
-                m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
+                // m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.3));
+                // m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.3));
+                // m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
+
+                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.runHopper(RPM.of(1000)));
 
                 // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
 
@@ -232,6 +236,8 @@ public class RobotContainer {
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
+
+               
 
                 if (RobotBase.isReal()) {
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
