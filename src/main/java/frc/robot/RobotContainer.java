@@ -183,11 +183,11 @@ public class RobotContainer {
                         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
                         m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
-                                        new WaitCommand(Seconds.of(0.9)),
+                                        new WaitCommand(Seconds.of(0.5)),
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
 
                 Command intakeFuel = Commands.parallel(
-                                m_HopperSubsystem.set(0.9),
+                                m_HopperSubsystem.set(0.5),
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
@@ -227,7 +227,7 @@ public class RobotContainer {
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
                         m_HopperSubsystem.setDefaultCommand(Commands.repeatingSequence(
-                        Commands.race(m_HopperSubsystem.set(0.75), new WaitCommand(1)), 
+                        Commands.race(m_HopperSubsystem.set(0.5), new WaitCommand(1)), 
                         Commands.race(m_HopperSubsystem.set(0), new WaitCommand(1))));
 
                 } else if (DriverStation.isTest()) {

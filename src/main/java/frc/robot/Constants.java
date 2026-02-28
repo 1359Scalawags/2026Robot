@@ -191,9 +191,9 @@ public final class Constants {
 
 
     // PID Constants (tune these based on your robot's performance)
-    public static final double kP = 0.0001;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kP = 0.03;
+    public static final double kI = 0.0000001;
+    public static final double kD = 0.1;
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
     //hopper motorFF
