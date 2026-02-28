@@ -12,6 +12,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Star;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
+import frc.robot.commands.SwerveCommands.AlignToTag;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
@@ -232,6 +233,17 @@ public class RobotContainer {
                 
                 // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
+
+                // Hold driver button 3 to lock rotation on an AprilTag
+                // Driver retains full translation control via joystick
+                m_DriverJoystick.button(3).whileTrue(
+                        new AlignToTag(
+                                m_SwerveSubsystem,
+                                m_limelight,
+                                () -> m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
+                                () -> m_DriverJoystick.getX() * throttleSupplier.getAsDouble()
+                        )
+                );
 
                
                 // ----------------------

@@ -110,8 +110,6 @@ public class SwerveSubsystem extends SubsystemBase
              .save();
     poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
 
-
-
     boolean blueAlliance = true;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
                                                                       Meter.of(4)),
