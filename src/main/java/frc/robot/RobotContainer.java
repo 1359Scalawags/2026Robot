@@ -177,6 +177,7 @@ public class RobotContainer {
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -186,6 +187,7 @@ public class RobotContainer {
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
@@ -199,11 +201,11 @@ public class RobotContainer {
                                 .withName("IntakeFuel"));
                 
                 m_AssistantJoystick.trigger().whileTrue(Commands.parallel(
-                        (m_Shooter.setShooterVelocity(Constants.Shooter.shooterMaxVelocity)),
-                                Commands.sequence(
-                                        new WaitCommand(Seconds.of(1.0))), 
-                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity))
-                                        .withName("ShootFuel"));
+                        m_Shooter.setShooterVelocity(Constants.Shooter.shooterMaxVelocity),
+                        Commands.sequence(
+                                new WaitCommand(Seconds.of(1.0)),
+                                m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
+                        .withName("ShootFuel"));
 
                 // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
               
