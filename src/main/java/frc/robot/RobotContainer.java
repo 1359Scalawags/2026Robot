@@ -268,10 +268,9 @@ public class RobotContainer {
 
                         // m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
 
-                        m_DriverJoystick.button(2)
-                                        .whileTrue(Commands.runEnd(
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
                 }
 
@@ -303,7 +302,7 @@ public class RobotContainer {
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-                        // m_DriverJoystick.button(3).whileTrue(AimAtObject);
+                        // m_DriverJoystick.button(3).whileTrue();
                 }
 
                 if (DriverStation.isTest()) {
