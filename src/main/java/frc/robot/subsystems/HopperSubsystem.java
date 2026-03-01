@@ -47,7 +47,7 @@ public class HopperSubsystem extends SubsystemBase {
   private SmartMotorControllerConfig smcConfig;
 
   // Vendor motor controller object
-  private SparkMax spark = new SparkMax(4, MotorType.kBrushless);
+  private SparkMax spark = new SparkMax(Constants.Hopper.jigglerMotorID, MotorType.kBrushless);
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sparkSmartMotorController;
@@ -58,32 +58,23 @@ public class HopperSubsystem extends SubsystemBase {
   public HopperSubsystem() {
     smcConfig = new SmartMotorControllerConfig(this)
   .withControlMode(ControlMode.CLOSED_LOOP)
-  // Feedback Constants (PID Constants)
   .withClosedLoopController(Constants.Hopper.kP, Constants.Hopper.kI, Constants.Hopper.kD)
   .withSimClosedLoopController(Constants.Hopper.kP, Constants.Hopper.kI, Constants.Hopper.kD)
   .withSimFeedforward(new SimpleMotorFeedforward(Constants.Hopper.kS, Constants.Hopper.kV, Constants.Hopper.kA))
-  // Telemetry name and verbosity level
   .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-  // Gearing from the motor rotor to final shaft.
-  // In this example GearBox.fromReductionStages(3,4) is the same as GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to your motor.
-  // You could also use .withGearing(12) which does the same thing.
-  .withGearing(new MechanismGearing(GearBox.fromReductionStages(3, 4)))
-  // Motor properties to prevent over currenting.
+  .withGearing(new MechanismGearing(GearBox.fromStages("20:1")))
   .withMotorInverted(false)
   .withIdleMode(MotorMode.COAST)
-  .withStatorCurrentLimit(Amps.of(20));
+  .withStatorCurrentLimit(Amps.of(20))
+  .withTrapezoidalProfile(Constants.Hopper.hopperMaxVelocity, Constants.Hopper.hopperMaxAcceleration );
 
   sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
   hopperConfig = new FlyWheelConfig(sparkSmartMotorController)
-  // Diameter of the flywheel.
   .withDiameter(Inches.of(4))
-  // Mass of the flywheel.
   .withMass(Pounds.of(1))
-  // Maximum speed of the shooter.
-  .withUpperSoftLimit(RPM.of(1000))
-  // Telemetry name and verbosity for the arm.
-  .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
+  .withSoftLimit(RPM.of(-2500), RPM.of(2500))
+  .withTelemetry("HopperMech", TelemetryVerbosity.HIGH);
 
   hopper = new FlyWheel(hopperConfig);
   }
@@ -134,6 +125,10 @@ public class HopperSubsystem extends SubsystemBase {
         () -> {setVelocity(speed);});
   }
 
+    public Command sysId() {
+      return hopper.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+    }
+
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *
@@ -144,15 +139,15 @@ public class HopperSubsystem extends SubsystemBase {
     return false;
   }
 
+
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
     hopper.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
     hopper.simIterate();
   }
 }

@@ -73,43 +73,35 @@ public class Star extends SubsystemBase {
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(40));
+        .withStatorCurrentLimit(Amps.of(40))
+        .withTrapezoidalProfile(Constants.Intake.starMaxVelocity, Constants.Intake.starMaxAcceleration);
 
     starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
 
     starConfig = new FlyWheelConfig(starSmartMotorController)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
+        .withDiameter(Inches.of(2))
+        .withMass(Pounds.of(0.375))
         .withSoftLimit(RPM.of(-2500), RPM.of(2500))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
     starWheel = new FlyWheel(starConfig);
   }
-   /**
-   * @return Shooter velocity.
-   */
+
   public AngularVelocity getStarVelocity() {
     return starWheel.getSpeed();
   }
 
- /**
-   * Set the kicker velocity to feed fuel into the shooter.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
   public Command setStarVelocity(AngularVelocity speed) {
     return starWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+
   public Command setStarDutyCylce(double dutyCycle) {
     return starWheel.set(dutyCycle);
+  }
+
+  public Command setVolatage(double volts) {
+    return starWheel.setVoltage(Volts.of(volts));
   }
 
    public Command sysId() {

@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
+
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -74,9 +75,11 @@ public class Shooter extends SubsystemBase {
         // You could also use .withGearing(12) which does the same thing.
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         // Motor properties to prevent over currenting.
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(35));
+        .withStatorCurrentLimit(Amps.of(35))
+        .withTrapezoidalProfile(Constants.Shooter.shooterMaxVelocity,Constants.Shooter.shooterMaxAcceleration);
+
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
 
@@ -94,40 +97,20 @@ public class Shooter extends SubsystemBase {
     shooterWheel = new FlyWheel(shooterConfig);
   }
   
-    /**
-   * Gets the current velocity of the shooter.
-   *
-   * @return Shooter velocity.
-   */
   public AngularVelocity getShooterVelocity() {
     return shooterWheel.getSpeed();
   }
 
-  /**
-   * Set the shooter velocity.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setShooterVelocity(AngularVelocity speed) {
+    public Command setShooterVelocity(AngularVelocity speed) {
     return shooterWheel.setSpeed(speed).withName("Shooter Wheel set Vel");
   }
-/**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+
+  // Set the dutycycle of the shooter.
   public Command setShooterDutyCycle(double dutyCycle) {
     return shooterWheel.set(dutyCycle).withName("Shooter Wheel set Duty");
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+  // Set the dutycycle of the shooter.
   public Command setShooterDutyCylce(double dutyCycle) {
     return shooterWheel.set(dutyCycle);
   }

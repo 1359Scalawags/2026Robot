@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Volts;
+
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -66,10 +67,12 @@ public class Kicker extends SubsystemBase {
         .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
         .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(4)))
-        .withMotorInverted(false)
+        .withGearing(new MechanismGearing(GearBox.fromStages("4:1")))
+        .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(25));
+        .withStatorCurrentLimit(Amps.of(25))
+        .withTrapezoidalProfile(Constants.Shooter.kickerMaxVelocity, Constants.Shooter.kickerMaxAcceleration);
+
 
     kickerSmartMotorController = new SparkWrapper(kickerMotor, DCMotor.getNEO(1), kickerSmcConfig);
 
@@ -84,29 +87,17 @@ public class Kicker extends SubsystemBase {
     kickerWheel = new FlyWheel(kickerConfig);
   }
 
-
-    /**
-   * Set the shooter velocity.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setKickerVelocity(AngularVelocity speed) {
+    public Command setKickerVelocity(AngularVelocity speed) {
     return kickerWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+  // Set the dutycycle of the shooter.
   public Command setKickerDutyCylce(double dutyCycle) {
     return kickerWheel.set(dutyCycle);
   }
 
   public Command sysId() {
-    return kickerWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+    return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(20));
   }
 
 

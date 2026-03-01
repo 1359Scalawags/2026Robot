@@ -10,9 +10,11 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
+
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -22,7 +24,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
 import frc.robot.Constants;
 
@@ -63,22 +64,24 @@ public class Sushi extends SubsystemBase {
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
-        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+           RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
+        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+            DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
-        .withStatorCurrentLimit(Amps.of(35));
-
+        .withStatorCurrentLimit(Amps.of(35))
+        .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
 
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
-        .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
+        .withDiameter(Inches.of(2))
+        .withMass(Pounds.of(1.07))
         .withSoftLimit(RPM.of(-2000), RPM.of(2000))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
@@ -91,29 +94,22 @@ public class Sushi extends SubsystemBase {
     return sushiWheel.getSpeed();
   }
 
-   /**
-   * Set the kicker velocity to feed fuel into the shooter.
-   *
-   * @param speed Speed to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
-  public Command setSushiVelocity(AngularVelocity speed) {
+    public Command setSushiVelocity(AngularVelocity speed) {
     return sushiWheel.setSpeed(speed);
   }
 
-  /**
-   * Set the dutycycle of the shooter.
-   *
-   * @param dutyCycle DutyCycle to set.
-   * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
-   */
+  // Set the dutycycle of the shooter.
   public Command setSushiDutyCycle(double dutyCycle) {
     return sushiWheel.set(dutyCycle);
   }
 
-    public Command sysId() {
-      return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-    }
+  public Command setVolatage(double volts) {
+    return sushiWheel.setVoltage(Volts.of(volts));
+  }
+
+  public Command sysId() {
+    return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  }
 
 
   @Override
