@@ -194,7 +194,10 @@ public class RobotContainer {
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
-
+                Command outtakeFuel = Commands.parallel(
+                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.negate()),
+                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.negate()))
+                                .withName("ReverseIntake");
                 Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
 
                 // =========== Set Default Command for swerve ============
@@ -222,7 +225,11 @@ public class RobotContainer {
 
                 } else if (DriverStation.isTest()) {
         }
-                m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+                m_AssistantJoystick.button(4).whileTrue(intakeFuel);
+
+                // Hold button 3 to reverse the intake
+                // m_AssistantJoystick.button(3).whileTrue(
+                //         outtakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
 
