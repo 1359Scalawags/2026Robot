@@ -198,6 +198,7 @@ public class RobotContainer {
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.negate()),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.negate()))
                                 .withName("ReverseIntake");
+                
                 Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
 
                 // =========== Set Default Command for swerve ============
