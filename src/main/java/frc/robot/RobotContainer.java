@@ -3,31 +3,34 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.Autos;
+import frc.robot.commands.SwerveCommands.AimAtObject;
+import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Star;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
-import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
-import java.util.function.DoubleSupplier;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.CancelCommandEvent;
+import java.lang.annotation.Target;
 
-import edu.wpi.first.math.MathUtil;
+import javax.print.attribute.standard.Finishings;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -36,15 +39,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Seconds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -62,34 +62,28 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
-        private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
-        private final LimelightSubsystem m_limelight = new LimelightSubsystem();
-        private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
+
+        // private final IntakeCommandFactory m_IntakeCommandFactory = new
+        // IntakeCommandFactory(m_IntakeSubsystem);
+        // TODO: Gavan or Alec; Add Shooter Subystem
+        // TODO: Gavn or c; Add Climber Subsystem
+
+        // private final Shooter m_Shooter = new Shooter();
+        // private final Kicker m_Kicker = new Kicker();
 
         private final CommandJoystick m_DriverJoystick = new CommandJoystick(
                         Constants.OperatorConstants.DriverJoystick);
         private final CommandJoystick m_AssistantJoystick = new CommandJoystick(
                         Constants.OperatorConstants.AssistJoystick);
 
-        private final DoubleSupplier throttleSupplier = () -> {
-                double raw = m_DriverJoystick.getRawAxis(3) * -1;
-                double scaled = (raw + 1) / 2.0;
-                return MathUtil.clamp(scaled, 0.25, 1.0);
-        };
-        
         private final SendableChooser<Command> autoChooser;
 
-        /**
-         * The container for the robot. Contains subsystems, OI devices, and
         /**
          * The container for the robot. Contains subsystems, OI devices, and
          * commands.
          */
         public RobotContainer() {
                 configureBindings();
-
-                // set limelight pipeline (use double-quoted string for Java)
-                m_limelight.setPipeline(1);
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -99,13 +93,18 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
-                }
-         /* controlled by angular velocity.
+
+                // TODO: Gavan or Alec; You need to set default commands
+        }
+
+        /**
+         * Converts driver input into a field-relative ChassisSpeeds that is
+         * controlled by angular velocity.
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
-                        () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
-                        () -> m_DriverJoystick.getX() * -1 *  throttleSupplier.getAsDouble())
-                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * throttleSupplier.getAsDouble())
+                        () -> m_DriverJoystick.getY() * -1,
+                        () -> m_DriverJoystick.getX() * -1)
+                        .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1)
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
@@ -132,9 +131,6 @@ public class RobotContainer {
                         .deadband(OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
-
-
-                        
         // Derive the heading axis with math!
         SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
                         .withControllerHeadingAxis(() -> Math.sin(
@@ -154,7 +150,6 @@ public class RobotContainer {
                         .translationHeadingOffset(Rotation2d.fromDegrees(
                                         0));
 
-
         /**
          * Use this method to define your trigger->command mappings. Triggers can be
          * created via the
@@ -169,32 +164,21 @@ public class RobotContainer {
          * joysticks}.
          */
         private void configureBindings() {
-                // Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
-                // Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
-                // Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-                //                 driveDirectAngle);
-                // Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem
-                //                 .driveFieldOriented(driveDirectAngleKeyboard);
-                // Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem
-                //                 .driveFieldOriented(driveAngularVelocityKeyboard);
-                // Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-                //                 driveDirectAngleKeyboard);
-                Command shootFuel = Commands.parallel(
-                        (m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity)),
-                                Commands.sequence(
-                                        new WaitCommand(Seconds.of(0.75)),
-                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
-
-                Command intakeFuel = Commands.parallel(
-                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
-                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
-                                .withName("IntakeFuel");
-
-                Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
+                Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
+                Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
+                Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
+                Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+                                driveDirectAngle);
+                Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem
+                                .driveFieldOriented(driveDirectAngleKeyboard);
+                Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem
+                                .driveFieldOriented(driveAngularVelocityKeyboard);
+                Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
+                                driveDirectAngleKeyboard);
 
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -202,58 +186,38 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
-                } else if (RobotBase.isReal()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+                } else {
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                }
 
-                        m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+                m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
+                                m_IntakeStar.setStarVelocity(RPM.of(500)),
+                                m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
+                                
+                m_AssistantJoystick.button(3).whileTrue(m_IntakeStar.setStarVelocity(RPM.of(1200)));
+                m_AssistantJoystick.button(4).whileTrue(m_IntakeSushi.setSushiVelocity(RPM.of(200)));
 
-                } else if (DriverStation.isTest()) {
-        }
-                m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+                m_AssistantJoystick.button(13).whileTrue(m_Shooter.setShooterVelocity(RPM.of(200)));
+                m_AssistantJoystick.button(12).whileTrue(m_Kicker.setKickerVelocity(RPM.of(200)));
                 
-                m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                m_AssistantJoystick.button(8).onTrue(m_IntakeStar.sysId());
+                m_AssistantJoystick.button(9).onTrue(m_IntakeSushi.sysId());
 
-                // m_AssistantJoystick.button(3). whileTrue();
-                        
-                // Commands.sequence(new WaitCommand(Seconds.of(10.0))), m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
+                m_AssistantJoystick.button(14).onTrue(m_Shooter.sysId());
+                m_AssistantJoystick.button(15).onTrue(m_Kicker.sysId());
 
-
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(m_IntakeStar.setStarDutyCylce(0.9), m_IntakeSushi.setSushiDutyCycle(0.5)));
-
-
-                m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.7));
-                m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.7));
-                m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
-
-                // m_AssistantJoystick.button(10).onTrue(m_ClimberSubsystem.setHeightAndStop(Meters.of(0.25)));
-
-
-                // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
-
-                // m_AssistantJoystick.button(11).onTrue(m_IntakeStar.sysId());
-                // m_AssistantJoystick.button(14).onTrue(m_IntakeSushi.sysId());
-
-                // m_AssistantJoystick.button(15).onTrue(m_Shooter.sysId());
-                // m_AssistantJoystick.button(16).onTrue(m_Kicker.sysId());
-                
-                // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
-                // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
-
-               
                 // ----------------------
 
                 // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
                 // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
 
                 if (RobotBase.isReal()) {
-                        m_DriverJoystick.button(1).onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
@@ -278,7 +242,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
-                        // m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
+                        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
 
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
@@ -309,7 +273,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.button(1).whileTrue(m_HopperSubsystem.runHopper(RPM.of(Constants.Hopper.HOPPER_SPEED_RPM)));
+                        m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
 
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
@@ -318,18 +282,30 @@ public class RobotContainer {
                 }
 
                 if (DriverStation.isTest()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity); // Overrides drive
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive
                                                                                                  // command above!
 
+                        // m_DriverJoystick.x().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock,
+                        // m_SwerveSubsystem).repeatedly());
+                        // m_DriverJoystick.start().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+                        // m_DriverJoystick.back().whileTrue(m_SwerveSubsystem.centerModulesCommand());
+                        // m_DriverJoystick.leftBumper().onTrue(Commands.none());
+                        // m_DriverJoystick.rightBumper().onTrue(Commands.none());
                 } else {
-
+                        // m_DriverJoystick.a().onTrue((Commands.runOnce(m_SwerveSubsystem::zeroGyro)));
+                        // m_DriverJoystick.start().whileTrue(Commands.none());
+                        // m_DriverJoystick.back().whileTrue(Commands.none());
+                        // m_DriverJoystick.leftBumper().whileTrue(Commands.runOnce(m_SwerveSubsystem::lock,
+                        // m_SwerveSubsystem).repeatedly());
+                        // m_DriverJoystick.rightBumper().onTrue(Commands.none());
                 }
         }
 
-        public double driverGetThrottle() {
-                return MathUtil.clamp((m_DriverJoystick.getThrottle() +1)/2, 0.1, 1);
-        }
-
+        /**
+         * Use this to pass the autonomous command to the main {@link Robot} class.
+         *
+         * @return the command to run in autonomous
+         */
         public Command getAutonomousCommand() {
                 // An example command will be run in autonomous
                 return autoChooser.getSelected();
