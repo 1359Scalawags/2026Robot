@@ -252,9 +252,9 @@ public class RobotContainer {
                 // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
-                // Hold driver button 3 to lock rotation on an AprilTag
+                // Hold driver button 4 to lock rotation on an AprilTag
                 // Driver retains full translation control via joystick
-                m_DriverJoystick.button(3).whileTrue(
+                m_DriverJoystick.button(4).whileTrue(
                         new AlignToTag(
                                 m_SwerveSubsystem,
                                 m_limelight,
@@ -262,14 +262,6 @@ public class RobotContainer {
                                 () -> m_DriverJoystick.getX() * throttleSupplier.getAsDouble()
                         )
                 );
-
-               
-                // ----------------------
-
-                // Command AimAtObject = new AimAtObject(m_SwerveSubsystem,
-                // m_SwerveSubsystem::getX, m_SwerveSubsystem::getY);
-
-               
 
                 if (RobotBase.isReal()) {
                         m_DriverJoystick.button(1).onTrue(Commands.runOnce(
@@ -334,7 +326,6 @@ public class RobotContainer {
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-                        // m_DriverJoystick.button(3).whileTrue();
                 }
 
                 if (DriverStation.isTest()) {
