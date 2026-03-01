@@ -183,17 +183,17 @@ public final class Constants {
     public static final int hopperMotorID = 11;
 
     // Motor speed in RPM
-    public static final double HOPPER_SPEED_RPM = 1600;
+    public static final double HOPPER_SPEED_RPM = 2000;
 
     // Trap profile
     public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
-    public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
+    public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(2000);
 
 
     // PID Constants (tune these based on your robot's performance)
-    public static final double kP = 0.0001;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kP = 0.03;
+    public static final double kI = 0.0000001;
+    public static final double kD = 0.1;
     public static final double kFF = 0.000156; // Feed-forward for NEO motors
 
     //hopper motorFF

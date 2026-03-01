@@ -315,7 +315,6 @@ public class RobotContainer {
                                         .whileTrue(Commands.runEnd(
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
                                                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
-                        // m_DriverJoystick.button(3).whileTrue(AimAtObject);
                 }
 
                 if (DriverStation.isTest()) {
