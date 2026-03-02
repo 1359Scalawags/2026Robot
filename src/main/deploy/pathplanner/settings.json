@@ -3,6 +3,7 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "Movements",
     "Test movements"
   ],
   "autoFolders": [
