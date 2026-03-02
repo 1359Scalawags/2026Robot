@@ -17,6 +17,7 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,7 +33,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,6 +45,7 @@ import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
@@ -60,6 +64,8 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+
+//limelight stuff
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
@@ -72,43 +78,34 @@ import limelight.networktables.target.pipeline.NeuralClassifier;
 
 public class SwerveSubsystem extends SubsystemBase
 {
-  /**
-   * Swerve drive object.
-   */
   private final SwerveDrive swerveDrive;
 
-  /**
-   * Initialize {@link SwerveDrive} with the directory provided.
-   *
-   * @param directory Directory of swerve drive config files.
-   */
+  SwerveDrivePoseEstimator swerveDrivePoseEstimator; 
 
-  // SparkMax left, right;
-  // RelativeEncoder leftEncoder, rightEncoder;
-  // AHRS navx;
-
-  // double                         driveGearRatio      = 1.0;
-  // double                         wheelDiameterMeters = 4.0;
-  // double                         trackWidth          = Units.inchesToMeters(20);
-  SwerveDrivePoseEstimator swerveDrivePoseEstimator;
   LimelightPoseEstimator poseEstimator;
-  Pose3d cameraOffset = new Pose3d(Inches.of(-3).in(Meters),
-                                                                  Inches.of(-13).in(Meters),
-                                                                  Inches.of(9).in(Meters),
-                                                                  Rotation3d.kZero);
   Limelight limelight = new Limelight("limelight-top");
+  LimelightPoseEstimator limelightPoseEstimator;
+  Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
+                                   Units.inchesToMeters(12),
+                                   Units.inchesToMeters(10.5),
+                                   new Rotation3d(0, 0, Units.degreesToRadians(45)));
 
-  Pose3d poseA = new Pose3d();
-  Pose3d poseB = new Pose3d();
+
+  Pose2d estimatedPose;
+
+    private int     outofAreaReading = 0;
+    private boolean initialReading = false;
+
+  private final Field2d m_field = new Field2d();
+
+
 
    public SwerveSubsystem(File directory) {
-    limelight.getSettings()
+    limelight.getSettings()  //Limelight stuff
              .withLimelightLEDMode(LEDMode.PipelineControl)
              .withCameraOffset(cameraOffset)
              .save();
     poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
-
-
 
     boolean blueAlliance = true;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
@@ -128,6 +125,9 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
+
+    setupLimelight();
+
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,
@@ -141,11 +141,20 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 
-    StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
-    StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
-
-
+    // StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
+    // StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
     }
+
+    public void setupLimelight(){
+      swerveDrive.stopOdometryThread();
+      limelight.getSettings()
+               .withPipelineIndex(0)
+               .withCameraOffset(cameraOffset)
+               .withAprilTagIdFilter(List.of())
+               .save();
+      limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+    }
+
 
     /**
      * Construct the swerve drive.
@@ -167,7 +176,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
-    limelight.getSettings()
+    limelight.getSettings()  //limelight stuff
             .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
                     new AngularVelocity3d(DegreesPerSecond.of(0),
                             DegreesPerSecond.of(0),
@@ -175,40 +184,67 @@ public class SwerveSubsystem extends SubsystemBase
             .save();
 
 
-    // Get MegaTag2 pose
-    Optional<PoseEstimate> visionEstimate = limelight.createPoseEstimator(EstimationMode.MEGATAG2).getPoseEstimate();
-    // If the pose is present
-    visionEstimate.ifPresent((PoseEstimate poseEstimate) -> {
-        // Add it to the pose estimator.
-        if (poseEstimate.avgTagDist < 4 && poseEstimate.tagCount > 0 && poseEstimate.getMinTagAmbiguity() < 0.3) {
-           swerveDrivePoseEstimator.addVisionMeasurement(poseEstimate.pose.toPose2d(), 
-           poseEstimate.timestampSeconds);
-      } 
-    });
+ // limelight.getLatestResults().ifPresent((LimelightResults result) -> {  //limelight stuff
+    //   for (NeuralClassifier object : result.targets_Classifier)
+    //   {
+    //     // Classifier says its a note.
+    //     if (object.className.equals("algae"))
+    //     {
+    //       if (object.ty > 2 && object.ty < 1)
+    //       {
+    //         // do stuff
+    //       }
+    //     }
+    //   }
+    // });
+//   }
 
 
-    limelight.getLatestResults().ifPresent((LimelightResults result) -> {
-      for (NeuralClassifier object : result.targets_Classifier)
+      Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
+      Optional<LimelightResults> results       = limelight.getLatestResults();
+      if (results.isPresent()/* && poseEstimates.isPresent()*/)
       {
-        // Classifier says its a note.
-        if (object.className.equals("algae"))
+        LimelightResults result       = results.get();
+        PoseEstimate     poseEstimate = poseEstimates.get();
+        SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
+        SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
+        SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
+        SmartDashboard.putNumber("Avg Distance", poseEstimate.avgTagDist);
+        SmartDashboard.putNumber("Avg Tag Area", poseEstimate.avgTagArea);
+        SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
+        SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
+        SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
+        SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
+        SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
+        if (result.valid)
         {
-          if (object.ty > 2 && object.ty < 1)
+          // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
+          Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
+          double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
+          if (distanceToPose < 0.5 || (outofAreaReading > 10) || (outofAreaReading > 10 && !initialReading))
           {
-            // do stuff
+            if (!initialReading)
+            {
+              initialReading = true;
+            }
+            outofAreaReading = 0;
+            // System.out.println(usefulPose.toString());
+            swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
+            // System.out.println(result.timestamp_LIMELIGHT_publish);
+            // System.out.println(result.timestamp_RIOFPGA_capture);
+            swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
+          } else
+          {
+            outofAreaReading += 1;
           }
+  //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
       }
-    });
+    }
 
-    SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-    SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-    SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
 
-// publisher.set(poseA);
-// arrayPublisher.set(new Pose3d[] { poseA, poseB};
-  }
-
+   
     @Override
     public void simulationPeriodic() {
     }
@@ -780,7 +816,7 @@ public class SwerveSubsystem extends SubsystemBase
   // "proportional control" is a control algorithm in which the output is proportional to the error.
   // in this case, we are going to return an angular velocity that is proportional to the 
   // "tx" value from the Limelight.
-  double limelight_aim_proportional()
+  double limelight_aim_proportional()  //limelight stuff
   {    
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
@@ -805,7 +841,7 @@ public class SwerveSubsystem extends SubsystemBase
   // simple proportional ranging control with Limelight's "ty" value
   // this works best if your Limelight's mount height and target mount height are different.
   // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()
+  double limelight_range_proportional()  //limelight stuff
   {    
     double kP = .1;
     double targetingForwardSpeed = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0) * kP;

@@ -1,92 +1,74 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.SwerveCommands;
 
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.LimelightSubsystem.LimelightHelpers;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.ShooterSubsystem.Kicker;
-import frc.robot.subsystems.ShooterSubsystem.Shooter;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 
+import java.util.function.DoubleSupplier;
 
 public class AlignToTag extends Command {
-  private PIDController xController, yController, rotController;
-  private boolean isRightScore;
-  private Timer dontSeeTagTimer, stopTimer;
-  private final SwerveSubsystem m_SwerveSubsystem;
-  private double tagID = 10;
+    private final SwerveSubsystem swerve;
+    private final LimelightSubsystem limelight;
+    private final PIDController yawPID;
+    private final DoubleSupplier forwardSupplier;
+    private final DoubleSupplier strafeSupplier;
 
-  public AlignToTag(SwerveSubsystem m_SwerveSubsystem) {
-    xController = new PIDController(Constants.swerveDrive.autoAlign.X_REEF_ALIGNMENT_P, 0.0, 0);  // Vertical movement
-    yController = new PIDController(Constants.swerveDrive.autoAlign.Y_REEF_ALIGNMENT_P, 0.0, 0);  // Horitontal movement
-    rotController = new PIDController(Constants.swerveDrive.autoAlign.ROT_REEF_ALIGNMENT_P, 0, 0);  // Rotation
-    this.m_SwerveSubsystem = m_SwerveSubsystem;
-    addRequirements(m_SwerveSubsystem);
-  }
+    private static final double MAX_ROT_SPEED = 0.5;
 
-  @Override
-  public void initialize() {
-    this.stopTimer = new Timer();
-    this.stopTimer.start();
-    this.dontSeeTagTimer = new Timer();
-    this.dontSeeTagTimer.start();
+    public AlignToTag(SwerveSubsystem swerve, LimelightSubsystem limelight,
+                      DoubleSupplier forwardSupplier, DoubleSupplier strafeSupplier) {
+        this.swerve = swerve;
+        this.limelight = limelight;
+        this.forwardSupplier = forwardSupplier;
+        this.strafeSupplier = strafeSupplier;
 
-    rotController.setSetpoint(Constants.swerveDrive.autoAlign.ROT_SETPOINT_REEF_ALIGNMENT);
-    rotController.setTolerance(Constants.swerveDrive.autoAlign.ROT_TOLERANCE_REEF_ALIGNMENT);
+        // PID to drive yaw to 0 (facing the tag head-on)
+        this.yawPID = new PIDController(0.03, 0.0, 0.003);
+        this.yawPID.setSetpoint(0.0);
+        this.yawPID.setTolerance(1.5);
 
-    xController.setSetpoint(Constants.swerveDrive.autoAlign.X_SETPOINT_REEF_ALIGNMENT);
-    xController.setTolerance(Constants.swerveDrive.autoAlign.X_TOLERANCE_REEF_ALIGNMENT);
-
-    yController.setSetpoint(isRightScore ? Constants.swerveDrive.autoAlign.Y_SETPOINT_REEF_ALIGNMENT : -Constants.swerveDrive.autoAlign.Y_SETPOINT_REEF_ALIGNMENT);
-    yController.setTolerance(Constants.swerveDrive.autoAlign.Y_TOLERANCE_REEF_ALIGNMENT);
-
-    tagID = LimelightHelpers.getFiducialID("limelight");
-  }
-
-  @Override
-  public void execute() {
-    if (LimelightHelpers.getTV("limelight") && LimelightHelpers.getFiducialID("limelight") == tagID) {
-      this.dontSeeTagTimer.reset();
-
-      double[] postions = LimelightHelpers.getBotPose_TargetSpace("limelight");
-      SmartDashboard.putNumber("x", postions[2]);
-
-      double xSpeed = xController.calculate(postions[2]);
-      SmartDashboard.putNumber("xspeed", xSpeed);
-      double ySpeed = -yController.calculate(postions[0]);
-      double rotValue = -rotController.calculate(postions[4]);
-
-      m_SwerveSubsystem.drive(new Translation2d(xSpeed, ySpeed), rotValue, true);
-
-      if (!rotController.atSetpoint() ||
-          !yController.atSetpoint() ||
-          !xController.atSetpoint()) {
-        stopTimer.reset();
-      }
-    } else {
-      m_SwerveSubsystem.drive(new Translation2d(), 0, true);
+        addRequirements(swerve);
     }
 
-    SmartDashboard.putNumber("poseValidTimer", stopTimer.get());
-  }
+    @Override
+    public void initialize() {
+        yawPID.reset();
+    }
 
-  @Override
-  public void end(boolean interrupted) {
-    m_SwerveSubsystem.drive(new Translation2d(), 0, false);
-  }
+    @Override
+    public void execute() {
+        double rotSpeed = 0.0;
 
-  @Override
-  public boolean isFinished() {
-    return false;
-    // Requires the robot to stay in the correct position for 0.3 seconds, as long as it gets a tag in the camera
-    // return this.dontSeeTagTimer.hasElapsed(Constants.swerveDrive.autoAlign.DONT_SEE_TAG_WAIT_TIME) ||
-    //     stopTimer.hasElapsed(Constants.swerveDrive.autoAlign.POSE_VALIDATION_TIME);
-  }
+        if (limelight.seesAprilTag()) {
+            double yaw = limelight.getYawToTag();
+            rotSpeed = yawPID.calculate(yaw, 0.0);
+            rotSpeed = Math.max(-MAX_ROT_SPEED, Math.min(MAX_ROT_SPEED, rotSpeed));
+
+            SmartDashboard.putNumber("AlignTag/YawError", yaw);
+            SmartDashboard.putBoolean("AlignTag/Locked", yawPID.atSetpoint());
+        }
+
+        // Driver keeps full translation control, PID overrides rotation
+        swerve.drive(
+            new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
+            rotSpeed,
+            true
+        );
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false; // Runs until button is released
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        swerve.drive(new Translation2d(0, 0), 0, true);
+    }
 }

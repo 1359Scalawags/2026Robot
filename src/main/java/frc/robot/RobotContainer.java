@@ -13,10 +13,12 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
+import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Star;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
+import frc.robot.commands.SwerveCommands.AlignToTag;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
@@ -71,7 +73,7 @@ public class RobotContainer {
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
-        private final LimelightSubsystem m_limelight = new LimelightSubsystem();
+        private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
 
 
@@ -90,8 +92,11 @@ public class RobotContainer {
         public RobotContainer() {
                 configureBindings();
 
-                 // set limelight pipeline (use double-quoted string for Java)
-                m_limelight.setPipeline(1);
+                // set limelight pipeline (use double-quoted string for Java)
+                // Add these imports to your LimelightSubsystem class
+
+                 //Set the Limelight pipeline index.
+                 m_limelight.setPipeline(0);
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -195,8 +200,41 @@ public class RobotContainer {
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
+                Command outtakeFuel = Commands.parallel(
+                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.negate()),
+                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.negate()))
+                                .withName("ReverseIntake");
+                
+                // =========== Set Default Command for swerve ============
+                if (RobotBase.isSimulation()) {
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
+                } else if (RobotBase.isReal()) {
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+
+                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
+                        // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+
+                } else if (DriverStation.isTest()) {
+        }
                 m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+
+                // Hold button 3 to reverse the intake
+                m_AssistantJoystick.button(4).whileTrue(
+                        outtakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
 
@@ -207,6 +245,14 @@ public class RobotContainer {
 
                 m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
 
+                m_DriverJoystick.button(5).whileTrue(
+                        new AlignToTag(
+                                m_SwerveSubsystem,
+                                m_limelight,
+                                () -> m_DriverJoystick.getY() * throttleSupplier.getAsDouble(),
+                                () -> m_DriverJoystick.getX() * throttleSupplier.getAsDouble()
+                        )
+                );
 
 
                   // =========== Set Default Command for swerve ===========

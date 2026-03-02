@@ -88,7 +88,7 @@ public final class Constants {
 
       // ======== Shooter Speed =======
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
-    public static final AngularVelocity kickerVelocity = RPM.of(1000);
+    public static final AngularVelocity kickerVelocity = RPM.of(1500);
 
 
      // ====== Trapazoidal Profile =======
@@ -196,7 +196,7 @@ public final class Constants {
   public static class Hopper {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int hopperMotorID = 11;
+    public static final int jigglerMotorID = 11;
 
     // Motor speed in RPM
     public static final double HOPPER_SPEED_RPM = 2000;
@@ -221,14 +221,12 @@ public final class Constants {
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
-
-    public static final int jigglerMotorID = 11;
   }
 
   public static class Limelight {
     public static final double TARGET_HEIGHT_METERS = 1.124;
     public static final double CAMERA_HEIGHT_METERS = 0.3048;
     public static final double CAMERA_PITCH_DEGREES = 0.0;
-
+    public static final String limelight_Name = "limelight-top";
   }
 }
