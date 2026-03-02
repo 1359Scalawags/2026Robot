@@ -51,6 +51,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meter;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
@@ -255,13 +256,17 @@ public class RobotContainer {
                 );
 
 
+                m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(new Pose2d(new Translation2d(Meter.of(1.524), Meter.of(0)), Rotation2d.fromDegrees(0))));
+                m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
+
                   // =========== Set Default Command for swerve ===========
 
                 if (RobotBase.isReal()) {
 
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
-                        Pose2d target = new Pose2d(new Translation2d(1, 4),
+                        Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
 
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
@@ -273,13 +278,12 @@ public class RobotContainer {
                                                 new Constraints(Units.degreesToRadians(360),
                                                                         Units.degreesToRadians(180))));
 
-                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                        m_DriverJoystick.button(5).whileTrue(Commands.runEnd(
                                 () -> driveDirectAngle.driveToPoseEnabled(true),
                                 () -> driveDirectAngle.driveToPoseEnabled(false)));
 
@@ -289,7 +293,7 @@ public class RobotContainer {
 
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
 
-                        Pose2d target = new Pose2d(new Translation2d(2, 4),
+                        Pose2d target = new Pose2d(new Translation2d(2, 2),
                                         Rotation2d.fromDegrees(180));
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
@@ -305,7 +309,7 @@ public class RobotContainer {
                                                                         Units.degreesToRadians(180))));
 
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
