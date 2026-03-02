@@ -72,7 +72,7 @@ public final class Constants {
 
       // ======== Shooter Speed =======
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
-    public static final AngularVelocity kickerVelocity = RPM.of(1000);
+    public static final AngularVelocity kickerVelocity = RPM.of(1500);
 
 
      // ====== Trapazoidal Profile =======
@@ -144,8 +144,8 @@ public final class Constants {
 
 
       // ======= Intake Speeds ======
-    public static AngularVelocity sushiVelocity = RotationsPerSecond.of(20);
-    public static AngularVelocity starVelocity = RotationsPerSecond.of(10);
+    public static AngularVelocity sushiVelocity = RotationsPerSecond.of(1500);
+    public static AngularVelocity starVelocity = RotationsPerSecond.of(3000);
 
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity starMaxVelocity = RotationsPerSecond.of(2500);
@@ -212,6 +212,6 @@ public final class Constants {
     public static final double TARGET_HEIGHT_METERS = 1.124;
     public static final double CAMERA_HEIGHT_METERS = 0.3048;
     public static final double CAMERA_PITCH_DEGREES = 0.0;
-    public static final String limelight_Name = "limelight-topp";
+    public static final String limelight_Name = "limelight-top";
   }
 }

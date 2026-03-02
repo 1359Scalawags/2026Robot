@@ -109,7 +109,7 @@ public class RobotContainer {
          */
         SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_SwerveSubsystem.getSwerveDrive(),
                         () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
-                        () -> m_DriverJoystick.getX() * -1 *  throttleSupplier.getAsDouble())
+                        () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble())
                         .withControllerRotationAxis(() -> m_DriverJoystick.getZ() * -1 * throttleSupplier.getAsDouble())
                         .deadband(Constants.OperatorConstants.DEADBAND)
                         .scaleTranslation(0.8)
@@ -226,11 +226,11 @@ public class RobotContainer {
 
                 } else if (DriverStation.isTest()) {
         }
-                m_AssistantJoystick.button(4).whileTrue(intakeFuel);
+                m_AssistantJoystick.button(2).whileTrue(intakeFuel);
 
                 // Hold button 3 to reverse the intake
-                // m_AssistantJoystick.button(3).whileTrue(
-                //         outtakeFuel);
+                m_AssistantJoystick.button(4).whileTrue(
+                        outtakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
 
@@ -260,9 +260,9 @@ public class RobotContainer {
                 // m_DriverJoystick.button(8).onTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
                 // m_DriverJoystick.button(9).onTrue(m_SwerveSubsystem.sysIdAngleMotorCommand());
 
-                // Hold driver button 4 to lock rotation on an AprilTag
+                // Hold driver button 5 to lock rotation on an AprilTag
                 // Driver retains full translation control via joystick
-                m_DriverJoystick.button(4).whileTrue(
+                m_DriverJoystick.button(5).whileTrue(
                         new AlignToTag(
                                 m_SwerveSubsystem,
                                 m_limelight,
@@ -272,10 +272,10 @@ public class RobotContainer {
                 );
 
                 if (RobotBase.isReal()) {
-                        m_DriverJoystick.button(1).onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
-                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
+                        // m_DriverJoystick.button(1).onTrue(Commands.runOnce(
+                        //                 () -> m_SwerveSubsystem.zeroGyro()));
+                        // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                        //                 () -> m_SwerveSubsystem.zeroGyro()));
 
                         Pose2d target = new Pose2d(new Translation2d(1, 4),
                                         Rotation2d.fromDegrees(90));
@@ -300,9 +300,9 @@ public class RobotContainer {
 
                         // m_DriverJoystick.button(1).whileTrue(m_SwerveSubsystem.sysIdDriveMotorCommand());
 
-                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
-                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                //         m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                //                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
+                //                         () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
 
                 }
 
@@ -328,7 +328,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.button(1).whileTrue(m_HopperSubsystem.runHopper(RPM.of(Constants.Hopper.HOPPER_SPEED_RPM)));
+                        m_DriverJoystick.button(3).whileTrue(m_HopperSubsystem.runHopper(RPM.of(Constants.Hopper.HOPPER_SPEED_RPM)));
 
                         m_DriverJoystick.button(2)
                                         .whileTrue(Commands.runEnd(
