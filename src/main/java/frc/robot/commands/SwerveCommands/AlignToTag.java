@@ -19,7 +19,7 @@ public class AlignToTag extends Command {
     private final DoubleSupplier forwardSupplier;
     private final DoubleSupplier strafeSupplier;
 
-    private static final double MAX_ROT_SPEED = 0.5;
+    private static final double MAX_ROT_SPEED = 0.9;
 
     public AlignToTag(SwerveSubsystem swerve, LimelightSubsystem limelight,
                       DoubleSupplier forwardSupplier, DoubleSupplier strafeSupplier) {
@@ -29,7 +29,7 @@ public class AlignToTag extends Command {
         this.strafeSupplier = strafeSupplier;
 
         // PID to drive yaw to 0 (facing the tag head-on)
-        this.yawPID = new PIDController(0.03, 0.0, 0.003);
+        this.yawPID = new PIDController(.25, 0.0, 0.003);
         this.yawPID.setSetpoint(0.0);
         this.yawPID.setTolerance(1.5);
 
@@ -48,18 +48,20 @@ public class AlignToTag extends Command {
         if (limelight.seesAprilTag()) {
             double yaw = limelight.getYawToTag();
             rotSpeed = yawPID.calculate(yaw, 0.0);
-            rotSpeed = Math.max(-MAX_ROT_SPEED, Math.min(MAX_ROT_SPEED, rotSpeed));
-
+            if (limelight.getTX() <= 2 && limelight.getTX() >= -2){
+                rotSpeed = Math.max(-MAX_ROT_SPEED, Math.min(MAX_ROT_SPEED, rotSpeed));
+            }
             SmartDashboard.putNumber("AlignTag/YawError", yaw);
             SmartDashboard.putBoolean("AlignTag/Locked", yawPID.atSetpoint());
         }
 
         // Driver keeps full translation control, PID overrides rotation
-        swerve.drive(
-            new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
-            rotSpeed,
-            true
-        );
+
+            swerve.drive(
+                new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
+                -rotSpeed,
+                false
+            );
     }
 
     @Override

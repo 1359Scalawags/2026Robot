@@ -85,7 +85,6 @@ public final class Constants {
     public static final int flyWheelID = 13;
     public static final int fingerWheelID = 14;
 
-
       // ======== Shooter Speed =======
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
     public static final AngularVelocity kickerVelocity = RPM.of(1500);
