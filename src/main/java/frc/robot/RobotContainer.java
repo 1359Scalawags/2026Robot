@@ -170,11 +170,13 @@ public class RobotContainer {
                 // Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
                 // Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
                 //                 driveDirectAngle);
-                Command driveFieldOrientedAnglularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
+
+                Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem
                                 .driveFieldOriented(driveDirectAngleKeyboard);
 
-
+                m_DriverJoystick.button(2).onTrue(Commands.runOnce(
+                        () -> m_SwerveSubsystem.zeroGyro()));
               
                 m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
                                 m_IntakeStar.setStarVelocity(RPM.of(500)),
@@ -211,33 +213,29 @@ public class RobotContainer {
 
                 if (RobotBase.isReal()) {
 
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                         Pose2d target = new Pose2d(new Translation2d(1, 4),
                                         Rotation2d.fromDegrees(90));
+
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
                         driveDirectAngleKeyboard.driveToPose(() -> target,
-                                        new ProfiledPIDController(5,
-                                                        0,
-                                                        0,
-                                                        new Constraints(5, 2)),
-                                        new ProfiledPIDController(5,
-                                                        0,
-                                                        0,
-                                                        new Constraints(Units.degreesToRadians(360),
+                                        new ProfiledPIDController(5,0,0,
+                                                new Constraints(5, 2)),
+                                        new ProfiledPIDController(5,0,0,
+                                                new Constraints(Units.degreesToRadians(360),
                                                                         Units.degreesToRadians(180))));
 
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+                                () -> m_SwerveSubsystem.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
+                                () -> m_SwerveSubsystem.zeroGyro()));
 
-                        m_DriverJoystick.button(2)
-                                        .whileTrue(Commands.runEnd(
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(true),
-                                                        () -> driveDirectAngleKeyboard.driveToPoseEnabled(false)));
+                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                                () -> driveDirectAngle.driveToPoseEnabled(true),
+                                () -> driveDirectAngle.driveToPoseEnabled(false)));
 
                 }
 
@@ -245,8 +243,8 @@ public class RobotContainer {
 
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
 
-                        Pose2d target = new Pose2d(new Translation2d(1, 4),
-                                        Rotation2d.fromDegrees(90));
+                        Pose2d target = new Pose2d(new Translation2d(2, 4),
+                                        Rotation2d.fromDegrees(180));
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
                         driveDirectAngleKeyboard.driveToPose(() -> target,
