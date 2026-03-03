@@ -10,7 +10,9 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.urcl.URCL;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -20,43 +22,57 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends LoggedRobot {
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
   private Command m_autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
+  public final RobotContainer m_robotContainer;
+  public static final Mode simMode     = Mode.SIM;
+  /// Change to Mode.REPLAY to enable REPLAy.
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   public Robot() {
+        switch (currentMode) {
+      case REAL:
+        // Running on a real robot, log to a USB stick ("/U/logs")
+        Logger.addDataReceiver(new WPILOGWriter());
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-    Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
+      case SIM:
+        // Running a physics simulator, log to NT
+        Logger.addDataReceiver(new NT4Publisher());
+        break;
 
-    if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    } else {
-      setUseTiming(false); // Run as fast as possible
-      // Prefer an explicit environment variable so we don't block on a GUI/file
-      // dialog when running headless or in CI. If AKIT_LOG_PATH is not set,
-      // skip setting a replay source.
-      String envLogPath = System.getenv("AKIT_LOG_PATH");
-      if (envLogPath != null && !envLogPath.isEmpty()) {
-        String logPath = envLogPath;
-        Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-      } else {
-        // No AKIT_LOG_PATH provided. Skipping replay source to avoid an
-        // interactive prompt. To get chooser behavior during development,
-        // set AKIT_LOG_PATH or call LogFileUtil.findReplayLog() manually.
-      }
+      case REPLAY:
+        // Replaying a log, set up replay source
+        setUseTiming(false); // Run as fast as possible
+        String logPath = LogFileUtil.findReplayLog();
+        Logger.setReplaySource(new WPILOGReader(logPath));
+        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+        break;
     }
 
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
-                    // be added.
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
+    // Initialize URCL
+    Logger.registerURCL(URCL.startExternal());
+
+    // Start AdvantageKit logger
+    Logger.start();
+
     m_robotContainer = new RobotContainer();
   }
 

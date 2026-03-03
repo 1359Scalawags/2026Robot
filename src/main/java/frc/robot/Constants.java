@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
+import edu.wpi.first.wpilibj.RobotBase;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -26,6 +27,21 @@ import edu.wpi.first.units.measure.AngularVelocity;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final Mode simMode = Mode.SIM;
+  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
+
+  public static enum Mode {
+    /** Running on a real robot. */
+    REAL,
+
+    /** Running a physics simulator. */
+    SIM,
+
+    /** Replaying from a log file. */
+    REPLAY
+  }
+
   public static class FieldConstants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
     public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
@@ -69,10 +85,9 @@ public final class Constants {
     public static final int flyWheelID = 13;
     public static final int fingerWheelID = 14;
 
-
       // ======== Shooter Speed =======
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
-    public static final AngularVelocity kickerVelocity = RPM.of(1000);
+    public static final AngularVelocity kickerVelocity = RPM.of(1500);
 
 
      // ====== Trapazoidal Profile =======
@@ -180,15 +195,14 @@ public final class Constants {
   public static class Hopper {
     // ========== CONFIGURATION ==========
     // CAN IDs for the motor controllers
-    public static final int hopperMotorID = 11;
+    public static final int jigglerMotorID = 11;
 
     // Motor speed in RPM
-    public static final double HOPPER_SPEED_RPM = 1600;
+    public static final double HOPPER_SPEED_RPM = 2000;
 
     // Trap profile
     public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
     public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
-
 
     // PID Constants (tune these based on your robot's performance)
     public static final double kP = 0.03;
@@ -206,14 +220,12 @@ public final class Constants {
     public static final double CURRENT_THRESHOLD = 35.0; // Amps for spike detection
     public static final double RPM_TOLERANCE = 100.0; // RPM
     public static final double CLOSED_LOOP_RAMP_RATE = 0.2;
-
-    public static final int jigglerMotorID = 11;
   }
 
   public static class Limelight {
     public static final double TARGET_HEIGHT_METERS = 1.124;
     public static final double CAMERA_HEIGHT_METERS = 0.3048;
     public static final double CAMERA_PITCH_DEGREES = 0.0;
-
+    public static final String limelight_Name = "limelight-top";
   }
 }

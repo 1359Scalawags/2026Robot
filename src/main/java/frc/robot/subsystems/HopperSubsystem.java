@@ -121,7 +121,7 @@ public class HopperSubsystem extends SubsystemBase {
   public Command runHopper(AngularVelocity speed) {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
+    return run(
         () -> {setVelocity(speed);});
   }
 
