@@ -173,6 +173,10 @@ public class RobotContainer {
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
+                Command reverseIntakeFuel = Commands.parallel(
+                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.times(-1)),
+                                m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.times(-1)))
+                                .withName("ReverseIntakeFuel");
 
                 Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
 
@@ -210,15 +214,17 @@ public class RobotContainer {
                 } else if (DriverStation.isTest()) {
         }
                 m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+                m_AssistantJoystick.button(4).whileTrue(reverseIntakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
 
+                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
 
                 m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.set(0.7));
                 m_AssistantJoystick.button(9).whileTrue(m_ClimberSubsystem.set(-0.7));
                 m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
 
-                m_AssistantJoystick.button(3).whileTrue(m_HopperSubsystem.set(0.5));
+
 
                 // m_AssistantJoystick.button(12).onTrue(m_ClimberSubsystem.sysId());
 
