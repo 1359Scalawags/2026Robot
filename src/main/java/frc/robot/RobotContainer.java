@@ -201,6 +201,7 @@ public class RobotContainer {
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
+                                
                 Command outtakeFuel = Commands.parallel(
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.negate()),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.negate()))
