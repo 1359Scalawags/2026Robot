@@ -24,7 +24,7 @@ public class AlignToTag extends Command {
     private DoubleSupplier strafeSupplier;
 
     // private static final double MAX_ROT_SPEED = 0.5;
-    private static final double MAX_OMEGA_RAD_PER_SEC = 4.0; // start 3-6
+    private static final double MAX_OMEGA_RAD_PER_SEC = 8.0; // start 3-6
     private static final double MAX_ALPHA_RAD_PER_SEC2 = 10.0; // start 8-16
 
     // Profiled PID gains (start conservative, then tune)

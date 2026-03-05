@@ -248,6 +248,7 @@ public class RobotContainer {
                 Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
                 Command stowSafe = m_ClimberSubsystem.set(-.25).until(m_ClimberSubsystem.limitSwitchSupplier);
+                
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommandKeyboard);
@@ -282,7 +283,6 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
-                        m_DriverJoystick.button(6).whileTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -295,7 +295,6 @@ public class RobotContainer {
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
                         //===============================DRIVE TO POSE ===============================
                         m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
-
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
 
@@ -344,6 +343,8 @@ public class RobotContainer {
                         isFieldCentric = !isFieldCentric;
                         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
                 }));
+
+                m_DriverJoystick.button(6).whileTrue(alignToTag);
 
                 // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(new Pose2d(new Translation2d(Meter.of(1.524), Meter.of(0)), Rotation2d.fromDegrees(0))));
                 // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
