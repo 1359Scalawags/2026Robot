@@ -102,6 +102,17 @@ public class RobotContainer {
                  //Set the Limelight pipeline index.
                  m_limelight.setPipeline(0);
 
+                NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
+                NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
+                NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
+                NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
+                NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
+                NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.55).until(m_ClimberSubsystem.getMaxHeight));
+                // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.55).until(null));
+                NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
+                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.setHeightAndStop(null));
+                // NamedCommands.registerCommand("Climb to L1", m_ClimberSubsystem.setHeightAndStop(null));
+
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -110,15 +121,6 @@ public class RobotContainer {
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
-
-                NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
-                NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
-                NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
-                NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
-                NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
-                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.setHeightAndStop(null));
-                // NamedCommands.registerCommand("Climb to L1", m_ClimberSubsystem.setHeightAndStop(null));
 
 
                 m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
@@ -249,7 +251,7 @@ public class RobotContainer {
 
                 Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
-                Command stowSafe = m_ClimberSubsystem.set(-.25).until(m_ClimberSubsystem.limitSwitchSupplier);
+                Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommandKeyboard);
@@ -333,10 +335,10 @@ public class RobotContainer {
                 // m_AssistantJoystick.button(7).whileTrue(stowSafe);
                 // m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.extend());
                 m_AssistantJoystick.button(16).whileTrue(stowSafe);
-                m_AssistantJoystick.button(15).whileTrue(m_ClimberSubsystem.set(.25));
+                m_AssistantJoystick.button(15).whileTrue(m_ClimberSubsystem.set(.55));
                 // Run while held (reliable; stops when released)
                 // m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.sysId().withName("ClimberSysId"));
-                // m_AssistantJoystick.button(14).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
+                // m_AssistantJoystick.button(7).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
 
                 m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
                 m_AssistantJoystick.button(3).whileTrue(unclogKicker);
@@ -346,39 +348,6 @@ public class RobotContainer {
                         isFieldCentric = !isFieldCentric;
                         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
                 }));
-
-                // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(new Pose2d(new Translation2d(Meter.of(1.524), Meter.of(0)), Rotation2d.fromDegrees(0))));
-                // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                //         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
-
-                  // =========== Set Default Command for swerve ===========
-
-                // if (RobotBase.isReal()) {
-
-                //         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
-                //         // Pose2d target = new Pose2d(new Translation2d(0, 0),
-                //         //                 Rotation2d.fromDegrees(90));
-
-                //         // m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
-
-                //         // driveAngularVelocity.driveToPose(() -> target,
-                //         //                 new ProfiledPIDController(5,0,0,
-                //         //                         new Constraints(5, 2)),
-                //         //                 new ProfiledPIDController(5,0,0,
-                //         //                         new Constraints(Units.degreesToRadians(360),
-                //         //                                                 Units.degreesToRadians(180))));
-
-
-
-                //         // m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                //         //         () -> m_SwerveSubsystem.zeroGyro()));
-
-                //         // m_DriverJoystick.button(5).whileTrue(Commands.runEnd(
-                //         //         () -> driveAngularVelocity.driveToPoseEnabled(true),
-                //         //         () -> driveAngularVelocity.driveToPoseEnabled(false)));
-
-                // }
         }
 
         public Command getAutonomousCommand() {

@@ -87,8 +87,8 @@ public ClimberSubsystem(){
         Meters.of(Inches.of(Constants.Climber.MIN_HEIGHT).in(Meters)),
         Meters.of(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)))
     .withSoftLimits(
-        Meters.of(Inches.of(Constants.Climber.MIN_HEIGHT).in(Meters)),
-        Meters.of(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)))
+        Meters.of(Inches.of(Constants.Climber.SOFT_MIN).in(Meters)),
+        Meters.of(Inches.of(Constants.Climber.SOFT_MAX).in(Meters)))
     .withTelemetry("Climber", TelemetryVerbosity.HIGH)
     .withMass(Pounds.of(16));
   spark.getEncoder().setPosition(5);
@@ -137,6 +137,14 @@ public ClimberSubsystem(){
   // Supplier for the limit switch state (renamed to avoid clash with the getter method)
   public BooleanSupplier limitSwitchSupplier = () -> {
     return !limitSwitch.get();
+  };
+
+  public BooleanSupplier getMaxHeight = () -> {
+    if (climber.getHeight().in(Inches) >= 18) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   /**
