@@ -19,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -89,16 +90,12 @@ public class SwerveSubsystem extends SubsystemBase
                                    Units.inchesToMeters(12),
                                    Units.inchesToMeters(10.5),
                                    new Rotation3d(0, 0, Units.degreesToRadians(45)));
-
-
   Pose2d estimatedPose;
 
     private int     outofAreaReading = 0;
     private boolean initialReading = false;
 
   private final Field2d m_field = new Field2d();
-
-
 
    public SwerveSubsystem(File directory) {
     limelight.getSettings()  //Limelight stuff
@@ -173,6 +170,8 @@ public class SwerveSubsystem extends SubsystemBase
   @Override
   public void periodic()
   {
+    swerveDrive.updateOdometry();
+
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
     // Required for megatag2
@@ -183,26 +182,9 @@ public class SwerveSubsystem extends SubsystemBase
                             DegreesPerSecond.of(0))))
             .save();
 
-
- // limelight.getLatestResults().ifPresent((LimelightResults result) -> {  //limelight stuff
-    //   for (NeuralClassifier object : result.targets_Classifier)
-    //   {
-    //     // Classifier says its a note.
-    //     if (object.className.equals("algae"))
-    //     {
-    //       if (object.ty > 2 && object.ty < 1)
-    //       {
-    //         // do stuff
-    //       }
-    //     }
-    //   }
-    // });
-//   }
-
-
       Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
       Optional<LimelightResults> results       = limelight.getLatestResults();
-      if (results.isPresent()/* && poseEstimates.isPresent()*/)
+      if (results.isPresent() && poseEstimates.isPresent())
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
@@ -247,6 +229,10 @@ public class SwerveSubsystem extends SubsystemBase
    
     @Override
     public void simulationPeriodic() {
+    // YAGSL updates swerveDrive.getPose() automatically in simulation.
+        m_field.setRobotPose(swerveDrive.getPose());
+        SmartDashboard.putNumber("SimPose X", swerveDrive.getPose().getX());
+        SmartDashboard.putNumber("SimPose Y", swerveDrive.getPose().getY());
     }
 
     /**
@@ -537,7 +523,21 @@ public class SwerveSubsystem extends SubsystemBase
                 fieldRelative,
                 false); // Open loop is disabled since it shouldn't be used most of the time.
     }
+    
+    public Command driveStreamCommand(Supplier<ChassisSpeeds> stream) {
+        return run(() -> {
+            swerveDrive.drive(stream.get());
+        });
+    }
 
+    /**
+     * Drive the robot given a chassis robot-oriented velocity stream.
+     */
+    public Command driveRobotOrientedCommand(Supplier<ChassisSpeeds> velocity) {
+        return run(() -> {
+            swerveDrive.drive(velocity.get());
+        });
+    }
     /**
      * Drive the robot given a chassis field oriented velocity.
      *

@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Second;
@@ -22,6 +23,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -72,13 +74,12 @@ public class Sushi extends SubsystemBase {
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
-        .withMotorInverted(true)
+        .withMotorInverted(false)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
         .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
-
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         .withDiameter(Inches.of(2))
         .withMass(Pounds.of(1.07))
@@ -114,6 +115,12 @@ public class Sushi extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Sushi/VelocityRPM", sushiMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Sushi/Applied", sushiMotor.getAppliedOutput());
+    SmartDashboard.putNumber("Sushi/SetpointRPS",
+    sushiWheel.getMechanismSetpointVelocity()
+        .map(v -> v.in(edu.wpi.first.units.Units.RotationsPerSecond))
+        .orElse(0.0));
     sushiWheel.updateTelemetry();
 
   }

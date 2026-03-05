@@ -124,27 +124,38 @@ public final class Constants {
   public static class Climber {
     public static final int climberID = 15;
     
-    // public static final int climberMotorPort = 103;
-     // Constants
- // Change to your CAN ID
-    
     public static final double GEAR_RATIO = 125.0;
     public static final int CURRENT_LIMIT = 60; // Amps
     
-    // PID Constants(tune these!)
-    public static final double kP = 0.0;
+    // PID Constants — TUNE THESE on the real robot!
+    // With 125:1 gearing, max linear speed is only ~0.106 m/s.
+    // Feedforward (kv) does the heavy lifting. PID just corrects small errors.
+    public static final double kP = 50
+    ;
     public static final double kI = 0.0;
-    public static final double kD = 0.0;
+    public static final double kD = 0.0;   // Damping to prevent overshoot
     public static final double kFF = 0.0;
     
-    // Position limits (in rotations of the output shaft)
-    public static final double MAX_HEIGHT = 17.5; // Adjust based on your mechanism
-    public static final double MIN_HEIGHT = 0.0;
-    public static final double START_HEIGHT = 0;
+    // Position limits (in inches)
+    public static final double MAX_HEIGHT = 17.5;  // inches — top of travel
+    public static final double MIN_HEIGHT = 0.0;   // inches — bottom of travel (limit switch home)
+    public static final double START_HEIGHT = 0.0;    // inches — should match STOWED_HEIGHT so default command doesn't move on boot
 
-    public static final double ks = 0;
-    public static final double kg = 0;
-    public static final double kv =0; 
+    // Soft limits (in inches) — the closed-loop controller won't command past these
+    public static final double SOFT_MIN = 0.25;     // inches — small buffer above hard bottom
+    public static final double SOFT_MAX = 17.0;     // inches — small buffer below hard top
+
+    // Feedforward — TUNE THESE with SysId or manual testing!
+    // ks = static friction, kg = gravity compensation, kv = velocity
+    // NOTE: kg always pushes UP. In sim there's no gravity so set to 0.
+    // On the real robot, slowly increase kg until the elevator holds position with PID off.
+    public static final double ks = 0;  // TODO: Tune on real robot
+    public static final double kg = 0;   // Set to 0 for sim. Real robot: ~0.3-1.0 (find with SysId)
+    public static final double kv = 0;   // Disable feedforward for now — let PID-only control work first
+
+    // Preset heights (in inches)
+    public static final double STOWED_HEIGHT = 0.5;    // inches — fully retracted
+    public static final double CLIMB_HEIGHT = 17.0;    // inches — fully extended for climb
 
     // Speeds
     public static final double MAX_SPEED = 0.8; // 80% max speed

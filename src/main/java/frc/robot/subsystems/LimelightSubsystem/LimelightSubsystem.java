@@ -37,13 +37,10 @@ public class LimelightSubsystem extends SubsystemBase {
         return (int) LimelightHelpers.getFiducialID(limelightName);
     }
     /**
-     * Returns the robot's yaw relative to the AprilTag face in degrees.
-     * 0 = facing the tag head-on.
+     * Returns the horizontal offset to the AprilTag in degrees.
+     * Positive = tag is to the right, Negative = tag is to the left.
+     * 0 = tag is centered (robot facing the tag head-on).
      */
-    public double getYawToTag() {
-        Pose3d botPose = LimelightHelpers.getBotPose3d_TargetSpace(limelightName);
-        return Math.toDegrees(botPose.getRotation().getZ());
-    }
     public void setPipeline(int pipeline) {
             // Clamp to a safe range (Limelight supports pipelines 0..9 typically)
             int p = Math.max(0, Math.min(9, pipeline));
