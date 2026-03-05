@@ -116,6 +116,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
                 NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
                 NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
+                NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.setHeightAndStop(null));
                 // NamedCommands.registerCommand("Climb to L1", m_ClimberSubsystem.setHeightAndStop(null));
 
@@ -229,7 +230,8 @@ public class RobotContainer {
                         m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
                                         new WaitCommand(Seconds.of(0.5)),
-                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)));
+                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
+                                        .withName("Shoot Fuel");
 
                 Command intakeFuel = Commands.parallel(
                                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
