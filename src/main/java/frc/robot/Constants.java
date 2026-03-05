@@ -172,7 +172,7 @@ public final class Constants {
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RotationsPerSecond.of(1500);
     public static AngularVelocity starVelocity = RotationsPerSecond.of(3000);
-
+    
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity starMaxVelocity = RotationsPerSecond.of(2500);
     public static final AngularAcceleration starMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
