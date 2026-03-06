@@ -50,19 +50,6 @@
                 "data": {
                   "waitTime": 8.0
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Hub2ToClimb"
-                }
               },
               {
                 "type": "named",
@@ -71,6 +58,18 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Hub2ToClimb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climb L1"
           }
         }
       ]
