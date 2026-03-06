@@ -17,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Shooter"
+                  "name": "Set Hopper"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Hopper"
+                  "name": "Set Shooter"
                 }
               },
               {
@@ -48,16 +48,66 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 10.0
+                  "waitTime": 8.0
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "Hub3ToClimb"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Kicker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Hopper"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Star"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Sushi"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Hub3ToClimb"
+                }
+              }
+            ]
           }
         }
       ]

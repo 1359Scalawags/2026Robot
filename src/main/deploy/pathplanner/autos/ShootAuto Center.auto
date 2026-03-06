@@ -50,6 +50,49 @@
                 "data": {
                   "waitTime": 8.0
                 }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Kicker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Hopper"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Star"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Sushi"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
               },
               {
                 "type": "named",
@@ -61,9 +104,16 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Hub2ToClimb"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Hub2ToClimb"
+                }
+              }
+            ]
           }
         },
         {
