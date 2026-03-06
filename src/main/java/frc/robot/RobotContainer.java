@@ -211,7 +211,7 @@ public class RobotContainer {
                 }, m_SwerveSubsystem);
 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
-                        () -> m_SwerveSubsystem.zeroGyro()));
+                        () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
               
                
                 Command shootFuel = Commands.parallel(
@@ -268,15 +268,15 @@ public class RobotContainer {
                                                                 Units.degreesToRadians(180))));
 
                         // Button 2: hold to drive-to-pose, release to resume joystick
-                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
-                                        () -> driveRobotOrientedKeyboard.driveToPoseEnabled(true),
-                                        () -> driveRobotOrientedKeyboard.driveToPoseEnabled(false)));
+                        // m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
+                        //                 () -> driveRobotOrientedKeyboard.driveToPoseEnabled(true),
+                        //                 () -> driveRobotOrientedKeyboard.driveToPoseEnabled(false)));
 
-                        m_DriverJoystick.trigger().onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
+                        // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
+                        //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                        () -> m_SwerveSubsystem.zeroGyro()));
+                                        () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
                         m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
@@ -305,19 +305,19 @@ public class RobotContainer {
                                                                         Units.degreesToRadians(180))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyro()));
+                                () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
-                        m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
-                                new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
-                        ));
+                        // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
+                        //         new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
+                        // ));
 
-                        m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
-                                new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
-                        ));
+                        // m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
+                        //         new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
+                        // ));
 
-                        m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
-                                new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
-                        ));
+                        // m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
+                        //         new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
+                        // ));
 
                         
                         // m_DriverJoystick.button(5).whileTrue(Commands.runEnd(

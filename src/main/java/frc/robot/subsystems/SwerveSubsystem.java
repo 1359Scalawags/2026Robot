@@ -105,7 +105,7 @@ public class SwerveSubsystem extends SubsystemBase
     poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
 
     boolean blueAlliance = true;
-    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(1),
+    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
                                                                       Meter.of(4)),
                                                     Rotation2d.fromDegrees(0))
                                        : new Pose2d(new Translation2d(Meter.of(16),
@@ -816,7 +816,7 @@ public class SwerveSubsystem extends SubsystemBase
   // "proportional control" is a control algorithm in which the output is proportional to the error.
   // in this case, we are going to return an angular velocity that is proportional to the 
   // "tx" value from the Limelight.
-  double limelight_aim_proportional()  //limelight stuff
+  double limelight_aiproportional()  //limelight stuff
   {    
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
