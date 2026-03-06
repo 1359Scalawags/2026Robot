@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9233614868174977,
-        "y": 4.0028689752897675
+        "x": 2.9074784803456972,
+        "y": 4.216252980522953
       },
       "isLocked": false,
       "linkedName": "Hub2ToClimb"
@@ -20,8 +20,8 @@
         "y": 4.126616161616162
       },
       "prevControl": {
-        "x": 1.0013840764290265,
-        "y": 4.1547213173043565
+        "x": 0.8623017902643461,
+        "y": 4.097052480824008
       },
       "nextControl": null,
       "isLocked": false,
@@ -35,7 +35,7 @@
       "minWaypointRelativePos": 0.5552959501557634,
       "maxWaypointRelativePos": 0.9571651090342724,
       "constraints": {
-        "maxVelocity": 0.25,
+        "maxVelocity": 0.2,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -47,8 +47,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 0.8,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

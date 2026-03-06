@@ -93,7 +93,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
                 NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
                 NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
-                NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.55).until(m_ClimberSubsystem.getMaxHeight));
+                NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
                 // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.55).until(null));
                 NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 

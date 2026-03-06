@@ -55,9 +55,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Hub2ToClimb"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Hub2ToClimb"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Set Climb L1"
+                }
+              }
+            ]
           }
         }
       ]

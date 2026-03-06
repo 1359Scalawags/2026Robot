@@ -137,7 +137,7 @@ public ClimberSubsystem(){
     return !limitSwitch.get();
   };
 
-  public BooleanSupplier getMaxHeight = () -> {
+  public BooleanSupplier getMaxHeightSupplier = () -> {
     if (climber.getHeight().in(Inches) >= 18) {
       return true;
     } else {
