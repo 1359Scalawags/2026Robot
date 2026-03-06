@@ -3,10 +3,13 @@
   "robotLength": 0.9,
   "holonomicMode": true,
   "pathFolders": [
+    "Move to hub",
     "Movements",
+    "Hub to Climb",
     "Test movements"
   ],
   "autoFolders": [
+    "ShootClimb",
     "Test autos"
   ],
   "defaultMaxVel": 1.0,
