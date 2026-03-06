@@ -3,27 +3,20 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
-import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
-import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Star;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
-import frc.robot.commands.SwerveCommands.AlignToTag;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
-import java.lang.annotation.Target;
 import java.util.function.DoubleSupplier;
-
-import javax.print.attribute.standard.Finishings;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -43,16 +36,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meter;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 
 
@@ -110,8 +96,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.55).until(m_ClimberSubsystem.getMaxHeight));
                 // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.55).until(null));
                 NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
-                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.setHeightAndStop(null));
-                // NamedCommands.registerCommand("Climb to L1", m_ClimberSubsystem.setHeightAndStop(null));
+                
 
                 // Have the autoChooser pull in all PathPlanner autos as options
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -186,19 +171,11 @@ public class RobotContainer {
    
                                         
         private void configureBindings() {
-                // Command driveFieldOrientedDirectAngle = m_SwerveSubsystem.driveFieldOriented(driveDirectAngle);
-                // Command driveFieldOrientedAnglularVelocityKeyboard = m_SwerveSubsystem
-                //                 .driveFieldOriented(driveAngularVelocityKeyboard);
-                // Command driveSetpointGenKeyboard = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-                //                 driveDirectAngleKeyboard);
-                Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
+                // Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
                 Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
-
-                Command driveFieldOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
-                Command driveRobotOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveRobotOrientedKeyboard);
-                // Command driveSetpointGen = m_SwerveSubsystem.driveWithSetpointGeneratorFieldRelative(
-                //                 driveDirectAngle);
-                Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
+                // Command driveFieldOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
+                // Command driveRobotOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveRobotOrientedKeyboard);
+                // Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
 
 
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
@@ -218,15 +195,10 @@ public class RobotContainer {
                         }
                 }, m_SwerveSubsystem);
 
-                // m_DriverJoystick.button(2).onTrue(Commands.runOnce(
-                //         () -> m_SwerveSubsystem.zeroGyro()));
+                m_DriverJoystick.button(2).onTrue(Commands.runOnce(
+                        () -> m_SwerveSubsystem.zeroGyro()));
               
-                // m_AssistantJoystick.button(2).whileTrue(Commands.parallel(
-                //                 m_IntakeStar.setStarVelocity(RPM.of(500)),
-                //                 m_IntakeSushi.setSushiVelocity(RPM.of(500)).withName("IntakeFuel")));
-                
-
-                                
+               
                 Command shootFuel = Commands.parallel(
                         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
                         m_HopperSubsystem.set(0.75),
@@ -297,6 +269,7 @@ public class RobotContainer {
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
                         //===============================DRIVE TO POSE ===============================
                         m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
 
@@ -337,9 +310,7 @@ public class RobotContainer {
                 m_AssistantJoystick.button(16).whileTrue(stowSafe);
                 m_AssistantJoystick.button(15).whileTrue(m_ClimberSubsystem.set(.55));
                 // Run while held (reliable; stops when released)
-                // m_AssistantJoystick.button(9).onTrue(m_ClimberSubsystem.sysId().withName("ClimberSysId"));
-                // m_AssistantJoystick.button(7).whileTrue(m_ClimberSubsystem.setHeight(Meters.of(Inches.of(5).in(Meters))));
-
+                
                 m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
                 m_AssistantJoystick.button(3).whileTrue(unclogKicker);
 
