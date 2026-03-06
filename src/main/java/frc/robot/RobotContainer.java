@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -39,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 
@@ -93,8 +95,16 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
                 NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
                 NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
+
+                NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
+                NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
+                NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
+                NamedCommands.registerCommand("0 Intake Star", m_IntakeStar.setStarDutyCylce(0));
+                NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
+
                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
                 NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
+
 
                 // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.55).until(null));
                 NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
@@ -120,8 +130,11 @@ public class RobotContainer {
                 m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0).withName("ClimberDefault"));
 
                 m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
                 SmartDashboard.putData("Field", m_SwerveSubsystem.getSwerveDrive().field);
                 SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
+
+
         }
 
         /**
@@ -226,6 +239,10 @@ public class RobotContainer {
                 Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
                 Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
+
+                
+
+
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {
                         m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommandKeyboard);
@@ -260,7 +277,7 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyro()));
-                        m_DriverJoystick.button(6).whileTrue(alignToTag);
+                        m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -290,12 +307,25 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyro()));
 
+                        m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
+                        ));
+
+                        m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
+                        ));
+
+                        m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
+                        ));
+
+                        
                         // m_DriverJoystick.button(5).whileTrue(Commands.runEnd(
                         //         () -> driveAngularVelocity.driveToPoseEnabled(true),
                         //         () -> driveAngularVelocity.driveToPoseEnabled(false)));
 
-                } else if (DriverStation.isTest()) {
-        }
+                } 
+
                 m_AssistantJoystick.button(2).whileTrue(intakeFuel);
 
                 // Hold button 4 to reverse the intake
@@ -321,6 +351,8 @@ public class RobotContainer {
                         isFieldCentric = !isFieldCentric;
                         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
                 }));
+
+                m_AssistantJoystick.button(10).whileTrue(m_ClimberSubsystem.homeCommand());
         }
 
         public Command getAutonomousCommand() {
