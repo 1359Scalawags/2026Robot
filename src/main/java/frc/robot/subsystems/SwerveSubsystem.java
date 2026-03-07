@@ -64,6 +64,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 //limelight stuff
@@ -77,32 +78,26 @@ import limelight.networktables.PoseEstimate;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
 import limelight.networktables.target.pipeline.NeuralClassifier;
 
-public class SwerveSubsystem extends SubsystemBase
-{
-  private final SwerveDrive swerveDrive;
+public class SwerveSubsystem extends SubsystemBase {
 
-  SwerveDrivePoseEstimator swerveDrivePoseEstimator; 
+    private final  SwerveDrive swerveDrive;
 
-  LimelightPoseEstimator poseEstimator;
-  Limelight limelight = new Limelight("limelight-top");
-  LimelightPoseEstimator limelightPoseEstimator;
-  Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
-                                   Units.inchesToMeters(12),
-                                   Units.inchesToMeters(10.5),
-                                   new Rotation3d(0, 0, Units.degreesToRadians(45)));
-  Pose2d estimatedPose;
 
+    SwerveDrivePoseEstimator swerveDrivePoseEstimator; 
+    LimelightPoseEstimator limelightPoseEstimator;
+
+
+    Limelight limelight = new Limelight("limelight-top");
     private int     outofAreaReading = 0;
     private boolean initialReading = false;
 
-  private final Field2d m_field = new Field2d();
+    
+    private final Field2d m_field = new Field2d();
 
-   public SwerveSubsystem(File directory) {
-    limelight.getSettings()  //Limelight stuff
-             .withLimelightLEDMode(LEDMode.PipelineControl)
-             .withCameraOffset(cameraOffset)
-             .save();
-    poseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);  
+
+
+public SwerveSubsystem(File directory) {
+
 
     boolean blueAlliance = true;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
@@ -123,7 +118,6 @@ public class SwerveSubsystem extends SubsystemBase
       throw new RuntimeException(e);
     }
 
-    setupLimelight();
 
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
@@ -134,23 +128,34 @@ public class SwerveSubsystem extends SubsystemBase
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
+    zeroGyroWithAlliance();
+
+    setupLimelight();
+
     setupPathPlanner();
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
+}
 
-    // StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault().getStructTopic("My pose", Pose3d.struct).publish();
-    // StructArrayPublisher<Pose3d> arrayPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("MyPoseArray", Pose3d.struct).publish();
-    }
 
-    public void setupLimelight(){
-      swerveDrive.stopOdometryThread();
-      limelight.getSettings()
-               .withPipelineIndex(0)
-               .withCameraOffset(cameraOffset)
-               .withAprilTagIdFilter(List.of())
-               .save();
-      limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
-    }
+
+
+
+public void setupLimelight(){
+    Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
+                                     Units.inchesToMeters(12),
+                                     Units.inchesToMeters(10.5),
+                                     new Rotation3d(0, 0, Units.degreesToRadians(45)));
+    swerveDrive.stopOdometryThread();
+    limelight.getSettings()
+             .withPipelineIndex(0)
+             .withCameraOffset(cameraOffset)
+             .withAprilTagIdFilter(List.of())
+             .save();
+    limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
+}
+
+
 
 
     /**
@@ -168,8 +173,14 @@ public class SwerveSubsystem extends SubsystemBase
     }
 
   @Override
-  public void periodic()
-  {
+  public void periodic() {
+    limelight.getSettings().withRobotOrientation(new Orientation3d(
+        new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
+        new AngularVelocity3d(
+            DegreesPerSecond.of(0), 
+            DegreesPerSecond.of(0), 
+            DegreesPerSecond.of(0))));
+
     swerveDrive.updateOdometry();
 
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
@@ -654,11 +665,28 @@ public class SwerveSubsystem extends SubsystemBase
         if (isRedAlliance()) {
             zeroGyro();
             //Set the pose 180 degrees
-            resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+            resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.k180deg));
         } else {
             zeroGyro();
         }
     }
+
+    // public Command resetOdom() {
+    //     // Rotation2d correctOffset;
+    //     // if (DriverStation.getAlliance() == Alliance.Blue) {
+    //     //    correctOffset = Rotation2d.kZero
+    //     // } else if (DriverStation.getAlliance() == Alliance.Red) {
+    //     //     correctOffset = Rotation2d.k180deg;
+    //     // }
+    //     // return Command ().onceint
+        
+    //     Rotation2d correctOffset = DriverStation.getAlliance().get() == Alliance.Blue
+    //      ?  Rotation2d.kZero : Rotation2d.k180deg;
+        
+    //     return Command.initialize() -> {
+    //         Pose2d newPose = new Pose2d( swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), correctOffset);
+    //         swerveDrive.resetOdometry(newPose);
+    //     }
 
     /**
      * Sets the drive motors to brake/coast mode.

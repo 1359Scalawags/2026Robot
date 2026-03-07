@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 public class AlignToTag extends Command {
@@ -24,9 +26,9 @@ public class AlignToTag extends Command {
     private DoubleSupplier strafeSupplier;
 
     // private static final double MAX_ROT_SPEED = 0.5;
-    private static final double MAX_OMEGA_RAD_PER_SEC = 4.0; // start 3-6
-    private static final double MAX_ALPHA_RAD_PER_SEC2 = 10.0; // start 8-16
-
+    private static final double MAX_OMEGA_RAD_PER_SEC = 6.0; // start 3-6
+    private static final double MAX_ALPHA_RAD_PER_SEC2 = 16.0; // start 8-16
+    private static final List<Integer> whitelist = new ArrayList();
     // Profiled PID gains (start conservative, then tune)
     private static final double kP = 4.0;
     private static final double kI = 0.0;
@@ -78,6 +80,10 @@ public class AlignToTag extends Command {
 
     @Override
     public void initialize() {
+        whitelist.add(10);
+        whitelist.add(3);
+        whitelist.add(20);
+        whitelist.add(25);
         Rotation2d currentHeading = swerve.getHeading();
         desiredHeading = currentHeading;
 
@@ -95,19 +101,21 @@ public class AlignToTag extends Command {
 
         // Update desired heading when we see a tag
         if (limelight.seesAprilTag()) {
-            double txDeg = limelight.getTX();
+            if (whitelist.contains(limelight.getTagId())){
+                double txDeg = limelight.getTX();
 
-            if (Math.abs(txDeg) < TX_DEADBAND_DEG)
-                txDeg = 0.0;
+                if (Math.abs(txDeg) < TX_DEADBAND_DEG)
+                    txDeg = 0.0;
 
-            // tx + means tag is to the right -> rotate right -> subtract degrees from
-            // current heading
-            desiredHeading = currentHeading.minus(Rotation2d.fromDegrees(txDeg));
+                // tx + means tag is to the right -> rotate right -> subtract degrees from
+                // current heading
+                desiredHeading = currentHeading.minus(Rotation2d.fromDegrees(txDeg));
 
-            lastTagTimeSec = Timer.getFPGATimestamp();
-            hasEverSeenTag = true;
+                lastTagTimeSec = Timer.getFPGATimestamp();
+                hasEverSeenTag = true;
 
-            headingController.setGoal(desiredHeading.getRadians());
+                headingController.setGoal(desiredHeading.getRadians());
+            }
         }
 
         // Should we keep holding the last known good goal?

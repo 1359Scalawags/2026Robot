@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
-import frc.robot.Constants.Climber;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -186,7 +185,7 @@ public class RobotContainer {
    
                                         
         private void configureBindings() {
-                // Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
+                Command driveRobotOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveRobotOriented);
                 Command driveFieldOrientedAngularVelocity = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocity);
                 // Command driveFieldOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
                 // Command driveRobotOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveRobotOrientedKeyboard);
@@ -194,21 +193,15 @@ public class RobotContainer {
 
 
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
-                Command unifiedDriveCommand = Commands.run(() -> {
-                        if (isFieldCentric) {
-                                m_SwerveSubsystem.drive(driveAngularVelocity.get());
-                        } else {
-                                m_SwerveSubsystem.drive(driveRobotOriented.get());
-                        }
-                }, m_SwerveSubsystem);
+                // Command unifiedDriveCommand = Commands.run(() -> {
+                //         if (isFieldCentric) {
+                //                 m_SwerveSubsystem.drive(driveAngularVelocity.get());
+                //         } else {
+                //                 m_SwerveSubsystem.drive(driveRobotOriented.get());
+                //         }
+                // }, m_SwerveSubsystem);
                 
-                Command unifiedDriveCommandKeyboard = Commands.run(() -> {
-                        if (isFieldCentric) {
-                                m_SwerveSubsystem.drive(driveAngularVelocityKeyboard.get());
-                        } else {
-                                m_SwerveSubsystem.drive(driveRobotOrientedKeyboard.get());
-                        }
-                }, m_SwerveSubsystem);
+                
 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
@@ -244,8 +237,8 @@ public class RobotContainer {
 
 
                 // =========== Set Default Command for swerve ============
-                if (RobotBase.isSimulation()) {
-                        m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommandKeyboard);
+                if (RobotBase.isSimulation()) {       
+                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
@@ -280,7 +273,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+                        // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -290,7 +283,6 @@ public class RobotContainer {
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         //===============================DRIVE TO POSE ===============================
-                        m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
 
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
@@ -347,10 +339,17 @@ public class RobotContainer {
                 m_AssistantJoystick.button(3).whileTrue(unclogKicker);
 
                 // m_DriverJoystick.button(5).whileTrue(driveRobotOrientedAngularVelocity);
-                m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
-                        isFieldCentric = !isFieldCentric;
-                        SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
-                }));
+                // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
+                //         isFieldCentric = !isFieldCentric;
+                //         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
+                // }));
+
+                m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+
+                
+                m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
+                m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
+
 
                 m_AssistantJoystick.button(10).whileTrue(m_ClimberSubsystem.homeCommand());
         }
