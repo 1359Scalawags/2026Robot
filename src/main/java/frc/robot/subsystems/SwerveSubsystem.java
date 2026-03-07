@@ -174,28 +174,25 @@ public void setupLimelight(){
 
   @Override
   public void periodic() {
-    limelight.getSettings().withRobotOrientation(new Orientation3d(
-        new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
-        new AngularVelocity3d(
-            DegreesPerSecond.of(0), 
-            DegreesPerSecond.of(0), 
-            DegreesPerSecond.of(0))));
 
     swerveDrive.updateOdometry();
 
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
-    // Required for megatag2
-    limelight.getSettings()  //limelight stuff
-            .withRobotOrientation(new Orientation3d(swerveDrive.getGyroRotation3d(),
-                    new AngularVelocity3d(DegreesPerSecond.of(0),
-                            DegreesPerSecond.of(0),
-                            DegreesPerSecond.of(0))))
-            .save();
 
-      Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
-      Optional<LimelightResults> results       = limelight.getLatestResults();
-      if (results.isPresent() && poseEstimates.isPresent())
+    limelight.getSettings().withRobotOrientation(new Orientation3d(
+        new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
+        new AngularVelocity3d(
+            DegreesPerSecond.of(0), 
+            DegreesPerSecond.of(0), 
+            DegreesPerSecond.of(0))))
+    .save();
+
+
+    
+    Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
+    Optional<LimelightResults> results       = limelight.getLatestResults();
+ if (results.isPresent() && poseEstimates.isPresent())
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
@@ -233,6 +230,9 @@ public void setupLimelight(){
           }
   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
+
+        
+
       }
     }
 
