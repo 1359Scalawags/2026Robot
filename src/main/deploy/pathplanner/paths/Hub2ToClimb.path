@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.613,
+        "x": 2.4,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9132121369712745,
-        "y": 4.204261909660472
+        "x": 2.6254582111512006,
+        "y": 4.151198717920672
       },
       "isLocked": false,
       "linkedName": "Hub2ToClimb"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.376,
-        "y": 4.125
+        "y": 4.075
       },
       "prevControl": {
-        "x": 0.9167413403118214,
-        "y": 4.125
+        "x": 1.0416888665640631,
+        "y": 4.057716496119485
       },
       "nextControl": null,
       "isLocked": false,
