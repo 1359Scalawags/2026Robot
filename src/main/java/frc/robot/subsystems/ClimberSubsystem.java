@@ -23,6 +23,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
@@ -105,6 +106,11 @@ public ClimberSubsystem(){
    */
   public Command setHeight(Distance height) {
      return climber.setHeight(height);
+  }
+
+  /* Sets the home height so that we can bring the robot down. */
+  public Command home() {
+    return Commands.run(() -> spark.getEncoder().setPosition(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)));
   }
   
   /**

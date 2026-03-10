@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.DoubleSupplier;
 
 public class AlignToTag extends Command {
@@ -31,6 +33,7 @@ public class AlignToTag extends Command {
     private static final double kP = 4.0;
     private static final double kI = 0.0;
     private static final double kD = 0.2;
+    private static final List<Integer> whitelist = new ArrayList<>();
 
     private final ProfiledPIDController headingController = new ProfiledPIDController(
             kP, kI, kD,
@@ -78,6 +81,10 @@ public class AlignToTag extends Command {
 
     @Override
     public void initialize() {
+        whitelist.add(10);
+        whitelist.add(3);
+        whitelist.add(20);
+        whitelist.add(25);
         Rotation2d currentHeading = swerve.getHeading();
         desiredHeading = currentHeading;
 
@@ -131,10 +138,12 @@ public class AlignToTag extends Command {
         // IMPORTANT NOTE ABOUT UNITS:
         // - If swerve.drive expects radians/sec for rotation: pass rotCommand directly.
         // - If it expects -1..1: use (rotCommand / MAX_OMEGA_RAD_PER_SEC) instead.
-        swerve.drive(
-                new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
-                rotCommand,
-                true);
+        if (whitelist.contains(limelight.getTagId())){
+            swerve.drive(
+                    new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
+                    rotCommand,
+                    true);
+        }
     }
 
     @Override

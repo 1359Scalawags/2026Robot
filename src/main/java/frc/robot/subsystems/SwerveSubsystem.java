@@ -318,6 +318,7 @@ public class SwerveSubsystem extends SubsystemBase
      * @return PathFinding command
      */
     public Command driveToPose(Pose2d pose) {
+        //TODO: replace pathtofindpose w. pathtofindposeflipped to account for alliance flip
 // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
                 swerveDrive.getMaximumChassisVelocity(), 4.0,

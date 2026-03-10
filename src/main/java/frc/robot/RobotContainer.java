@@ -167,7 +167,9 @@ public class RobotContainer {
                         .withControllerRotationAxis(() -> m_DriverJoystick.getRawAxis(
                                         2))
                         .deadband(OperatorConstants.DEADBAND)
-                        .scaleTranslation(0.8);
+                        .scaleTranslation(0.8)
+                        .robotRelative(false)
+                        .allianceRelativeControl(true);
         SwerveInputStream driveRobotOrientedKeyboard = driveAngularVelocityKeyboard.copy().robotRelative(true)
                         .allianceRelativeControl(false);
         
@@ -201,9 +203,9 @@ public class RobotContainer {
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
                 Command unifiedDriveCommand = Commands.run(() -> {
                         if (isFieldCentric) {
-                                m_SwerveSubsystem.drive(driveAngularVelocity.get());
+                                m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         } else {
-                                m_SwerveSubsystem.drive(driveRobotOriented.get());
+                                m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity);
                         }
                 }, m_SwerveSubsystem);
                 
@@ -262,11 +264,10 @@ public class RobotContainer {
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         // Configure driveToPose on the stream backing the default command
-                        Pose2d simTarget = new Pose2d(new Translation2d(2, 2),
-                                        Rotation2d.fromDegrees(180));
+                        Pose2d simTarget = new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.fromDegrees(90));
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(simTarget);
 
-                        driveRobotOrientedKeyboard.driveToPose(
+                        driveAngularVelocityKeyboard.driveToPose(
                                         () -> simTarget,
                                         new ProfiledPIDController(5, 0, 0, new Constraints(5, 2)),
                                         new ProfiledPIDController(5, 0, 0,
@@ -275,8 +276,8 @@ public class RobotContainer {
 
                         // Button 2: hold to drive-to-pose, release to resume joystick
                         m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
-                                        () -> driveRobotOrientedKeyboard.driveToPoseEnabled(true),
-                                        () -> driveRobotOrientedKeyboard.driveToPoseEnabled(false)));
+                                        () -> driveAngularVelocityKeyboard.driveToPoseEnabled(true),
+                                        () -> driveAngularVelocityKeyboard.driveToPoseEnabled(false)));
 
                         m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
@@ -285,7 +286,7 @@ public class RobotContainer {
                                         () -> m_SwerveSubsystem.zeroGyro()));
 
                 } else if (RobotBase.isReal()) {
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+                        m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -294,7 +295,7 @@ public class RobotContainer {
                         m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
                         //===============================DRIVE TO POSE ===============================
-                        m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
+                        // m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
 
@@ -323,7 +324,7 @@ public class RobotContainer {
                 m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
                 
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
-
+                m_AssistantJoystick.button(5).whileTrue(m_ClimberSubsystem.home());
 
                 // Climber: button 8 = retract (stow), button 9 = extend (climb)
                 // Uses closed-loop position control with soft limits
@@ -340,11 +341,10 @@ public class RobotContainer {
 
                 // m_DriverJoystick.button(5).whileTrue(driveRobotOrientedAngularVelocity);
                 m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
-                        isFieldCentric = !isFieldCentric;
-                        SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
+                        
                 }));
 
-                m_DriverJoystick.button(6).whileTrue(alignToTag);
+                m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(new Pose2d(new Translation2d(Meter.of(1.524), Meter.of(0)), Rotation2d.fromDegrees(0))));
                 // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
