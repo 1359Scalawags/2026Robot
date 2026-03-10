@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveToHub1"
+            "pathName": "MoveToHub3"
           }
         },
         {
@@ -48,13 +48,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 8.0
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Set Climb L1"
+                  "waitTime": 16.0
                 }
               }
             ]

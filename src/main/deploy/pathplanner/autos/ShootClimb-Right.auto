@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveToHub3"
+            "pathName": "MoveToHub2"
           }
         },
         {
@@ -49,6 +49,12 @@
                 "type": "wait",
                 "data": {
                   "waitTime": 8.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Set Climb L1"
                 }
               }
             ]
@@ -95,6 +101,25 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Hub2Climb-R"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climb L1"
           }
         }
       ]

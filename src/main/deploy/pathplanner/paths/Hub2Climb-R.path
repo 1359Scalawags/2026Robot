@@ -8,32 +8,32 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6254582111512006,
-        "y": 4.151198717920672
+        "x": 2.4362933025404168,
+        "y": 3.500854503464204
       },
       "isLocked": false,
-      "linkedName": "Hub2ToClimb"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2,
-        "y": 4.175
+        "x": 1.179480369515013,
+        "y": 3.1971247113163987
       },
       "prevControl": {
-        "x": 0.8656888665640632,
-        "y": 4.157716496119485
+        "x": 2.541027713625867,
+        "y": 3.1657043879907634
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "T-Climb"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5552959501557634,
-      "maxWaypointRelativePos": 0.9571651090342724,
+      "minWaypointRelativePos": 0.85,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.2,
         "maxAcceleration": 5.0,
