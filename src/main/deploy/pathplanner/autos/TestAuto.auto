@@ -7,48 +7,41 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveToHub2"
+            "pathName": "Example Path"
           }
         },
         {
-          "type": "race",
+          "type": "sequential",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Hopper"
+                  "name": "testPrint"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Shooter"
+                  "name": "testPrint"
                 }
               },
               {
-                "type": "sequential",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 0.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Set Kicker"
-                      }
-                    }
-                  ]
+                  "name": "testPrint"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 10.0
+                  "name": "testPrint"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "testPrint"
                 }
               }
             ]

@@ -143,7 +143,7 @@ public final class Constants {
 
     // Soft limits (in inches) — the closed-loop controller won't command past these
     public static final double SOFT_MIN = -0.5;     // inches — small buffer above hard bottom
-    public static final double SOFT_MAX = 17.5;     // inches — small buffer below hard top
+    public static final double SOFT_MAX = 18;     // inches — small buffer below hard top
 
     // Feedforward — TUNE THESE with SysId or manual testing!
     // ks = static friction, kg = gravity compensation, kv = velocity

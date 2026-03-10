@@ -145,6 +145,14 @@ public ClimberSubsystem(){
     return !limitSwitch.get();
   };
 
+  public BooleanSupplier getMaxHeight = () -> {
+    if (climber.getHeight().in(Inches) >= 18) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   /**
    * Run sysId on the {@link Elevator}.
    * 

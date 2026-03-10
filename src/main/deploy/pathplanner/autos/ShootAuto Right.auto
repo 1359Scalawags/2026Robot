@@ -17,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Hopper"
+                  "name": "Set Shooter"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Set Shooter"
+                  "name": "Set Hopper"
                 }
               },
               {
@@ -48,6 +48,7 @@
               {
                 "type": "wait",
                 "data": {
+<<<<<<< HEAD
                   "waitTime": 8.0
                 }
               },
@@ -55,10 +56,14 @@
                 "type": "named",
                 "data": {
                   "name": "Set Climb L1"
+=======
+                  "waitTime": 10.0
+>>>>>>> d8bbcf05ec2dbc8ad1d931c3972820d93399ee66
                 }
               }
             ]
           }
+<<<<<<< HEAD
         },
         {
           "type": "race",
@@ -127,11 +132,17 @@
           "data": {
             "name": "Climb L1"
           }
+=======
+>>>>>>> d8bbcf05ec2dbc8ad1d931c3972820d93399ee66
         }
       ]
     }
   },
   "resetOdom": true,
+<<<<<<< HEAD
   "folder": "ShootClimb",
+=======
+  "folder": null,
+>>>>>>> d8bbcf05ec2dbc8ad1d931c3972820d93399ee66
   "choreoAuto": false
 }
