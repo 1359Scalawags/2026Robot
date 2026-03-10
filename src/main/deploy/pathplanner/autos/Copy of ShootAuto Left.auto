@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveToHub3"
+            "pathName": "MoveToHub1"
           }
         },
         {
@@ -50,119 +50,6 @@
                 "data": {
                   "waitTime": 8.0
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Shooter"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Kicker"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Hopper"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Intake Star"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Intake Sushi"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.1
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Hub3ToClimb"
-                }
-              }
-            ]
-          }
-<<<<<<< HEAD
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Shooter"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Kicker"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Hopper"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Intake Star"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "0 Intake Sushi"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.1
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Hub3ToClimb"
-                }
               },
               {
                 "type": "named",
@@ -174,17 +61,52 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Climb L1"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Kicker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Hopper"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Star"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Sushi"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
           }
-=======
->>>>>>> d8bbcf05ec2dbc8ad1d931c3972820d93399ee66
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "ShootClimb",
+  "folder": "Shoot auto no climb",
   "choreoAuto": false
 }

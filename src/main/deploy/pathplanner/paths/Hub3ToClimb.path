@@ -1,0 +1,68 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.064699769053119,
+        "y": 2.935288683602772
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.064699769053119,
+        "y": 3.6682179765320644
+      },
+      "isLocked": false,
+      "linkedName": "Hub3ToClimb"
+    },
+    {
+      "anchor": {
+        "x": 1.2,
+        "y": 4.175
+      },
+      "prevControl": {
+        "x": 2.4699621212121214,
+        "y": 4.106287878787879
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "T-Climb"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.8465732087227389,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.3,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Hub to Climb",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 34.69515353123393
+  },
+  "useDefaultConstraints": true
+}

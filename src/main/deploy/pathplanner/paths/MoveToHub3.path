@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.2654671717171726,
-        "y": 3.0959343434343443
+        "x": 3.064699769053119,
+        "y": 2.935288683602772
       },
       "prevControl": {
-        "x": 3.124154344752273,
-        "y": 2.8897046536823874
+        "x": 2.9233869420882193,
+        "y": 2.729058993850815
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Hub3ToClimb"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 34.69515353123393
   },
   "reversed": false,
-  "folder": "Movements",
+  "folder": "Move to hub",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

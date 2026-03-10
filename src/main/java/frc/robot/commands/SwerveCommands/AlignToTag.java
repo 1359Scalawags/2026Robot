@@ -26,9 +26,9 @@ public class AlignToTag extends Command {
     private DoubleSupplier strafeSupplier;
 
     // private static final double MAX_ROT_SPEED = 0.5;
-    private static final double MAX_OMEGA_RAD_PER_SEC = 8.0; // start 3-6
-    private static final double MAX_ALPHA_RAD_PER_SEC2 = 10.0; // start 8-16
-
+    private static final double MAX_OMEGA_RAD_PER_SEC = 6.0; // start 3-6
+    private static final double MAX_ALPHA_RAD_PER_SEC2 = 16.0; // start 8-16
+    
     // Profiled PID gains (start conservative, then tune)
     private static final double kP = 4.0;
     private static final double kI = 0.0;
@@ -102,19 +102,21 @@ public class AlignToTag extends Command {
 
         // Update desired heading when we see a tag
         if (limelight.seesAprilTag()) {
-            double txDeg = limelight.getTX();
+            if (whitelist.contains(limelight.getTagId())){
+                double txDeg = limelight.getTX();
 
-            if (Math.abs(txDeg) < TX_DEADBAND_DEG)
-                txDeg = 0.0;
+                if (Math.abs(txDeg) < TX_DEADBAND_DEG)
+                    txDeg = 0.0;
 
-            // tx + means tag is to the right -> rotate right -> subtract degrees from
-            // current heading
-            desiredHeading = currentHeading.minus(Rotation2d.fromDegrees(txDeg));
+                // tx + means tag is to the right -> rotate right -> subtract degrees from
+                // current heading
+                desiredHeading = currentHeading.minus(Rotation2d.fromDegrees(txDeg));
 
-            lastTagTimeSec = Timer.getFPGATimestamp();
-            hasEverSeenTag = true;
+                lastTagTimeSec = Timer.getFPGATimestamp();
+                hasEverSeenTag = true;
 
-            headingController.setGoal(desiredHeading.getRadians());
+                headingController.setGoal(desiredHeading.getRadians());
+            }
         }
 
         // Should we keep holding the last known good goal?

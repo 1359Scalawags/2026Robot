@@ -3,10 +3,14 @@
   "robotLength": 0.908,
   "holonomicMode": true,
   "pathFolders": [
+    "Move to hub",
     "Movements",
+    "Hub to Climb",
     "Test movements"
   ],
   "autoFolders": [
+    "Shoot auto no climb",
+    "ShootClimb",
     "Test autos"
   ],
   "defaultMaxVel": 1.0,
@@ -17,7 +21,7 @@
   "robotMass": 107.0,
   "robotMOI": 6.883,
   "robotTrackwidth": 0.546,
-  "driveWheelRadius": 0.051,
+  "driveWheelRadius": 0.0508,
   "driveGearing": 5.143,
   "maxDriveSpeed": 5.45,
   "driveMotorType": "falcon500",

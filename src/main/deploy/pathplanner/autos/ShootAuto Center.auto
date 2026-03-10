@@ -48,16 +48,84 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 10.0
+                  "waitTime": 8.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Set Climb L1"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Shooter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Kicker"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Hopper"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Star"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "0 Intake Sushi"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Hub2ToClimb"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Climb L1"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "ShootClimb",
   "choreoAuto": false
 }

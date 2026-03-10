@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.051553030303031,
-        "y": 3.977739898989899
+        "x": 3.52,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.000580307390209,
-        "y": 3.9808632967870285
+        "x": 3.837645008571132,
+        "y": 4.017773373961388
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.876098484848485,
-        "y": 3.977739898989899
+        "x": 2.4,
+        "y": 4.0
       },
       "prevControl": {
-        "x": 1.9703737585055343,
-        "y": 3.9778722413009593
+        "x": 2.150034110543038,
+        "y": 3.995870338029544
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Hub2ToClimb"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Movements",
+  "folder": "Move to hub",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
