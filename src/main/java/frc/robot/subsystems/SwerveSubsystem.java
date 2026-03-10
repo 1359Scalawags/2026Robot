@@ -65,6 +65,7 @@ import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 //limelight stuff
@@ -182,10 +183,7 @@ public void setupLimelight(){
 
     limelight.getSettings().withRobotOrientation(new Orientation3d(
         new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
-        new AngularVelocity3d(
-            DegreesPerSecond.of(0), 
-            DegreesPerSecond.of(0), 
-            DegreesPerSecond.of(0))))
+        new AngularVelocity3d(RotationsPerSecond.of(0),RotationsPerSecond.of(0),RotationsPerSecond.of(0))))
     .save();
 
 
