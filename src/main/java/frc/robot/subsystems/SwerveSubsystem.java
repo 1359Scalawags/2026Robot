@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -194,6 +195,7 @@ public void setupLimelight(){
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
+
         SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
         SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
         SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
@@ -228,10 +230,8 @@ public void setupLimelight(){
           }
   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
-
-        
-
       }
+    m_field.setRobotPose(swerveDrive.getPose());
     }
 
 
@@ -837,43 +837,18 @@ public void setupLimelight(){
     }
 
 
+//   SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
+//         SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
+//         SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+//         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
+//         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
+//         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
 
-  // simple proportional turning control with Limelight.
-  // "proportional control" is a control algorithm in which the output is proportional to the error.
-  // in this case, we are going to return an angular velocity that is proportional to the 
-  // "tx" value from the Limelight.
-  double limelight_aiproportional()  //limelight stuff
-  {    
-    // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
-    // if it is too high, the robot will oscillate around.
-    // if it is too low, the robot will never reach its target
-    // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
+    public Pose2d getOdomPoseEstimte() {
+        return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), swerveDrive.getPose().getRotation());
+    }
 
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
-    // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity =  NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0) * kP;
-
-    // convert to radians per second for our drive method
-    // targetingAngularVelocity *= Drivetrain.kMaxAngularSpeed;
-
-    //invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
-
-    return targetingAngularVelocity;
-  }
-
-  // simple proportional ranging control with Limelight's "ty" value
-  // this works best if your Limelight's mount height and target mount height are different.
-  // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()  //limelight stuff
-  {    
-    double kP = .1;
-    double targetingForwardSpeed = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0) * kP;
-    targetingForwardSpeed *= Constants.swerveDrive.MAX_SPEED;
-    targetingForwardSpeed *= -1.0;
-    return targetingForwardSpeed;
-  }
-
+    public Pose2d getLLPoseEstimte(Double LLx, Double LLy, Rotation2d LLdeg) {
+        return new Pose2d(LLx, LLy, LLdeg);
+    }
 }
