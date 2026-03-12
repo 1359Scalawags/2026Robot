@@ -195,15 +195,6 @@ public class RobotContainer {
 
 
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
-<<<<<<< HEAD
-                Command unifiedDriveCommand = Commands.run(() -> {
-                        if (isFieldCentric) {
-                                m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-                        } else {
-                                m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity);
-                        }
-                }, m_SwerveSubsystem);
-=======
                 // Command unifiedDriveCommand = Commands.run(() -> {
                 //         if (isFieldCentric) {
                 //                 m_SwerveSubsystem.drive(driveAngularVelocity.get());
@@ -212,7 +203,6 @@ public class RobotContainer {
                 //         }
                 // }, m_SwerveSubsystem);
                 
->>>>>>> Salem2026
                 
 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
@@ -272,32 +262,19 @@ public class RobotContainer {
                                                                 Units.degreesToRadians(180))));
 
                         // Button 2: hold to drive-to-pose, release to resume joystick
-<<<<<<< HEAD
-                        m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
-                                        () -> driveAngularVelocityKeyboard.driveToPoseEnabled(true),
-                                        () -> driveAngularVelocityKeyboard.driveToPoseEnabled(false)));
-=======
                         // m_DriverJoystick.button(2).whileTrue(Commands.runEnd(
                         //                 () -> driveRobotOrientedKeyboard.driveToPoseEnabled(true),
                         //                 () -> driveRobotOrientedKeyboard.driveToPoseEnabled(false)));
->>>>>>> Salem2026
 
                         // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                         //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-<<<<<<< HEAD
-                                        () -> m_SwerveSubsystem.zeroGyro()));
-
-                } else if (RobotBase.isReal()) {
-                        m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
-=======
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
                         m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
->>>>>>> Salem2026
 
                         m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
@@ -307,11 +284,6 @@ public class RobotContainer {
                         m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         //===============================DRIVE TO POSE ===============================
-<<<<<<< HEAD
-                        // m_SwerveSubsystem.setDefaultCommand(unifiedDriveCommand);
-=======
-
->>>>>>> Salem2026
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
 
@@ -367,16 +339,6 @@ public class RobotContainer {
                 m_AssistantJoystick.button(3).whileTrue(unclogKicker);
 
                 // m_DriverJoystick.button(5).whileTrue(driveRobotOrientedAngularVelocity);
-<<<<<<< HEAD
-                m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
-                        
-                }));
-=======
-                // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
-                //         isFieldCentric = !isFieldCentric;
-                //         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
-                // }));
-
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                 
@@ -385,11 +347,9 @@ public class RobotContainer {
 
 
                 m_AssistantJoystick.button(10).whileTrue(m_ClimberSubsystem.homeCommand());
->>>>>>> Salem2026
         }
 
         public Command getAutonomousCommand() {
-                // An example command will be run in autonomous
                 return autoChooser.getSelected();
         }
 }
