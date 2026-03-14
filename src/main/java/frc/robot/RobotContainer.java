@@ -349,6 +349,7 @@ public class RobotContainer {
                 //Robot Centric to Field Centric, vice versa.
                 m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
                 m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
+                m_DriverJoystick.button(8).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d(1.65, 3.755, Rotation2d.kZero)), m_SwerveSubsystem));
 
 
                 m_AssistantJoystick.button(10).whileTrue(m_ClimberSubsystem.homeCommand());
@@ -358,4 +359,5 @@ public class RobotContainer {
                 // An example command will be run in autonomous
                 return autoChooser.getSelected();
         }
+
 }

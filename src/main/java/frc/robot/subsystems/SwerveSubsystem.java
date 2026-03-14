@@ -229,8 +229,6 @@ public void setupLimelight(){
   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
 
-        
-
       }
     }
 
