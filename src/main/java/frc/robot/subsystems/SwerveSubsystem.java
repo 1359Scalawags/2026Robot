@@ -195,7 +195,6 @@ public void setupLimelight(){
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
-
         SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
         SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
         SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
