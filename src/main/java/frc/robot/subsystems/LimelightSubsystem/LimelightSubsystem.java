@@ -106,34 +106,34 @@ public class LimelightSubsystem extends SubsystemBase {
             double secondBestTa = -1.0;
             
             //Find the top 2 largest whitelisted tags in a single pass
-            for (var tag : latestResults.get().targets_Fiducials) {
-                if (whitelist.contains((int) tag.fiducialID)) {
-                    if (tag.ta > bestTa) {
-                        // Move the old best down to second place
-                        secondBestTa = bestTa;
-                        secondBestId = bestId;
+            // for (var tag : latestResults.get().targets_Fiducials) {
+            //     if (whitelist.contains((int) tag.fiducialID)) {
+            //         if (tag.ta > bestTa) {
+            //             // Move the old best down to second place
+            //             secondBestTa = bestTa;
+            //             secondBestId = bestId;
                         
-                        // Set the new best
-                        bestTa = tag.ta;
-                        bestId = (int) tag.fiducialID;
-                    } else if (tag.ta > secondBestTa) {
-                        // Set the new second best
-                        secondBestTa = tag.ta;
-                        secondBestId = (int) tag.fiducialID;
-                    }
-                }
-            }
-
+            //             // Set the new best
+            //             bestTa = tag.ta;
+            //             bestId = (int) tag.fiducialID;
+            //         } else if (tag.ta > secondBestTa) {
+            //             // Set the new second best
+            //             secondBestTa = tag.ta;
+            //             secondBestId = (int) tag.fiducialID;
+            //         }
+            //     }
+            // }
+            
             //Lock onto the tags
-            if (bestId != -1) {
-                lockedIds.add(bestId); // Always lock the best tag
+            // if (bestId != -1) {
+            //     lockedIds.add(bestId); // Always lock the best tag
                 
-                // Only lock the second tag if it is at least 70% as big as the best tag
-                // (If it's smaller, we are just looking flush at the first tag)
-                if (secondBestId != -1 && secondBestTa >= (bestTa * 0.70)) {
-                    lockedIds.add(secondBestId);
-                }
-            }
+            //     // Only lock the second tag if it is at least 70% as big as the best tag
+            //     // (If it's smaller, we are just looking flush at the first tag)
+            //     if (secondBestId != -1 && secondBestTa >= (bestTa * 0.70)) {
+            //         lockedIds.add(secondBestId);
+            //     }
+            // }
         }
         return lockedIds;
     }

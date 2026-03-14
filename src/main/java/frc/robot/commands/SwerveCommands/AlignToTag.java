@@ -85,66 +85,47 @@ public class AlignToTag extends Command {
 
     @Override
     public void initialize() {
-        whitelist.addAll(List.of(10, 3, 20, 25));
-        Rotation2d currentHeading = swerve.getHeading();
-        desiredHeading = currentHeading;
+        // whitelist.addAll(List.of(10, 3, 20, 25));
+        // Rotation2d currentHeading = swerve.getHeading();
+        // desiredHeading = currentHeading;
 
-        hasEverSeenTag = false;
-        lastTagTimeSec = -999.0;
+        // hasEverSeenTag = false;
+        // lastTagTimeSec = -999.0;
 
-        lockedTagIds.clear();
+        // lockedTagIds.clear();
 
         // Reset the internal motion profile to “start from where we are right now”
-        headingController.reset(currentHeading.getRadians());
-        headingController.setGoal(desiredHeading.getRadians());
+        headingController.reset(swerve.getHeading().getRadians());
+        // headingController.setGoal(desiredHeading.getRadians());
     }
 
     @Override
     public void execute() {
         Rotation2d currentHeading = swerve.getHeading();
-        //If we aren't locked onto anything yet, lock onto the relevent visible tags
-        if (lockedTagIds.isEmpty()) {
-            lockedTagIds = limelight.getRelevantWhitelistedTags(whitelist);
+
+        // 1. Get the absolute X/Y coordinates of the Hub (Red or Blue)
+        Translation2d hubPos = swerve.getTargetHub();
+
+        // 2. Get our robot's exact X/Y coordinates on the field
+        Translation2d robotPos = swerve.getPose().getTranslation();
+
+        // 3. Calculate the exact angle from the robot to the center of the Hub
+        Rotation2d desiredHeading = hubPos.minus(robotPos).getAngle();
+
+        // NOTE: If your shooter is on the BACK of your robot, uncomment this line:
+        // desiredHeading = desiredHeading.plus(Rotation2d.fromDegrees(180));
+
+        // 4. Feed the angle to the ProfiledPIDController
+        headingController.setGoal(desiredHeading.getRadians());
+
+        double rotCommand = headingController.calculate(currentHeading.getRadians());
+        rotCommand = MathUtil.clamp(rotCommand, -MAX_OMEGA_RAD_PER_SEC, MAX_OMEGA_RAD_PER_SEC);
+
+        if (headingController.atGoal()) {
+            rotCommand = 0.0;
         }
 
-        //Ask the Limelight for the average tx of our locked tags
-        OptionalDouble targetTx = OptionalDouble.empty();
-        if (!lockedTagIds.isEmpty()) {
-            targetTx = limelight.getAverageTxOfTags(lockedTagIds);
-        }
-
-        //Update heading based on that average
-        if (targetTx.isPresent()) {
-            double txDeg = targetTx.getAsDouble();
-
-            if (Math.abs(txDeg) < TX_DEADBAND_DEG) {
-                txDeg = 0.0;
-            }
-
-            desiredHeading = currentHeading.minus(Rotation2d.fromDegrees(txDeg));
-
-            lastTagTimeSec = Timer.getFPGATimestamp();
-            hasEverSeenTag = true;
-
-            headingController.setGoal(desiredHeading.getRadians());
-        }
-
-        // Should we keep holding the last known good goal?
-        double now = Timer.getFPGATimestamp();
-        boolean shouldHold = hasEverSeenTag && (now - lastTagTimeSec) <= TAG_LOSS_HOLD_SEC;
-
-        double rotCommand = 0.0;
-
-        if (shouldHold) {
-            rotCommand = headingController.calculate(currentHeading.getRadians());
-            rotCommand = MathUtil.clamp(rotCommand, -MAX_OMEGA_RAD_PER_SEC, MAX_OMEGA_RAD_PER_SEC);
-
-            if (headingController.atGoal()) {
-                rotCommand = 0.0;
-            }
-        }
-
-        //Drive
+        // 5. Drive! (Notice how there is no "if we see a tag" check. It just ALWAYS works.)
         swerve.drive(
                 new Translation2d(forwardSupplier.getAsDouble(), strafeSupplier.getAsDouble()),
                 rotCommand,

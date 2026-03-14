@@ -271,8 +271,6 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
-                        m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
-
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
@@ -345,6 +343,8 @@ public class RobotContainer {
                 // }));
 
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+
+                m_DriverJoystick.button(7).toggleOnTrue(alignToTag);
 
                 //Robot Centric to Field Centric, vice versa.
                 m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
