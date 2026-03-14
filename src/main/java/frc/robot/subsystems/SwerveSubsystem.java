@@ -207,33 +207,45 @@ public void setupLimelight(){
         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
-        if (result.valid)
-        {
-          // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
-          Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
-          double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
-          if (distanceToPose < 0.5 || (outofAreaReading > 10) || (outofAreaReading > 10 && !initialReading))
-          {
-            if (!initialReading)
-            {
-              initialReading = true;
+        // MegaTag2 Vision Integration
+        if (result.valid && poseEstimate.avgTagDist < 4.0) {
+            // 1. Get the highly accurate MegaTag2 Pose
+            Pose2d mt2Pose = poseEstimate.pose.toPose2d();
+            
+            // 2. Feed it directly to YAGSL!
+            // Trust Vision for X and Y (0.5), but IGNORE Vision for Rotation (9999999)
+            swerveDrive.addVisionMeasurement(
+                    mt2Pose, 
+                    poseEstimate.timestampSeconds,
+                    VecBuilder.fill(0.5, 0.5, 9999999) 
+            );
             }
-            outofAreaReading = 0;
-            // System.out.println(usefulPose.toString());
-            swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-            // System.out.println(result.timestamp_LIMELIGHT_publish);
-            // System.out.println(result.timestamp_RIOFPGA_capture);
-            swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
-          } else
-          {
-            outofAreaReading += 1;
-          }
-  //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
-      }
-      
-    m_field.setRobotPose(swerveDrive.getPose());
     }
+//         if (result.valid)
+//         {
+//           // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
+//           Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
+//         //   double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
+//           if (result.valid && poseEstimate.avgTagDist < 4.0)
+//           {
+//             // if (!initialReading)
+//             // {
+//             //   initialReading = true;
+//             // }
+//             // outofAreaReading = 0;
+//             swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
+//             swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
+//           } else
+//           {
+//             outofAreaReading += 1;
+//           }
+//   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
+//         }
+    //   }
+      
+    // m_field.setRobotPose(swerveDrive.getPose());
+    // }
 
 
    
