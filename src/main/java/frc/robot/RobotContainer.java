@@ -43,6 +43,7 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 
 
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -339,11 +340,6 @@ public class RobotContainer {
                 m_AssistantJoystick.button(3).whileTrue(unclogKicker);
 
                 // m_DriverJoystick.button(5).whileTrue(driveRobotOrientedAngularVelocity);
-                // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> {
-                //         isFieldCentric = !isFieldCentric;
-                //         SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
-                // }));
-
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                 //Robot Centric to Field Centric, vice versa.
@@ -355,7 +351,8 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                // An example command will be run in autonomous
                 return autoChooser.getSelected();
         }
+
+
 }
