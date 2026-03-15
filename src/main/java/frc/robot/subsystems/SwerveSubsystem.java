@@ -147,7 +147,7 @@ public void setupLimelight(){
     Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
                                      Units.inchesToMeters(12),
                                      Units.inchesToMeters(10.5),
-                                     new Rotation3d(0, 0, Units.degreesToRadians(45)));
+                                     new Rotation3d(0, Units.degreesToRadians(45), 0));
     swerveDrive.stopOdometryThread();
     limelight.getSettings()
              .withPipelineIndex(0)
