@@ -45,7 +45,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -139,15 +138,11 @@ public SwerveSubsystem(File directory) {
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 }
 
-
-
-
-
 public void setupLimelight(){
-    Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
-                                     Units.inchesToMeters(12),
-                                     Units.inchesToMeters(10.5),
-                                     new Rotation3d(0, Units.degreesToRadians(45), 0));
+    Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(13.5),
+                                     Units.inchesToMeters(13.5),
+                                     Units.inchesToMeters(4),
+                                     new Rotation3d(0, 20, 0));
     swerveDrive.stopOdometryThread();
     limelight.getSettings()
              .withPipelineIndex(0)
@@ -156,9 +151,6 @@ public void setupLimelight(){
              .save();
     limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
 }
-
-
-
 
     /**
      * Construct the swerve drive.
@@ -181,17 +173,14 @@ public void setupLimelight(){
 
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
-
     limelight.getSettings().withRobotOrientation(new Orientation3d(
         new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
         new AngularVelocity3d(RotationsPerSecond.of(0),RotationsPerSecond.of(0),RotationsPerSecond.of(0))))
     .save();
-
-
     
     Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
     Optional<LimelightResults> results       = limelight.getLatestResults();
- if (results.isPresent() && poseEstimates.isPresent())
+    if (results.isPresent() && poseEstimates.isPresent())
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
@@ -200,39 +189,52 @@ public void setupLimelight(){
         SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
         SmartDashboard.putNumber("Avg Distance", poseEstimate.avgTagDist);
         SmartDashboard.putNumber("Avg Tag Area", poseEstimate.avgTagArea);
-        SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-        SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-        SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Fused Pose/x", swerveDrive.getPose().getX());
+        SmartDashboard.putNumber("Fused Pose/y", swerveDrive.getPose().getY());
+        SmartDashboard.putNumber("Fused Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
-        if (result.valid)
-        {
-          // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
-          Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
-          double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
-          if (distanceToPose < 0.5 || (outofAreaReading > 10) || (outofAreaReading > 10 && !initialReading))
-          {
-            if (!initialReading)
-            {
-              initialReading = true;
+        // MegaTag2 Vision Integration
+        if (result.valid && poseEstimate.avgTagDist < 2.92227) {
+            // Get the highly accurate MegaTag2 Pose
+            Pose2d mt2Pose = poseEstimate.pose.toPose2d();
+            
+            // Feed it directly to YAGSL!
+            // Trust Vision for X and Y (0.5), but IGNORE Vision for Rotation (9999999)
+            swerveDrive.addVisionMeasurement(
+                    mt2Pose, 
+                    poseEstimate.timestampSeconds,
+                    VecBuilder.fill(0.5, 0.5, 9999999) 
+            );
             }
-            outofAreaReading = 0;
-            // System.out.println(usefulPose.toString());
-            swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-            // System.out.println(result.timestamp_LIMELIGHT_publish);
-            // System.out.println(result.timestamp_RIOFPGA_capture);
-            swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
-          } else
-          {
-            outofAreaReading += 1;
-          }
-  //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
         }
-      }
-      
-    m_field.setRobotPose(swerveDrive.getPose());
+        m_field.setRobotPose(swerveDrive.getPose());
     }
+//         if (result.valid)
+//         {
+//           // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
+//           Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
+//         //   double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
+//           if (result.valid && poseEstimate.avgTagDist < 4.0)
+//           {
+//             // if (!initialReading)
+//             // {
+//             //   initialReading = true;
+//             // }
+//             // outofAreaReading = 0;
+//             swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
+//             swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
+//           } else
+//           {
+//             outofAreaReading += 1;
+//           }
+//   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
+//         }
+    //   }
+      
+    // m_field.setRobotPose(swerveDrive.getPose());
+    // }
 
    
     @Override
@@ -326,6 +328,7 @@ public void setupLimelight(){
      * @return PathFinding command
      */
     public Command driveToPose(Pose2d pose) {
+        //TODO: replace pathtofindpose w. pathtofindposeflipped to account for alliance flip
 // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
                 swerveDrive.getMaximumChassisVelocity(), 4.0,
@@ -836,18 +839,43 @@ public void setupLimelight(){
     }
 
 
-//   SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-//         SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-//         SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
-//         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
-//         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
-//         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
 
-    public Pose2d getOdomPoseEstimte() {
-        return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), swerveDrive.getPose().getRotation());
-    }
+  // simple proportional turning control with Limelight.
+  // "proportional control" is a control algorithm in which the output is proportional to the error.
+  // in this case, we are going to return an angular velocity that is proportional to the 
+  // "tx" value from the Limelight.
+  double limelight_aiproportional()  //limelight stuff
+  {    
+    // kP (constant of proportionality)
+    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
+    // if it is too high, the robot will oscillate around.
+    // if it is too low, the robot will never reach its target
+    // if the robot never turns in the correct direction, kP should be inverted.
+    double kP = .035;
 
-    public Pose2d getLLPoseEstimte(Double LLx, Double LLy, Rotation2d LLdeg) {
-        return new Pose2d(LLx, LLy, LLdeg);
-    }
+    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
+    // your limelight 3 feed, tx should return roughly 31 degrees.
+    double targetingAngularVelocity =  NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0) * kP;
+
+    // convert to radians per second for our drive method
+    // targetingAngularVelocity *= Drivetrain.kMaxAngularSpeed;
+
+    //invert since tx is positive when the target is to the right of the crosshair
+    targetingAngularVelocity *= -1.0;
+
+    return targetingAngularVelocity;
+  }
+
+  // simple proportional ranging control with Limelight's "ty" value
+  // this works best if your Limelight's mount height and target mount height are different.
+  // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
+  double limelight_range_proportional()  //limelight stuff
+  {    
+    double kP = .1;
+    double targetingForwardSpeed = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0) * kP;
+    targetingForwardSpeed *= Constants.swerveDrive.MAX_SPEED;
+    targetingForwardSpeed *= -1.0;
+    return targetingForwardSpeed;
+  }
+
 }
