@@ -129,7 +129,7 @@ public SwerveSubsystem(File directory) {
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
-    zeroGyroWithAlliance();
+    // zeroGyroWithAlliance();
 
     setupLimelight();
 
@@ -196,7 +196,7 @@ public void setupLimelight(){
         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
         // MegaTag2 Vision Integration
-        if (result.valid && poseEstimate.avgTagDist < 2.92227) {
+        if (result.valid && poseEstimate.avgTagDist < 3.353) {
             // Get the highly accurate MegaTag2 Pose
             Pose2d mt2Pose = poseEstimate.pose.toPose2d();
             
