@@ -4,6 +4,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.SwerveCommands.AimAtObject;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -277,15 +278,6 @@ public class RobotContainer {
                         m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                 } else if (RobotBase.isReal()) {
-                        // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
-                        // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                        // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
-
-                        // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                        // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-                        // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
-
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
@@ -302,23 +294,21 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
-                        // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
-                        // ));
+                        m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
+                        ));
 
-                        // m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
-                        // ));
+                        m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
+                        ));
 
-                        // m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
-                        // ));
+                        m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
+                                new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
+                        ));
 
-                        
-                        // m_DriverJoystick.button(5).whileTrue(Commands.runEnd(
-                        //         () -> driveAngularVelocity.driveToPoseEnabled(true),
-                        //         () -> driveAngularVelocity.driveToPoseEnabled(false)));
+                        m_DriverJoystick.button(1).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.resetOdometry(new Pose2d( Meters.of(1.5),Meters.of(3.7), Rotation2d.kZero))));
 
+                        m_DriverJoystick.button(13).whileTrue(new AimAtObject(m_SwerveSubsystem, () -> m_DriverJoystick.getX(), () -> m_DriverJoystick.getY()));
                 } 
 
                 // m_AssistantJoystick.button(2).whileTrue(intakeFuel);

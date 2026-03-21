@@ -142,10 +142,10 @@ public SwerveSubsystem(File directory) {
 }
 
 public void setupLimelight(){
-    Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(13.5),
-                                     Units.inchesToMeters(13.5),
-                                     Units.inchesToMeters(4),
-                                     new Rotation3d(0, 20, 0));
+    Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(2.5),
+                                     Units.inchesToMeters(0.75),
+                                     Units.inchesToMeters(5.25),
+                                     new Rotation3d(0, 20, 180));
     swerveDrive.stopOdometryThread();
     limelight.getSettings()
              .withPipelineIndex(0)
