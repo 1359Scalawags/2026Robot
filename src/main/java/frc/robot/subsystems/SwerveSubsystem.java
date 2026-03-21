@@ -96,17 +96,18 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Field2d m_field = new Field2d();
 
 
-
 public SwerveSubsystem(File directory) {
 
 
-    boolean blueAlliance = true;
-    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(0))
-                                       : new Pose2d(new Translation2d(Meter.of(16),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(180));
+    // boolean blueAlliance = true;
+    // Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(0))
+    //                                    : new Pose2d(new Translation2d(Meter.of(16),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(180));
+    Pose2d startingPose = getAllianceStartPose2d();
+
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -130,6 +131,8 @@ public SwerveSubsystem(File directory) {
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     // zeroGyroWithAlliance();
+
+    seedForMatch(startingPose);
 
     setupLimelight();
 
@@ -211,30 +214,6 @@ public void setupLimelight(){
         }
         m_field.setRobotPose(swerveDrive.getPose());
     }
-//         if (result.valid)
-//         {
-//           // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
-//           Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
-//         //   double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
-//           if (result.valid && poseEstimate.avgTagDist < 4.0)
-//           {
-//             // if (!initialReading)
-//             // {
-//             //   initialReading = true;
-//             // }
-//             // outofAreaReading = 0;
-//             swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-//             swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
-//           } else
-//           {
-//             outofAreaReading += 1;
-//           }
-//   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
-//         }
-    //   }
-      
-    // m_field.setRobotPose(swerveDrive.getPose());
-    // }
 
    
     @Override
@@ -329,12 +308,12 @@ public void setupLimelight(){
      */
     public Command driveToPose(Pose2d pose) {
         //TODO: replace pathtofindpose w. pathtofindposeflipped to account for alliance flip
-// Create the constraints to use while pathfinding
+        // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
                 swerveDrive.getMaximumChassisVelocity(), 4.0,
                 swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
         return AutoBuilder.pathfindToPose(
                 pose,
                 constraints,
@@ -609,6 +588,19 @@ public void setupLimelight(){
         return swerveDrive.getPose();
     }
 
+    public Pose2d getAllianceStartPose2d() {
+        var alliance = DriverStation.getAlliance();
+
+        // If alliance is present and its red..
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red){
+            //We are going to keep blue origin coordinates
+            return new Pose2d(Constants.FieldConstants.RED_NEUTRAL_POSE, Rotation2d.fromDegrees(180));
+        }
+
+        //Replace with blue side starting pose
+        return new Pose2d(Constants.FieldConstants.BLUE_NEUTRAL_POSE, Rotation2d.fromDegrees(0));
+    }
+
     public  double getX() {
         return swerveDrive.getPose().getX();
     }
@@ -671,22 +663,10 @@ public void setupLimelight(){
         }
     }
 
-    // public Command resetOdom() {
-    //     // Rotation2d correctOffset;
-    //     // if (DriverStation.getAlliance() == Alliance.Blue) {
-    //     //    correctOffset = Rotation2d.kZero
-    //     // } else if (DriverStation.getAlliance() == Alliance.Red) {
-    //     //     correctOffset = Rotation2d.k180deg;
-    //     // }
-    //     // return Command ().onceint
-        
-    //     Rotation2d correctOffset = DriverStation.getAlliance().get() == Alliance.Blue
-    //      ?  Rotation2d.kZero : Rotation2d.k180deg;
-        
-    //     return Command.initialize() -> {
-    //         Pose2d newPose = new Pose2d( swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), correctOffset);
-    //         swerveDrive.resetOdometry(newPose);
-    //     }
+    public void seedForMatch(Pose2d startpose){
+        zeroGyro();
+        resetOdometry(startpose);
+    }
 
     /**
      * Sets the drive motors to brake/coast mode.
@@ -837,45 +817,5 @@ public void setupLimelight(){
             return Constants.FieldConstants.kBlueHubPosition;
         }
     }
-
-
-
-  // simple proportional turning control with Limelight.
-  // "proportional control" is a control algorithm in which the output is proportional to the error.
-  // in this case, we are going to return an angular velocity that is proportional to the 
-  // "tx" value from the Limelight.
-  double limelight_aiproportional()  //limelight stuff
-  {    
-    // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control loop
-    // if it is too high, the robot will oscillate around.
-    // if it is too low, the robot will never reach its target
-    // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
-
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
-    // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity =  NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0.0) * kP;
-
-    // convert to radians per second for our drive method
-    // targetingAngularVelocity *= Drivetrain.kMaxAngularSpeed;
-
-    //invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
-
-    return targetingAngularVelocity;
-  }
-
-  // simple proportional ranging control with Limelight's "ty" value
-  // this works best if your Limelight's mount height and target mount height are different.
-  // if your limelight and target are mounted at the same or similar heights, use "ta" (area) for target ranging rather than "ty"
-  double limelight_range_proportional()  //limelight stuff
-  {    
-    double kP = .1;
-    double targetingForwardSpeed = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0.0) * kP;
-    targetingForwardSpeed *= Constants.swerveDrive.MAX_SPEED;
-    targetingForwardSpeed *= -1.0;
-    return targetingForwardSpeed;
-  }
 
 }
