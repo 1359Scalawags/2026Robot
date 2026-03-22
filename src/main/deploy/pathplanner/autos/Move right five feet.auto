@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "mocw rught"
+            "pathName": "mocw left"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "mocw lfty"
+            "pathName": "mocw right"
           }
         }
       ]
