@@ -10,7 +10,7 @@ import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Star;
+import frc.robot.subsystems.IntakeSubsystem.Flippy;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 import swervelib.SwerveInputStream;
