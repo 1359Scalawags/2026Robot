@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+// import static edu.wpi.first_units.Units.
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
@@ -12,6 +14,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
@@ -49,6 +52,9 @@ public final class Constants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
     public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
     public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
+
+    public static final Translation2d BLUE_NEUTRAL_POSE = new Translation2d(Units.inchesToMeters(99.085), Units.inchesToMeters(158.84));
+    public static final Translation2d RED_NEUTRAL_POSE = new Translation2d(Units.inchesToMeters(552.135), Units.inchesToMeters(158.84));
   }
 
   public static class OperatorConstants {
