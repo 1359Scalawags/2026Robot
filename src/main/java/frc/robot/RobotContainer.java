@@ -10,7 +10,7 @@ import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.Star;
+import frc.robot.subsystems.IntakeSubsystem.Flippy;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 import swervelib.SwerveInputStream;
@@ -56,7 +56,7 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
-        private final Star m_IntakeStar = new Star();
+        private final Flippy m_IntakeStar = new Flippy();
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
@@ -93,13 +93,13 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
                 NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
+                NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setflippyVelocity(Constants.Intake.flippyVelocity));
                 NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
 
                 NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
                 NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
                 NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
-                NamedCommands.registerCommand("0 Intake Star", m_IntakeStar.setStarDutyCylce(0));
+                NamedCommands.registerCommand("0 Intake Star", m_IntakeStar.setflippyDutyCylce(0));
                 NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
 
                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
@@ -120,7 +120,7 @@ public class RobotContainer {
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
 
-                m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                m_IntakeStar.setDefaultCommand(m_IntakeStar.setflippyDutyCylce(0));
                 m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                 m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
@@ -219,12 +219,12 @@ public class RobotContainer {
                                         .withName("Shoot Fuel");
 
                 Command intakeFuel = Commands.parallel(
-                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
+                                m_IntakeStar.setflippyVelocity(Constants.Intake.flippyVelocity),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
                                 .withName("IntakeFuel");
                                 
                 Command outtakeFuel = Commands.parallel(
-                                m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.times(1.25).unaryMinus()),
+                                m_IntakeStar.setflippyVelocity(Constants.Intake.flippyVelocity.times(1.25).unaryMinus()),
                                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.times(1.25).unaryMinus()))
                                 .withName("ReverseIntake");
 
@@ -244,7 +244,7 @@ public class RobotContainer {
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
-                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setflippyDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
@@ -277,7 +277,7 @@ public class RobotContainer {
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
-                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
+                        m_IntakeStar.setDefaultCommand(m_IntakeStar.setflippyDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                         m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));

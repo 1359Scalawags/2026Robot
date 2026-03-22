@@ -94,10 +94,10 @@ public final class Constants {
 
 
      // ====== Trapazoidal Profile =======
-    public static final AngularVelocity shooterMaxVelocity = RotationsPerSecond.of(3000);
+    public static final AngularVelocity shooterMaxVelocity = RPM.of(3000);
     public static final AngularAcceleration shooterMaxAcceleration = RotationsPerSecondPerSecond.of(20000);
 
-    public static final AngularVelocity kickerMaxVelocity = RotationsPerSecond.of(2000);
+    public static final AngularVelocity kickerMaxVelocity = RPM.of(2000);
     public static final AngularAcceleration kickerMaxAcceleration = RotationsPerSecondPerSecond.of(1250);
 
 
@@ -169,18 +169,18 @@ public final class Constants {
     // ========== CONFIGURATION ==========
       // CAN IDs for the motor controllers
     public static final int sushiMotorID = 10;
-    public static final int starMotorID = 9;
+    public static final int flippyMotorID = 9;
 
 
       // ======= Intake Speeds ======
-    public static AngularVelocity sushiVelocity = RotationsPerSecond.of(1500);
-    public static AngularVelocity starVelocity = RotationsPerSecond.of(3000);
+    public static AngularVelocity sushiVelocity = RPM.of(1500);
+    public static AngularVelocity flippyVelocity = RPM.of(3000);
     
       // ====== Trapazoidal Profile =======
-    public static final AngularVelocity starMaxVelocity = RotationsPerSecond.of(2500);
-    public static final AngularAcceleration starMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
+    public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
+    public static final AngularAcceleration flippyMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
-    public static final AngularVelocity sushiMaxVelocity = RotationsPerSecond.of(2000);
+    public static final AngularVelocity sushiMaxVelocity = RPM.of(2000);
     public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(1000);
 
 
@@ -196,13 +196,13 @@ public final class Constants {
 
       // =========  PID & FF values for StarWheel ==============
           //Star motor is agrresivly tunned to help stop fuel getting stuck
-    public static final double starP = 0.035; //From sysID - 0.055968, 0.029853
-    public static final double starI = 0.000001;
-    public static final double starD = 1.3;
+    public static final double flippyP = 0.035; //From sysID - 0.055968, 0.029853
+    public static final double flippyI = 0.000001;
+    public static final double flippyD = 1.3;
 
-    public static final double starS = 0.66508;
-    public static final double starV = 0.10476;
-    public static final double starA = 0.03396;
+    public static final double flippyS = 0.66508;
+    public static final double flippyV = 0.10476;
+    public static final double flippyA = 0.03396;
   }
 
 
@@ -215,7 +215,7 @@ public final class Constants {
     public static final double HOPPER_SPEED_RPM = 2000;
 
     // Trap profile
-    public static final AngularVelocity hopperMaxVelocity = RotationsPerSecond.of(2500);
+    public static final AngularVelocity hopperMaxVelocity = RPM.of(2500);
     public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
     // PID Constants (tune these based on your robot's performance)
