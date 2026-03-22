@@ -92,10 +92,10 @@ public final class Constants {
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
     public static final AngularVelocity kickerVelocity = RPM.of(1500);
 
-
      // ====== Trapazoidal Profile =======
     public static final AngularVelocity shooterMaxVelocity = RotationsPerSecond.of(3000);
     public static final AngularAcceleration shooterMaxAcceleration = RotationsPerSecondPerSecond.of(20000);
+    
 
     public static final AngularVelocity kickerMaxVelocity = RotationsPerSecond.of(2000);
     public static final AngularAcceleration kickerMaxAcceleration = RotationsPerSecondPerSecond.of(1250);

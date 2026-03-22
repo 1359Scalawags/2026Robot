@@ -14,10 +14,13 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +43,8 @@ public class Star extends SubsystemBase {
   private final SparkMax starMotor;
 
   private SmartMotorControllerConfig starSmcConfig;
-
+  private DigitalInput limitSwitch = new DigitalInput(1);
+    private boolean lastLimitPressed = false;
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController starSmartMotorController;
@@ -89,6 +93,10 @@ public class Star extends SubsystemBase {
     starWheel = new FlyWheel(starConfig);
   }
 
+  public BooleanSupplier limitSwitchSupplier = () -> {
+    return !limitSwitch.get();
+  };
+
   public AngularVelocity getStarVelocity() {
     return starWheel.getSpeed();
   }
@@ -112,7 +120,14 @@ public class Star extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Star/Applied", starMotor.getAppliedOutput());
+    final boolean limitPressed = limitSwitchSupplier.getAsBoolean();
+
+    // if (limitPressed) {
+    //   starMotor.getEncoder().setPosition(0);
+    // }
+    lastLimitPressed = limitPressed;
+
+    SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
     starWheel.updateTelemetry();
 
   }
