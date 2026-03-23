@@ -9,11 +9,9 @@ import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 
-import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.systems.field.AllianceFlipUtil;
 import frc.robot.systems.field.FieldConstants;
 import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.subsystems.LimelightSubsystem.LimelightHelpers.PoseEstimate;
 
 
 public class ShootCalculator {
