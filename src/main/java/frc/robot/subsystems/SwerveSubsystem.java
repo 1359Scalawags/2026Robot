@@ -33,6 +33,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -827,6 +828,10 @@ public void setupLimelight(){
             
         }
     }
+
+   public void driveFieldOrientedSetpoint(ChassisSpeeds speeds) {
+    swerveDrive.driveFieldOriented(speeds);
+  }
 
     public Translation2d getTargetHub() {
         if (isRedAlliance()) {

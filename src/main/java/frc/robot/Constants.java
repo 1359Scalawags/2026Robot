@@ -45,6 +45,9 @@ public final class Constants {
     REPLAY
   }
 
+  public static boolean disableHAL = false;
+
+
   public static class FieldConstants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
     public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
@@ -242,4 +245,5 @@ public final class Constants {
     public static final double CAMERA_PITCH_DEGREES = 0.0;
     public static final String limelight_Name = "limelight-top";
   }
+
 }
