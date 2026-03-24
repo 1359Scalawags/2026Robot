@@ -4,6 +4,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.SwerveCommands.AlignToTag;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -273,6 +274,8 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
                         // m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
+
+                        m_DriverJoystick.button(8).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
 
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
