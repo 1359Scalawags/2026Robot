@@ -1,0 +1,111 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.7546444444470155,
+        "y": 4.81455555555589
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.9334048272364517,
+        "y": 5.082163133479659
+      },
+      "isLocked": false,
+      "linkedName": "Neutral Blue"
+    },
+    {
+      "anchor": {
+        "x": 2.462311111113682,
+        "y": 5.993633333331034
+      },
+      "prevControl": {
+        "x": 2.473749079662856,
+        "y": 5.670952190567192
+      },
+      "nextControl": {
+        "x": 2.453455008221923,
+        "y": 6.243476422972454
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.3417000000025703,
+        "y": 5.993633333331034
+      },
+      "prevControl": {
+        "x": 1.4699378186340564,
+        "y": 6.212130957029043
+      },
+      "nextControl": {
+        "x": 1.2151577744587068,
+        "y": 5.778024740843614
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5560777777803487,
+        "y": 4.989955555553256
+      },
+      "prevControl": {
+        "x": 1.1273222222247927,
+        "y": 5.389477777775478
+      },
+      "nextControl": {
+        "x": 1.8393788208905317,
+        "y": 4.725970492655131
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.1115111111136815,
+        "y": 3.9667888888865885
+      },
+      "prevControl": {
+        "x": 1.3709333333359037,
+        "y": 4.171422222219922
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 160.19654462703912
+    },
+    {
+      "waypointRelativePos": 3,
+      "rotationDegrees": -55.78429786756268
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -109.40597075394606
+  },
+  "useDefaultConstraints": true
+}
