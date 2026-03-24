@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -39,6 +40,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.systems.field.AllianceFlipUtil;
+import frc.robot.systems.field.FieldConstants;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -223,7 +227,7 @@ public void setupLimelight(){
     m_field.setRobotPose(swerveDrive.getPose());
     }
 
-
+    
    
     @Override
     public void simulationPeriodic() {
@@ -231,6 +235,8 @@ public void setupLimelight(){
         m_field.setRobotPose(swerveDrive.getPose());
         SmartDashboard.putNumber("SimPose X", swerveDrive.getPose().getX());
         SmartDashboard.putNumber("SimPose Y", swerveDrive.getPose().getY());
+
+        SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
     }
 
     /**
@@ -843,5 +849,14 @@ public void setupLimelight(){
 
     public Pose2d getLLPoseEstimte(Double LLx, Double LLy, Rotation2d LLdeg) {
         return new Pose2d(LLx, LLy, LLdeg);
+    }
+
+    public double getDistanceToHub() {
+      Translation2d hubLocation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+      Translation2d robotTranslation = swerveDrive.getPose().getTranslation();
+
+       double distanceToHub = robotTranslation.getDistance(hubLocation);
+
+       return distanceToHub;
     }
 }
