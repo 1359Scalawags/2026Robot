@@ -23,6 +23,8 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,85 +40,93 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Star extends SubsystemBase {
+public class Flippy extends SubsystemBase {
 
-  private final SparkMax starMotor;
+  private final SparkMax flippyMotor;
 
   private SmartMotorControllerConfig starSmcConfig;
   private DigitalInput limitSwitch = new DigitalInput(1);
-    private boolean lastLimitPressed = false;
+  private boolean lastLimitPressed = false;
 
   // Create our SmartMotorController from our Spark and config with the NEO.
-  private SmartMotorController starSmartMotorController;
+  private SmartMotorController flippySmartMotorController;
 
+  //TODO: make these not fly wheels (maybe i dont actualy know)
+  private final FlyWheelConfig flippyConfig;
 
-  private final FlyWheelConfig starConfig;
+  private FlyWheel flippyWheel;
 
-  private FlyWheel starWheel;
+  private DigitalInput limitSwitch = new DigitalInput(1);
+  private boolean lastLimitPressed = false;
+  private final DIOSim limitSwitchSim = new DIOSim(limitSwitch);
+  private boolean simLimitLatched = false;
 
-  //TODO: create constants whereveer needed.
-  public Star() {
+  public Flippy() {
 
     //Creates the motor objects that control the motors on the real robot
-    starMotor = new SparkMax(Constants.Intake.starMotorID, MotorType.kBrushless);
+    flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
 
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
-    starSmcConfig = new SmartMotorControllerConfig(this)
+    flippySmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD,
+        .withClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Intake.starP, Constants.Intake.starI, Constants.Intake.starD,
+        .withSimClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.starS,Constants.Intake.starV,Constants.Intake.starA))
+            new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
         .withSimFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.starS, Constants.Intake.starV, Constants.Intake.starA))
-        .withTelemetry("starMotor", TelemetryVerbosity.HIGH)
+            new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
+        .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
         .withMotorInverted(true)
-        .withIdleMode(MotorMode.COAST)
+        .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40))
-        .withTrapezoidalProfile(Constants.Intake.starMaxVelocity, Constants.Intake.starMaxAcceleration);
+        .withTrapezoidalProfile(Constants.Intake.flippyMaxVelocity, Constants.Intake.flippyMaxAcceleration);
 
-    starSmartMotorController = new SparkWrapper(starMotor, DCMotor.getNEO(1), starSmcConfig);
+    flippySmartMotorController = new SparkWrapper(flippyMotor, DCMotor.getNEO(1), flippySmcConfig);
     // starSmartMotorController.setEncoderInverted(true);
 
-    starConfig = new FlyWheelConfig(starSmartMotorController)
+    //TODO: make sure these are correct too
+    flippyConfig = new FlyWheelConfig(flippySmartMotorController)
         .withDiameter(Inches.of(2))
         .withMass(Pounds.of(0.375))
         .withSoftLimit(RPM.of(-2500), RPM.of(2500))
         .withTelemetry("starMech", TelemetryVerbosity.HIGH);
 
-    starWheel = new FlyWheel(starConfig);
+    flippyWheel = new FlyWheel(flippyConfig);
   }
 
   public BooleanSupplier limitSwitchSupplier = () -> {
     return !limitSwitch.get();
   };
-
-  public AngularVelocity getStarVelocity() {
-    return starWheel.getSpeed();
+  public AngularVelocity getflippyVelocity() {
+    return flippyWheel.getSpeed();
   }
 
-  public Command setStarVelocity(AngularVelocity speed) {
-    return starWheel.setSpeed(speed);
+  public Command setflippyVelocity(AngularVelocity speed) {
+    return flippyWheel.setSpeed(speed);
   }
 
 
-  public Command setStarDutyCylce(double dutyCycle) {
-    return starWheel.set(dutyCycle);
+  public Command setflippyDutyCylce(double dutyCycle) {
+    return flippyWheel.set(dutyCycle);
   }
 
   public Command setVolatage(double volts) {
-    return starWheel.setVoltage(Volts.of(volts));
+    return flippyWheel.setVoltage(Volts.of(volts));
   }
 
-   public Command sysId() {
-      return starWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-    }
+  public Command sysId() {
+    return flippyWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  }
+
+  public BooleanSupplier limitSwitchSupplier = () -> {
+    return !limitSwitch.get();
+  };
 
   @Override
   public void periodic() {
@@ -128,12 +138,12 @@ public class Star extends SubsystemBase {
     lastLimitPressed = limitPressed;
 
     SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
-    starWheel.updateTelemetry();
-
+    SmartDashboard.putNumber("Star/Applied", flippyMotor.getAppliedOutput());
+    flippyWheel.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
-    starWheel.simIterate();
+    flippyWheel.simIterate();
   }
 }

@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import limelight.Limelight;
-import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightSettings.LEDMode;
 
 public class LimelightSubsystem extends SubsystemBase {

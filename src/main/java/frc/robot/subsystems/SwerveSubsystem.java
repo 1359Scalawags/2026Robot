@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -19,7 +20,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,9 +30,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,9 +40,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.systems.field.AllianceFlipUtil;
+import frc.robot.systems.field.FieldConstants;
+
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -63,22 +62,16 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 //limelight stuff
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightResults;
-import limelight.networktables.LimelightSettings.LEDMode;
 import limelight.networktables.Orientation3d;
 import limelight.networktables.PoseEstimate;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.target.pipeline.NeuralClassifier;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -147,7 +140,7 @@ public void setupLimelight(){
     Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
                                      Units.inchesToMeters(12),
                                      Units.inchesToMeters(10.5),
-                                     new Rotation3d(0, 0, Units.degreesToRadians(45)));
+                                     new Rotation3d(0, Units.degreesToRadians(45), 0));
     swerveDrive.stopOdometryThread();
     limelight.getSettings()
              .withPipelineIndex(0)
@@ -195,7 +188,6 @@ public void setupLimelight(){
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
-
         SmartDashboard.putNumber("Avg Tag Ambiguity", poseEstimate.getAvgTagAmbiguity());
         SmartDashboard.putNumber("Min Tag Ambiguity", poseEstimate.getMinTagAmbiguity());
         SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
@@ -247,7 +239,7 @@ public void setupLimelight(){
     // m_field.setRobotPose(swerveDrive.getPose());
     // }
 
-
+    
    
     @Override
     public void simulationPeriodic() {
@@ -255,6 +247,8 @@ public void setupLimelight(){
         m_field.setRobotPose(swerveDrive.getPose());
         SmartDashboard.putNumber("SimPose X", swerveDrive.getPose().getX());
         SmartDashboard.putNumber("SimPose Y", swerveDrive.getPose().getY());
+
+        SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
     }
 
     /**
@@ -841,6 +835,10 @@ public void setupLimelight(){
         }
     }
 
+   public void driveFieldOrientedSetpoint(ChassisSpeeds speeds) {
+    swerveDrive.driveFieldOriented(speeds);
+  }
+
     public Translation2d getTargetHub() {
         if (isRedAlliance()) {
             return Constants.FieldConstants.kRedHubPosition;
@@ -863,5 +861,14 @@ public void setupLimelight(){
 
     public Pose2d getLLPoseEstimte(Double LLx, Double LLy, Rotation2d LLdeg) {
         return new Pose2d(LLx, LLy, LLdeg);
+    }
+
+    public double getDistanceToHub() {
+      Translation2d hubLocation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
+      Translation2d robotTranslation = swerveDrive.getPose().getTranslation();
+
+       double distanceToHub = robotTranslation.getDistance(hubLocation);
+
+       return distanceToHub;
     }
 }

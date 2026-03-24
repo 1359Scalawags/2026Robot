@@ -74,7 +74,7 @@ public class Sushi extends SubsystemBase {
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
-        .withMotorInverted(false)
+        .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
         .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
