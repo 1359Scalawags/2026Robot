@@ -3,6 +3,7 @@ package frc.robot.commands.SwerveCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 
 import frc.robot.Constants;
@@ -41,7 +42,7 @@ public class ShootOnTheMove extends Command {
 
   static {
       // Puts values for the IDTM for the RPM of the shooter motor.
-      //             KEY:    feet, VALUE:RPM
+      //             KEY:    meters, VALUE:RPM
     flywheelSpeedMap.put(1.34, 2100.0);
     flywheelSpeedMap.put(1.78, 2200.0);
     flywheelSpeedMap.put(2.17, 2200.0);
@@ -60,14 +61,16 @@ public class ShootOnTheMove extends Command {
         this.hopper = hopper;
         this.swerveDrive = swerveDrive;
 
-        addRequirements(shooter, kicker, hopper, swerveDrive);
+        addRequirements(shooter, kicker, hopper);
     }
     
 
 
     @Override
     public void initialize() {
-        
+        shooter.setShooterDutyCycle(0);
+        kicker.setKickerDutyCylce(0);
+        hopper.set(0);
     }
 
     @Override
@@ -78,7 +81,7 @@ public class ShootOnTheMove extends Command {
       distanceToHub = Feet.of(robotTranslation.getDistance(hubLocation));
 
       if (distanceToHub.gte(minDistance) && distanceToHub.lte(maxDistance)) {
-         finalRPM = RPM.of(flywheelSpeedMap.get(distanceToHub.in(Feet)));
+         finalRPM = RPM.of(flywheelSpeedMap.get(distanceToHub.in(Meters)));
       } else {
          finalRPM = Constants.Shooter.shooterVelocity;
       }
@@ -96,7 +99,6 @@ public class ShootOnTheMove extends Command {
         }
 
         hopper.set(0.5);
-
     }
 
     @Override
