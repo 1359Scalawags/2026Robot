@@ -4,7 +4,9 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.SwerveCommands.AlignToTag;
+import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
@@ -56,7 +58,6 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
-        // private final Star m_IntakeStar = new Star();
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
@@ -272,7 +273,11 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
+
+                        m_AssistantJoystick.button(5).whileTrue(new ShootOnTheMove(m_Shooter, m_Kicker, m_HopperSubsystem, m_SwerveSubsystem));
                         // m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
+
+                        m_DriverJoystick.button(8).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
 
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
@@ -299,47 +304,12 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
-
-                        // m_DriverJoystick.button(6).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(3.25), Meters.of(5.1), Rotation2d.fromDegrees(-41.0))
-                        // ));
-
-                        // m_DriverJoystick.button(5).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(2.745), Meters.of(4), Rotation2d.fromDegrees(0))
-                        // ));
-
-                        // m_DriverJoystick.button(7).whileTrue(m_SwerveSubsystem.driveToPose(
-                        //         new Pose2d(Meters.of(3), Meters.of(2.68), Rotation2d.fromDegrees(35.6))
-                        // ));
-
-                        
-                        // m_DriverJoystick.button(5).whileTrue(Commands.runEnd(
-                        //         () -> driveAngularVelocity.driveToPoseEnabled(true),
-                        //         () -> driveAngularVelocity.driveToPoseEnabled(false)));
-
                 } 
 
-                // m_AssistantJoystick.button(2).whileTrue(intakeFuel);
-
-                // Hold button 4 to reverse the intake
-
-                // m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
-                
                 m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                // m_AssistantJoystick.button(5).whileTrue(m_ClimberSubsystem.home());
-
-                // Climber: button 8 = retract (stow), button 9 = extend (climb)
-                // Uses closed-loop position control with soft limits
-                // m_AssistantJoystick.button(7).whileTrue(stowSafe);
-                // m_AssistantJoystick.button(8).whileTrue(m_ClimberSubsystem.extend());
-                // m_AssistantJoystick.button(16).whileTrue(stowSafe);
-                // m_AssistantJoystick.button(15).whileTrue(m_ClimberSubsystem.set(.55));
-                // Run while held (reliable; stops when released)
-                
+               
                 m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
-                // m_AssistantJoystick.button(3).whileTrue(unclogKicker);
-
-                // m_DriverJoystick.button(5).whileTrue(driveRobotOrientedAngularVelocity);
+       
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                 
