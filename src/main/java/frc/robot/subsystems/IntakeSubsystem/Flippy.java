@@ -44,7 +44,7 @@ public class Flippy extends SubsystemBase {
 
   private final SparkMax flippyMotor;
 
-  private SmartMotorControllerConfig starSmcConfig;
+  private SmartMotorControllerConfig flippySmcConfig;
   private DigitalInput limitSwitch = new DigitalInput(1);
   private boolean lastLimitPressed = false;
 
@@ -55,11 +55,6 @@ public class Flippy extends SubsystemBase {
   private final FlyWheelConfig flippyConfig;
 
   private FlyWheel flippyWheel;
-
-  private DigitalInput limitSwitch = new DigitalInput(1);
-  private boolean lastLimitPressed = false;
-  private final DIOSim limitSwitchSim = new DIOSim(limitSwitch);
-  private boolean simLimitLatched = false;
 
   public Flippy() {
 
@@ -123,10 +118,6 @@ public class Flippy extends SubsystemBase {
   public Command sysId() {
     return flippyWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
   }
-
-  public BooleanSupplier limitSwitchSupplier = () -> {
-    return !limitSwitch.get();
-  };
 
   @Override
   public void periodic() {
