@@ -13,6 +13,7 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.BooleanSupplier;
 
@@ -123,13 +124,12 @@ public class Flippy extends SubsystemBase {
   public void periodic() {
     final boolean limitPressed = limitSwitchSupplier.getAsBoolean();
 
-    // if (limitPressed) {
-    //   starMotor.getEncoder().setPosition(0);
-    // }
+    if (limitPressed) {
+      flippySmartMotorController.setEncoderPosition(Degrees.of(0));
+    }
     lastLimitPressed = limitPressed;
 
     SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
-    SmartDashboard.putNumber("Star/Applied", flippyMotor.getAppliedOutput());
     flippyWheel.updateTelemetry();
   }
 

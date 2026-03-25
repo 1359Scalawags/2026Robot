@@ -89,11 +89,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private final Field2d m_field = new Field2d();
 
-
-
 public SwerveSubsystem(File directory) {
-
-
     boolean blueAlliance = true;
     Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
                                                                       Meter.of(4)),

@@ -197,13 +197,6 @@ public class RobotContainer {
 
 
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
-                // Command unifiedDriveCommand = Commands.run(() -> {
-                //         if (isFieldCentric) {
-                //                 m_SwerveSubsystem.drive(driveAngularVelocity.get());
-                //         } else {
-                //                 m_SwerveSubsystem.drive(driveRobotOriented.get());
-                //         }
-                // }, m_SwerveSubsystem);
                 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
