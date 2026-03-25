@@ -23,6 +23,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
@@ -34,6 +35,8 @@ import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
 import yams.mechanisms.velocity.FlyWheel;
+import yams.mechanisms.positional.Arm;
+import yams.mechanisms.config.ArmConfig;
 import yams.motorcontrollers.SmartMotorController;
 import yams.motorcontrollers.SmartMotorControllerConfig;
 import yams.motorcontrollers.SmartMotorControllerConfig.ControlMode;
@@ -53,15 +56,16 @@ public class Flippy extends SubsystemBase {
   private SmartMotorController flippySmartMotorController;
 
   //TODO: make these not fly wheels (maybe i dont actualy know)
-  private final FlyWheelConfig flippyConfig;
+  private final ArmConfig flippyConfig;
 
-  private FlyWheel flippyWheel;
+  // private FlyWheel flippyWheel;
+  private Arm flippyArm;
 
   public Flippy() {
 
     //Creates the motor objects that control the motors on the real robot
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
-
+    
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     flippySmcConfig = new SmartMotorControllerConfig(this)
@@ -72,53 +76,50 @@ public class Flippy extends SubsystemBase {
         .withSimClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
-        .withSimFeedforward(
-            new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
+        // .withFeedforward(
+            // new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
+        // .withSimFeedforward(
+            // new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
-        .withMotorInverted(true)
+        .withMotorInverted(false)
         .withIdleMode(MotorMode.BRAKE)
-        .withStatorCurrentLimit(Amps.of(40))
-        .withTrapezoidalProfile(Constants.Intake.flippyMaxVelocity, Constants.Intake.flippyMaxAcceleration);
+        .withStatorCurrentLimit(Amps.of(40));
+        // .withTrapezoidalProfile(Constants.Intake.flippyMaxVelocity, Constants.Intake.flippyMaxAcceleration);
 
     flippySmartMotorController = new SparkWrapper(flippyMotor, DCMotor.getNEO(1), flippySmcConfig);
     // starSmartMotorController.setEncoderInverted(true);
 
     //TODO: make sure these are correct too
-    flippyConfig = new FlyWheelConfig(flippySmartMotorController)
-        .withDiameter(Inches.of(2))
-        .withMass(Pounds.of(0.375))
-        .withSoftLimit(RPM.of(-2500), RPM.of(2500))
-        .withTelemetry("starMech", TelemetryVerbosity.HIGH);
+    flippyConfig = new ArmConfig(flippySmartMotorController)
+            .withLength(Inches.of(4))
+            .withMass(Pounds.of(1))
+            .withStartingPosition(Degrees.of(90))
+            .withHardLimit(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+            .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+            .withTelemetry("flippyMech", TelemetryVerbosity.HIGH);
 
-    flippyWheel = new FlyWheel(flippyConfig);
+    flippyArm = new Arm(flippyConfig);
   }
 
   public BooleanSupplier limitSwitchSupplier = () -> {
     return !limitSwitch.get();
   };
-  public AngularVelocity getflippyVelocity() {
-    return flippyWheel.getSpeed();
-  }
 
-  public Command setflippyVelocity(AngularVelocity speed) {
-    return flippyWheel.setSpeed(speed);
-  }
+  public Command setFlippyDutyCycle(double dutyCycle){
+    return flippyArm.set(dutyCycle);
+  };
 
-
-  public Command setflippyDutyCylce(double dutyCycle) {
-    return flippyWheel.set(dutyCycle);
+  public Angle getFlippyAngle(){
+    return flippyArm.getAngle();
   }
+  // public Command setVolatage(double volts) {
+  //   return flippyWheel.setVoltage(Volts.of(volts));
+  // }
 
-  public Command setVolatage(double volts) {
-    return flippyWheel.setVoltage(Volts.of(volts));
-  }
-
-  public Command sysId() {
-    return flippyWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-  }
+  // public Command sysId() {
+  //   return flippyWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  // }
 
   @Override
   public void periodic() {
@@ -130,11 +131,12 @@ public class Flippy extends SubsystemBase {
     lastLimitPressed = limitPressed;
 
     SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
-    flippyWheel.updateTelemetry();
+    SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
+    flippyArm.updateTelemetry();
   }
 
   @Override
   public void simulationPeriodic() {
-    flippyWheel.simIterate();
+    flippyArm.simIterate();
   }
 }

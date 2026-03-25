@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Micro;
 import static edu.wpi.first.units.Units.Seconds;
 
 
@@ -58,6 +59,7 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
+        private final Flippy m_IntakeFlippy = new Flippy();
         // private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
@@ -231,8 +233,13 @@ public class RobotContainer {
                 Command climb  = m_ClimberSubsystem.set(0.40).until(m_ClimberSubsystem.getMaxHeightSupplier);
                 Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
+                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.2);
+                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.2);
+
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {       
+                        m_AssistantJoystick.button(5).whileTrue(flipDown);
+                        m_AssistantJoystick.button(6).whileTrue(flipUp);
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 

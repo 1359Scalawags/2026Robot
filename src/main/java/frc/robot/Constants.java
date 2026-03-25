@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -12,6 +13,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
@@ -149,7 +151,7 @@ public final class Constants {
 
     // Soft limits (in inches) — the closed-loop controller won't command past these
     public static final double SOFT_MIN = -0.5;     // inches — small buffer above hard bottom
-    public static final double SOFT_MAX = 18;     // inches — small buffer below hard top
+    public static final double SOFT_MAX = 17.5;     // inches — small buffer below hard top
 
     // Feedforward — TUNE THESE with SysId or manual testing!
     // ks = static friction, kg = gravity compensation, kv = velocity
@@ -177,7 +179,9 @@ public final class Constants {
 
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RPM.of(1500);
-    public static AngularVelocity flippyVelocity = RPM.of(3000);
+    public static AngularVelocity flippyVelocity = RPM.of(1000);
+    public static Angle flippyMinAngle = Degrees.of(0);
+    public static Angle flippyMaxAngle = Degrees.of(590);
     
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
