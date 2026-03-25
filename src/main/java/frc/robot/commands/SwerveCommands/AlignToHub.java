@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 
-public class AlignToTag extends Command {
+public class AlignToHub extends Command {
     private SwerveSubsystem swerve;
     private LimelightSubsystem limelight;
     private DoubleSupplier forwardSupplier;
@@ -37,7 +37,7 @@ public class AlignToTag extends Command {
             kP, kI, kD,
             new TrapezoidProfile.Constraints(MAX_OMEGA_RAD_PER_SEC, MAX_ALPHA_RAD_PER_SEC2));
 
-    public AlignToTag(
+    public AlignToHub(
             SwerveSubsystem swerve,
             LimelightSubsystem limelight,
             DoubleSupplier forwardSupplier,

@@ -5,7 +5,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.AutoAimCommand;
-import frc.robot.commands.SwerveCommands.AlignToTag;
+import frc.robot.commands.SwerveCommands.AlignToHub;
 // import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
