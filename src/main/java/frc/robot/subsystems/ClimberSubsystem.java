@@ -95,7 +95,6 @@ public ClimberSubsystem(){
 
   Shuffleboard.getTab("Arm").add("LimitSwitch", limitSwitch);
 
-  SmartDashboard.putBoolean("limSwitch2", limitSwitchSupplier.getAsBoolean());
 }
 /**
    * Set the height of the elevator. Command runs continuously until cancelled.

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -12,6 +13,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 
@@ -45,10 +48,16 @@ public final class Constants {
     REPLAY
   }
 
+  public static boolean disableHAL = false;
+
+
   public static class FieldConstants {
     // gives a generic translation 2d for the red and blue side to be used on any object.
     public static final Translation2d kBlueHubPosition = new Translation2d(4.61137, 4.021328 );
     public static final Translation2d kRedHubPosition = new Translation2d(11.901424, 4.021328);
+
+    public static final Translation2d BLUE_NEUTRAL_POSE = new Translation2d(Units.inchesToMeters(99.085), Units.inchesToMeters(158.84));
+    public static final Translation2d RED_NEUTRAL_POSE = new Translation2d(Units.inchesToMeters(552.135), Units.inchesToMeters(158.84));
   }
 
   public static class OperatorConstants {
@@ -92,10 +101,10 @@ public final class Constants {
     public static final AngularVelocity shooterVelocity = RPM.of(3000);
     public static final AngularVelocity kickerVelocity = RPM.of(1500);
 
-
      // ====== Trapazoidal Profile =======
     public static final AngularVelocity shooterMaxVelocity = RPM.of(3000);
     public static final AngularAcceleration shooterMaxAcceleration = RotationsPerSecondPerSecond.of(20000);
+    
 
     public static final AngularVelocity kickerMaxVelocity = RPM.of(2000);
     public static final AngularAcceleration kickerMaxAcceleration = RotationsPerSecondPerSecond.of(1250);
@@ -146,7 +155,7 @@ public final class Constants {
 
     // Soft limits (in inches) — the closed-loop controller won't command past these
     public static final double SOFT_MIN = -0.5;     // inches — small buffer above hard bottom
-    public static final double SOFT_MAX = 18;     // inches — small buffer below hard top
+    public static final double SOFT_MAX = 17.5;     // inches — small buffer below hard top
 
     // Feedforward — TUNE THESE with SysId or manual testing!
     // ks = static friction, kg = gravity compensation, kv = velocity
@@ -174,7 +183,9 @@ public final class Constants {
 
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RPM.of(1500);
-    public static AngularVelocity flippyVelocity = RPM.of(3000);
+    public static AngularVelocity flippyVelocity = RPM.of(1000);
+    public static Angle flippyMinAngle = Degrees.of(0);
+    public static Angle flippyMaxAngle = Degrees.of(590);
     
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
@@ -185,13 +196,13 @@ public final class Constants {
 
 
       // =========  PID & FF values for SushiWheel ==============
-    public static final double sushiP = 0.045874; //0.029668
-    public static final double sushiI = 0;
-    public static final double sushiD = 0.001;
+    public static final double sushiP = 0.025; //0.029668
+    public static final double sushiI = 0.00000001;
+    public static final double sushiD = 0.8;
 
-    public static final double sushiS = 0.41655;
-    public static final double sushiV = 0.12963;
-    public static final double sushiA = 0.038507;
+    public static final double sushiS = 0.41333;
+    public static final double sushiV = 0.45;
+    public static final double sushiA = 0.024823;
 
 
       // =========  PID & FF values for StarWheel ==============
@@ -242,4 +253,5 @@ public final class Constants {
     public static final double CAMERA_PITCH_DEGREES = 0.0;
     public static final String limelight_Name = "limelight-top";
   }
+
 }

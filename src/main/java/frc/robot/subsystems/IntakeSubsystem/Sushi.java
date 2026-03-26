@@ -23,6 +23,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -46,8 +47,7 @@ public class Sushi extends SubsystemBase {
 
 
   private SmartMotorControllerConfig sushiSmcConfig;
-
-
+  private DigitalInput limitSwitch = new DigitalInput(0);
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sushiSmartMotorController;
 
@@ -83,7 +83,7 @@ public class Sushi extends SubsystemBase {
     sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
         .withDiameter(Inches.of(2))
         .withMass(Pounds.of(1.07))
-        .withSoftLimit(RPM.of(-2000), RPM.of(2000))
+        .withSoftLimit(RPM.of(-3500), RPM.of(3500))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
     sushiWheel = new FlyWheel(sushiConfig);   

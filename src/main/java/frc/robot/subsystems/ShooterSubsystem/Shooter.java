@@ -20,6 +20,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -101,6 +102,10 @@ public class Shooter extends SubsystemBase {
     return shooterWheel.getSpeed();
   }
 
+  public double getShooterVelAsDouble() {
+    return  shooterWheel.getSpeed().in(RPM);
+  }
+
     public Command setShooterVelocity(AngularVelocity speed) {
     return shooterWheel.setSpeed(speed).withName("Shooter Wheel set Vel");
   }
@@ -128,6 +133,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     shooterWheel.simIterate();
+    SmartDashboard.putNumber("ShooterVelocity", getShooterVelAsDouble());
     // This method will be called once per scheduler run during simulation
   }
 }
