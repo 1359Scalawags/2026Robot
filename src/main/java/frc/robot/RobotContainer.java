@@ -124,13 +124,13 @@ public class RobotContainer {
                 // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                 m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                 // Default: hold current position with closed-loop (doesn't fight closed-loop mode)
                 // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0).withName("ClimberDefault"));
 
-                m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+                // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                 SmartDashboard.putData("Field", m_SwerveSubsystem.getSwerveDrive().field);
                 SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
@@ -233,7 +233,7 @@ public class RobotContainer {
                 //                 () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
                 //                 () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble());
 
-                Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
+                // Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
                 // Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
@@ -248,9 +248,9 @@ public class RobotContainer {
                         // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+                        // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                        // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         // Configure driveToPose on the stream backing the default command
                         Pose2d simTarget = new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.fromDegrees(90));
@@ -274,7 +274,7 @@ public class RobotContainer {
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
-                        m_AssistantJoystick.button(5).whileTrue(new ShootOnTheMove(m_Shooter, m_Kicker, m_HopperSubsystem, m_SwerveSubsystem));
+                        // m_AssistantJoystick.button(5).whileTrue(new ShootOnTheMove(m_Shooter, m_Kicker, m_HopperSubsystem, m_SwerveSubsystem));
                         // m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
                         m_DriverJoystick.button(8).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
@@ -285,9 +285,10 @@ public class RobotContainer {
                         // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
                         m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
+                        // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                        // m_Kicker.setDefauluCommand(m_Kicker.setKickerDutyCylce(0));
+                        // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
@@ -306,9 +307,9 @@ public class RobotContainer {
                                 () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
                 } 
 
-                m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                // m_AssistantJoystick.trigger().whileTrue(shootFuel);
                
-                m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
+                m_AssistantJoystick.button(14).whileTrue(m_IntakeSushi.setSushiDutyCycle(0.7));
        
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
@@ -317,7 +318,8 @@ public class RobotContainer {
                 m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
 
 
-                // m_AssistantJoystick.button(10).whileTrue(m_ClimberSubsystem.homeCommand());
+
+                m_AssistantJoystick.button(10).onTrue(m_IntakeSushi.sysId());
         }
 
         public Command getAutonomousCommand() {

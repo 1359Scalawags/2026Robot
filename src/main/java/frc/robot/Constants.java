@@ -188,13 +188,13 @@ public final class Constants {
 
 
       // =========  PID & FF values for SushiWheel ==============
-    public static final double sushiP = 0.045874; //0.029668
-    public static final double sushiI = 0;
-    public static final double sushiD = 0.001;
+    public static final double sushiP = 0.025; //0.029668
+    public static final double sushiI = 0.00000001;
+    public static final double sushiD = 0.8;
 
-    public static final double sushiS = 0.41655;
-    public static final double sushiV = 0.12963;
-    public static final double sushiA = 0.038507;
+    public static final double sushiS = 0.41333;
+    public static final double sushiV = 0.45;
+    public static final double sushiA = 0.024823;
 
 
       // =========  PID & FF values for StarWheel ==============
