@@ -4,9 +4,9 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoAimCommand;
-import frc.robot.commands.SwerveCommands.AlignToTag;
-import frc.robot.commands.SwerveCommands.ShootOnTheMove;
+// import frc.robot.commands.AutoAimCommand;
+import frc.robot.commands.SwerveCommands.AlignToHub;
+// import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
@@ -42,6 +42,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Micro;
 import static edu.wpi.first.units.Units.Seconds;
 
 
@@ -58,10 +59,11 @@ public class RobotContainer {
 
         private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem(
                         new File(Filesystem.getDeployDirectory(), Constants.swerveDrive.flipper2026));
+        private final Flippy m_IntakeFlippy = new Flippy();
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
-        // private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
         // private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
 
@@ -122,13 +124,13 @@ public class RobotContainer {
 
 
                 // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+                // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                 // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                 // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
 
                 // Default: hold current position with closed-loop (doesn't fight closed-loop mode)
-                // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0).withName("ClimberDefault"));
+                m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0).withName("ClimberDefault"));
 
                 // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
@@ -197,27 +199,20 @@ public class RobotContainer {
 
 
                 // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
-                // Command unifiedDriveCommand = Commands.run(() -> {
-                //         if (isFieldCentric) {
-                //                 m_SwerveSubsystem.drive(driveAngularVelocity.get());
-                //         } else {
-                //                 m_SwerveSubsystem.drive(driveRobotOriented.get());
-                //         }
-                // }, m_SwerveSubsystem);
                 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
               
                
-                Command shootFuel = Commands.parallel(
-                        m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
-                        m_HopperSubsystem.set(0.75),
-                                Commands.sequence(
-                                        new WaitCommand(Seconds.of(0.5)),
-                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
-                                        .withName("Shoot Fuel");
+                // Command shootFuel = Commands.parallel(
+                //         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
+                //         m_HopperSubsystem.set(0.75),
+                //                 Commands.sequence(
+                //                         new WaitCommand(Seconds.of(0.5)),
+                //                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
+                //                         .withName("Shoot Fuel");
                 
-                m_AssistantJoystick.button(2).whileTrue(m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
+                // m_AssistantJoystick.button(2).whileTrue(m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
 
                 // Command intakeFuel = Commands.parallel(
                 //                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
@@ -235,18 +230,21 @@ public class RobotContainer {
 
                 // Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
-                // Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
+                Command climb  = m_ClimberSubsystem.set(0.40).until(m_ClimberSubsystem.getMaxHeightSupplier);
+                Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
-                
-
+                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.2);
+                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.2);
 
                 // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {       
+                        m_AssistantJoystick.button(5).whileTrue(flipDown);
+                        m_AssistantJoystick.button(6).whileTrue(flipUp);
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
 
                         // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+                        // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
                         // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                         // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
@@ -277,13 +275,14 @@ public class RobotContainer {
                         // m_AssistantJoystick.button(5).whileTrue(new ShootOnTheMove(m_Shooter, m_Kicker, m_HopperSubsystem, m_SwerveSubsystem));
                         // m_DriverJoystick.button(6).toggleOnTrue(alignToTag);
 
-                        m_DriverJoystick.button(8).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
+                        // m_DriverJoystick.button(8).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
 
                 } else if (RobotBase.isReal()) {
                         // m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
+                        m_AssistantJoystick.button(5).whileTrue(climb);
+                        m_AssistantJoystick.button(6).whileTrue(stowSafe);
                         // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+                        // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
 
 
                         // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
@@ -310,12 +309,13 @@ public class RobotContainer {
                 // m_AssistantJoystick.trigger().whileTrue(shootFuel);
                
                 m_AssistantJoystick.button(14).whileTrue(m_IntakeSushi.setSushiDutyCycle(0.7));
+                // m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
        
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
                 //Robot Centric to Field Centric, vice versa.
-                m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
-                m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
+                // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
+                // m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
 
 
 

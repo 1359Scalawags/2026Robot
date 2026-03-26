@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Meter;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -20,6 +19,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,6 +30,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -40,9 +43,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
-import frc.robot.systems.field.AllianceFlipUtil;
-import frc.robot.systems.field.FieldConstants;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,16 +62,22 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 //limelight stuff
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightResults;
+import limelight.networktables.LimelightSettings.LEDMode;
 import limelight.networktables.Orientation3d;
 import limelight.networktables.PoseEstimate;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
+import limelight.networktables.target.pipeline.NeuralClassifier;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -90,17 +96,18 @@ public class SwerveSubsystem extends SubsystemBase {
     private final Field2d m_field = new Field2d();
 
 
-
 public SwerveSubsystem(File directory) {
 
 
-    boolean blueAlliance = true;
-    Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(0))
-                                       : new Pose2d(new Translation2d(Meter.of(16),
-                                                                      Meter.of(4)),
-                                                    Rotation2d.fromDegrees(180));
+    // boolean blueAlliance = true;
+    // Pose2d startingPose = blueAlliance ? new Pose2d(new Translation2d(Meter.of(3.5),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(0))
+    //                                    : new Pose2d(new Translation2d(Meter.of(16),
+    //                                                                   Meter.of(4)),
+    //                                                 Rotation2d.fromDegrees(180));
+    Pose2d startingPose = getAllianceStartPose2d();
+
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -125,6 +132,8 @@ public SwerveSubsystem(File directory) {
 
     // zeroGyroWithAlliance();
 
+    seedForMatch(startingPose);
+
     setupLimelight();
 
     setupPathPlanner();
@@ -132,15 +141,11 @@ public SwerveSubsystem(File directory) {
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 }
 
-
-
-
-
 public void setupLimelight(){
     Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
                                      Units.inchesToMeters(12),
                                      Units.inchesToMeters(10.5),
-                                     new Rotation3d(0, Units.degreesToRadians(45), 0));
+                                     new Rotation3d(0, Units.degreesToRadians(20), 0));
     swerveDrive.stopOdometryThread();
     limelight.getSettings()
              .withPipelineIndex(0)
@@ -149,9 +154,6 @@ public void setupLimelight(){
              .save();
     limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
 }
-
-
-
 
     /**
      * Construct the swerve drive.
@@ -174,17 +176,14 @@ public void setupLimelight(){
 
     swerveDrivePoseEstimator.update(swerveDrive.getOdometryHeading(), swerveDrive.getModulePositions());
 
-
     limelight.getSettings().withRobotOrientation(new Orientation3d(
         new Rotation3d(swerveDrive.getOdometryHeading().rotateBy(Rotation2d.kZero)), 
         new AngularVelocity3d(RotationsPerSecond.of(0),RotationsPerSecond.of(0),RotationsPerSecond.of(0))))
     .save();
-
-
     
     Optional<PoseEstimate>     poseEstimates = limelightPoseEstimator.getPoseEstimate();
     Optional<LimelightResults> results       = limelight.getLatestResults();
- if (results.isPresent() && poseEstimates.isPresent())
+    if (results.isPresent() && poseEstimates.isPresent())
       {
         LimelightResults result       = results.get();
         PoseEstimate     poseEstimate = poseEstimates.get();
@@ -193,14 +192,14 @@ public void setupLimelight(){
         SmartDashboard.putNumber("Max Tag Ambiguity", poseEstimate.getMaxTagAmbiguity());
         SmartDashboard.putNumber("Avg Distance", poseEstimate.avgTagDist);
         SmartDashboard.putNumber("Avg Tag Area", poseEstimate.avgTagArea);
-        SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-        SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-        SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("Fused Pose/x", swerveDrive.getPose().getX());
+        SmartDashboard.putNumber("Fused Pose/y", swerveDrive.getPose().getY());
+        SmartDashboard.putNumber("Fused Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
         // MegaTag2 Vision Integration
-        if (result.valid && poseEstimate.avgTagDist < 4.0) {
+        if (result.valid && poseEstimate.avgTagDist < 3.353) {
             // Get the highly accurate MegaTag2 Pose
             Pose2d mt2Pose = poseEstimate.pose.toPose2d();
             
@@ -213,33 +212,9 @@ public void setupLimelight(){
             );
             }
         }
+        m_field.setRobotPose(swerveDrive.getPose());
     }
-//         if (result.valid)
-//         {
-//           // Pose2d estimatorPose = poseEstimate.pose.toPose2d();
-//           Pose2d usefulPose     = result.getBotPose2d(Alliance.Blue);
-//         //   double distanceToPose = usefulPose.getTranslation().getDistance(swerveDrive.getPose().getTranslation());
-//           if (result.valid && poseEstimate.avgTagDist < 4.0)
-//           {
-//             // if (!initialReading)
-//             // {
-//             //   initialReading = true;
-//             // }
-//             // outofAreaReading = 0;
-//             swerveDrive.setVisionMeasurementStdDevs(VecBuilder.fill(0.05, 0.05, 0.022));
-//             swerveDrive.addVisionMeasurement(usefulPose, result.timestamp_RIOFPGA_capture);
-//           } else
-//           {
-//             outofAreaReading += 1;
-//           }
-//   //        swerveDrive.addVisionMeasurement(estimatorPose, poseEstimate.timestampSeconds);
-//         }
-    //   }
-      
-    // m_field.setRobotPose(swerveDrive.getPose());
-    // }
 
-    
    
     @Override
     public void simulationPeriodic() {
@@ -247,8 +222,6 @@ public void setupLimelight(){
         m_field.setRobotPose(swerveDrive.getPose());
         SmartDashboard.putNumber("SimPose X", swerveDrive.getPose().getX());
         SmartDashboard.putNumber("SimPose Y", swerveDrive.getPose().getY());
-
-        SmartDashboard.putNumber("DistanceToHub", getDistanceToHub());
     }
 
     /**
@@ -284,9 +257,9 @@ public void setupLimelight(){
                     // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
                     new PPHolonomicDriveController(
                             // PPHolonomicController is the built in path following controller for holonomic drive trains
-                            new PIDConstants(5.0, 0.0, 0.0),
+                            new PIDConstants(1.0, 0.0, 0.0),
                             // Translation PID constants
-                            new PIDConstants(5.0, 0.0, 0.0)
+                            new PIDConstants(1.0, 0.0, 0.0)
                     // Rotation PID constants
                     ),
                     config,
@@ -334,12 +307,13 @@ public void setupLimelight(){
      * @return PathFinding command
      */
     public Command driveToPose(Pose2d pose) {
-// Create the constraints to use while pathfinding
+        //TODO: replace pathtofindpose w. pathtofindposeflipped to account for alliance flip
+        // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
                 swerveDrive.getMaximumChassisVelocity(), 4.0,
                 swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
-// Since AutoBuilder is configured, we can use it to build pathfinding commands
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
         return AutoBuilder.pathfindToPose(
                 pose,
                 constraints,
@@ -614,6 +588,19 @@ public void setupLimelight(){
         return swerveDrive.getPose();
     }
 
+    public Pose2d getAllianceStartPose2d() {
+        var alliance = DriverStation.getAlliance();
+
+        // If alliance is present and its red..
+        if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red){
+            //We are going to keep blue origin coordinates
+            return new Pose2d(Constants.FieldConstants.RED_NEUTRAL_POSE, Rotation2d.fromDegrees(180));
+        }
+
+        //Replace with blue side starting pose
+        return new Pose2d(Constants.FieldConstants.BLUE_NEUTRAL_POSE, Rotation2d.fromDegrees(0));
+    }
+
     public  double getX() {
         return swerveDrive.getPose().getX();
     }
@@ -676,22 +663,10 @@ public void setupLimelight(){
         }
     }
 
-    // public Command resetOdom() {
-    //     // Rotation2d correctOffset;
-    //     // if (DriverStation.getAlliance() == Alliance.Blue) {
-    //     //    correctOffset = Rotation2d.kZero
-    //     // } else if (DriverStation.getAlliance() == Alliance.Red) {
-    //     //     correctOffset = Rotation2d.k180deg;
-    //     // }
-    //     // return Command ().onceint
-        
-    //     Rotation2d correctOffset = DriverStation.getAlliance().get() == Alliance.Blue
-    //      ?  Rotation2d.kZero : Rotation2d.k180deg;
-        
-    //     return Command.initialize() -> {
-    //         Pose2d newPose = new Pose2d( swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), correctOffset);
-    //         swerveDrive.resetOdometry(newPose);
-    //     }
+    public void seedForMatch(Pose2d startpose){
+        zeroGyro();
+        resetOdometry(startpose);
+    }
 
     /**
      * Sets the drive motors to brake/coast mode.
@@ -835,10 +810,6 @@ public void setupLimelight(){
         }
     }
 
-   public void driveFieldOrientedSetpoint(ChassisSpeeds speeds) {
-    swerveDrive.driveFieldOriented(speeds);
-  }
-
     public Translation2d getTargetHub() {
         if (isRedAlliance()) {
             return Constants.FieldConstants.kRedHubPosition;
@@ -847,28 +818,4 @@ public void setupLimelight(){
         }
     }
 
-
-//   SmartDashboard.putNumber("Odom Pose/x", swerveDrive.getPose().getX());
-//         SmartDashboard.putNumber("Odom Pose/y", swerveDrive.getPose().getY());
-//         SmartDashboard.putNumber("Odom Pose/degrees", swerveDrive.getPose().getRotation().getDegrees());
-//         SmartDashboard.putNumber("Limelight Pose/x", poseEstimate.pose.getX());
-//         SmartDashboard.putNumber("Limelight Pose/y", poseEstimate.pose.getY());
-//         SmartDashboard.putNumber("Limelight Pose/degrees", poseEstimate.pose.toPose2d().getRotation().getDegrees());
-
-    public Pose2d getOdomPoseEstimte() {
-        return new Pose2d(swerveDrive.getPose().getX(), swerveDrive.getPose().getY(), swerveDrive.getPose().getRotation());
-    }
-
-    public Pose2d getLLPoseEstimte(Double LLx, Double LLy, Rotation2d LLdeg) {
-        return new Pose2d(LLx, LLy, LLdeg);
-    }
-
-    public double getDistanceToHub() {
-      Translation2d hubLocation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
-      Translation2d robotTranslation = swerveDrive.getPose().getTranslation();
-
-       double distanceToHub = robotTranslation.getDistance(hubLocation);
-
-       return distanceToHub;
-    }
 }
