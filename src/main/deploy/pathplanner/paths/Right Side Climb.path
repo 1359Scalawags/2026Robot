@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5738033175355444,
-        "y": 2.0039218009478668
+        "x": 3.064699769053119,
+        "y": 2.935288683602772
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.043886098626645,
-        "y": 2.019901364451362
+        "x": 3.53478255014422,
+        "y": 2.9512682471062672
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R-MoveToHub"
     },
     {
       "anchor": {
@@ -36,7 +36,7 @@
         "y": 2.799158767772511
       },
       "prevControl": {
-        "x": 1.0259629092993612,
+        "x": 1.0259629092993614,
         "y": 2.066130256508985
       },
       "nextControl": null,
@@ -83,7 +83,7 @@
   "folder": "Rebuilt Reba",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 34.69515353123393
   },
   "useDefaultConstraints": true
 }
