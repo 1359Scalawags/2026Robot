@@ -5,9 +5,27 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Flippy Down"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "0 Flippy"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Right Side Climb"
+            "pathName": "Center to Right Side Climb"
           }
         }
       ]

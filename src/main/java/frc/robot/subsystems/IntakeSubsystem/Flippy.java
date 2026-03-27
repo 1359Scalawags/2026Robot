@@ -85,7 +85,7 @@ public class Flippy extends SubsystemBase {
         // .withUseExternalFeedbackEncoder(false)
         // .withExternalEncoderZeroOffset(Degrees.of(45))
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromStages("36:1")))
+        .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40));
