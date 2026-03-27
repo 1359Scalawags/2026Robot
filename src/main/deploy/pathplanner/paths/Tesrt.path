@@ -4,27 +4,27 @@
     {
       "anchor": {
         "x": 3.527,
-        "y": 1.714
+        "y": 6.0268612
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.037121336846042,
-        "y": 1.8068621219250391
+        "x": 4.037608602006659,
+        "y": 6.119812023325053
       },
       "isLocked": false,
-      "linkedName": "Right Side Hub Start"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.105,
+        "x": 1.060577,
         "y": 1.714
       },
       "prevControl": {
-        "x": 1.1823598532539992,
+        "x": 1.1379368532539993,
         "y": 1.4762702098925762
       },
       "nextControl": {
-        "x": 1.027640146746001,
+        "x": 0.9832171467460011,
         "y": 1.9517297901074238
       },
       "isLocked": false,
@@ -32,16 +32,16 @@
     },
     {
       "anchor": {
-        "x": 1.105,
-        "y": 2.7869124602
+        "x": 1.060577,
+        "y": 2.8874
       },
       "prevControl": {
-        "x": 1.1338240577509437,
-        "y": 2.2438171985023376
+        "x": 1.0894010577509439,
+        "y": 2.3443047383023377
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Side Tower"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -69,7 +69,7 @@
       "minWaypointRelativePos": 1.0035971223021583,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.5,
+        "maxVelocity": 0.25,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,

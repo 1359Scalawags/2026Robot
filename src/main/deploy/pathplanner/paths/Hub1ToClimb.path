@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.52,
-        "y": 4.0
+        "x": 3.0135227272727274,
+        "y": 4.813737373737374
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.837645008571132,
-        "y": 4.017773373961388
+        "x": 2.830290404040404,
+        "y": 3.863219696969697
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4,
-        "y": 4.0
+        "x": 1.2,
+        "y": 4.175
       },
       "prevControl": {
-        "x": 2.150034110543038,
-        "y": 3.995870338029544
+        "x": 1.6912247474747473,
+        "y": 4.186452020202021
       },
       "nextControl": null,
       "isLocked": false,
@@ -29,7 +29,21 @@
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7640186915887832,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.3,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -45,10 +59,10 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Move to hub",
+  "folder": "Hub to Climb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -25.97439396243127
   },
   "useDefaultConstraints": true
 }
