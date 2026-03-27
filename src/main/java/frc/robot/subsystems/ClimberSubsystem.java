@@ -56,7 +56,7 @@ public class ClimberSubsystem extends SubsystemBase {
   // Elevator Mechanism
   private Elevator climber;
 
-  private DigitalInput limitSwitch = new DigitalInput(0);
+  private DigitalInput limitSwitch = new DigitalInput(2);
   private boolean lastLimitPressed = false;
   private final DIOSim limitSwitchSim = new DIOSim(limitSwitch);
   private boolean simLimitLatched = false;

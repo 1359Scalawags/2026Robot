@@ -191,8 +191,8 @@ public final class Constants {
     public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
     public static final AngularAcceleration flippyMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
-    public static final AngularVelocity sushiMaxVelocity = RPM.of(2000);
-    public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(1000);
+    public static final AngularVelocity sushiMaxVelocity = RPM.of(4000);
+    public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
 
 
       // =========  PID & FF values for SushiWheel ==============

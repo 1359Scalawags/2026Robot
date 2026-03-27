@@ -80,20 +80,23 @@ public class Flippy extends SubsystemBase {
             // new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
         // .withSimFeedforward(
             // new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
+        // .withExternalEncoder(flippyMotor.getAbsoluteEncoder())
+        // .withExternalEncoderInverted(true)
+        // .withUseExternalFeedbackEncoder(false)
+        // .withExternalEncoderZeroOffset(Degrees.of(45))
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromReductionStages(1,1)))
+        .withGearing(new MechanismGearing(GearBox.fromStages("36:1")))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40));
-        // .withTrapezoidalProfile(Constants.Intake.flippyMaxVelocity, Constants.Intake.flippyMaxAcceleration);
 
     flippySmartMotorController = new SparkWrapper(flippyMotor, DCMotor.getNEO(1), flippySmcConfig);
     // starSmartMotorController.setEncoderInverted(true);
 
     //TODO: make sure these are correct too
     flippyConfig = new ArmConfig(flippySmartMotorController)
-            .withLength(Inches.of(4))
-            .withMass(Pounds.of(1))
+            .withLength(Inches.of(10))
+            .withMass(Pounds.of(15))
             .withStartingPosition(Degrees.of(90))
             .withHardLimit(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
             .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
@@ -113,13 +116,12 @@ public class Flippy extends SubsystemBase {
   public Angle getFlippyAngle(){
     return flippyArm.getAngle();
   }
-  // public Command setVolatage(double volts) {
-  //   return flippyWheel.setVoltage(Volts.of(volts));
-  // }
 
-  // public Command sysId() {
-  //   return flippyWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-  // }
+  public Command setAngle(Angle angle) {
+    return flippyArm.setAngle(angle);
+  }
+
+
 
   @Override
   public void periodic() {
@@ -130,6 +132,8 @@ public class Flippy extends SubsystemBase {
     }
     lastLimitPressed = limitPressed;
 
+    SmartDashboard.putNumber("getFlippyABSEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("getFlippyRelativeEncoder", flippyMotor.getEncoder().getPosition());
     SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
     SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
     flippyArm.updateTelemetry();
