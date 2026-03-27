@@ -103,7 +103,8 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
                 NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-
+                NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.1));
+                NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(.1));
                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
                 NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
 
