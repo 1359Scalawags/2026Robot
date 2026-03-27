@@ -3,18 +3,6 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<< HEAD
-        "x": 3.527,
-        "y": 1.714
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 4.037121336846042,
-        "y": 1.8068621219250391
-      },
-      "isLocked": false,
-      "linkedName": "Right Side Hub Start"
-=======
         "x": 3.064699769053119,
         "y": 2.935288683602772
       },
@@ -25,27 +13,18 @@
       },
       "isLocked": false,
       "linkedName": "R-MoveToHub"
->>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
     },
     {
       "anchor": {
-        "x": 1.105,
-        "y": 1.714
+        "x": 1.055,
+        "y": 2.1221327014218003
       },
       "prevControl": {
-<<<<<<< HEAD
-        "x": 1.1823598532539992,
-        "y": 1.4762702098925762
-      },
-      "nextControl": {
-        "x": 1.027640146746001,
-        "y": 1.9517297901074238
-=======
-        "x": 1.08346110792347,
+        "x": 1.03346110792347,
         "y": 1.8687275658153277
       },
       "nextControl": {
-        "x": 1.136669496949625,
+        "x": 1.086669496949625,
         "y": 2.494724436437417
 >>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
       },
@@ -54,17 +33,12 @@
     },
     {
       "anchor": {
-        "x": 1.105,
-        "y": 2.799158767772511
+        "x": 1.055,
+        "y": 2.9704460093896716
       },
       "prevControl": {
-<<<<<<< HEAD
-        "x": 1.1338240577509437,
-        "y": 2.2438171985023376
-=======
-        "x": 1.0259629092993614,
-        "y": 2.066130256508985
->>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
+        "x": 0.9759629092993614,
+        "y": 2.2374174981261454
       },
       "nextControl": null,
       "isLocked": false,
@@ -108,8 +82,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 0.8,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,

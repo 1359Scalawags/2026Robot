@@ -47,7 +47,7 @@ public class Sushi extends SubsystemBase {
 
 
   private SmartMotorControllerConfig sushiSmcConfig;
-  private DigitalInput limitSwitch = new DigitalInput(0);
+  // private DigitalInput limitSwitch = new DigitalInput(0);
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sushiSmartMotorController;
 

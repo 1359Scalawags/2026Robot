@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.ShootCalculator;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -120,6 +121,7 @@ public class Shooter extends SubsystemBase {
     return shooterWheel.set(dutyCycle);
   }
   
+  
   public Command sysId() {
     return shooterWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
   }
@@ -127,6 +129,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // AngularVelocity finalRPM = ShootCalculator.CalculateShooterRPM();
     shooterWheel.updateTelemetry();
   }
 

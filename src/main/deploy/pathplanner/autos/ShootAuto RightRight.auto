@@ -40,7 +40,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.0
+                        "waitTime": 0.65
                       }
                     }
                   ]
@@ -52,7 +52,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "MoveToHub2"
+            "pathName": "MoveToHub3"
           }
         },
         {
@@ -140,15 +140,9 @@
                 }
               },
               {
-                "type": "named",
-                "data": {
-                  "name": "0 Flippy"
-                }
-              },
-              {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.05
+                  "waitTime": 0.1
                 }
               }
             ]
@@ -161,7 +155,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Center to Left Side Climb"
+                  "pathName": "Right Side Climb"
                 }
               }
             ]

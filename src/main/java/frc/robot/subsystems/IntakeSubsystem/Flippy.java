@@ -106,7 +106,7 @@ public class Flippy extends SubsystemBase {
   }
 
   public BooleanSupplier limitSwitchSupplier = () -> {
-    return !limitSwitch.get();
+    return limitSwitch.get();
   };
 
   public Command setFlippyDutyCycle(double dutyCycle){

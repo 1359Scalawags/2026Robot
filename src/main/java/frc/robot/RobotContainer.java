@@ -6,6 +6,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.SwerveCommands.AlignToHub;
+import frc.robot.commands.SwerveCommands.DynamicShooting;
 // import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -66,6 +67,7 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
+        private final ShootCalculator m_ShootCalculator = new ShootCalculator(m_SwerveSubsystem);
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
         private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final MatchTimeSubsystem m_MatchTimeSubsystem = new MatchTimeSubsystem();
@@ -206,7 +208,7 @@ public class RobotContainer {
                 
                 Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
                                 
-                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
+                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
                 Command alignToTag =  new AlignToHub(m_SwerveSubsystem, m_limelight,
                                 () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
@@ -216,15 +218,24 @@ public class RobotContainer {
                 Command climb  = m_ClimberSubsystem.set(0.80).until(m_ClimberSubsystem.getMaxHeightSupplier);
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
-                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.1);
-                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.175).until(m_IntakeFlippy.limitSwitchSupplier);
+                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
+                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
 
 
-                if (RobotBase.isSimulation()) {       
+                if (RobotBase.isSimulation()) {      
+                        
+                        Command shootDynamicFuel = Commands.parallel(
+                        new DynamicShooting(m_Shooter, m_SwerveSubsystem, m_ShootCalculator),
+                        m_HopperSubsystem.set(0.75),
+                                Commands.sequence(
+                                        new WaitCommand(Seconds.of(0.5)),
+                                        m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
+                                        .withName("Shoot Fuel");
+
                         m_AssistantJoystick.button(12).whileTrue(flipDown);
                         m_AssistantJoystick.button(13).whileTrue(flipUp);
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-                        m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                        m_AssistantJoystick.trigger().whileTrue(shootDynamicFuel);
                       
                         // Configure driveToPose on the stream backing the default command
                         Pose2d simTarget = new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.fromDegrees(90));
@@ -266,6 +277,7 @@ public class RobotContainer {
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+                        m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
 
 
                        
