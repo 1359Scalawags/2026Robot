@@ -1,0 +1,102 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.527,
+        "y": 1.714
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 4.037121336846042,
+        "y": 1.8068621219250391
+      },
+      "isLocked": false,
+      "linkedName": "Right Side Hub Start"
+    },
+    {
+      "anchor": {
+        "x": 1.105,
+        "y": 1.714
+      },
+      "prevControl": {
+        "x": 1.1823598532539992,
+        "y": 1.4762702098925762
+      },
+      "nextControl": {
+        "x": 1.027640146746001,
+        "y": 1.9517297901074238
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.105,
+        "y": 2.7869124602
+      },
+      "prevControl": {
+        "x": 1.1338240577509437,
+        "y": 2.2438171985023376
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Right Side Tower"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.0047244094488057,
+      "rotationDegrees": -90.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.0035971223021583,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 5.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 1.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -90.0
+  },
+  "reversed": false,
+  "folder": "Rebuilt Reba",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

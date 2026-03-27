@@ -212,7 +212,7 @@ public class RobotContainer {
                                 () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble());
 
                 // Stow: go to stowed height, stop when limit switch is hit
-                Command climb  = m_ClimberSubsystem.set(0.40).until(m_ClimberSubsystem.getMaxHeightSupplier);
+                Command climb  = m_ClimberSubsystem.set(0.80).until(m_ClimberSubsystem.getMaxHeightSupplier);
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
                 Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.1);
@@ -244,7 +244,7 @@ public class RobotContainer {
                         // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                         //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
-                                                m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
+                                                // m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
 
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
@@ -257,11 +257,11 @@ public class RobotContainer {
 
                 } else if (RobotBase.isReal()) {
 
-                        m_AssistantJoystick.button(12).whileTrue(flipDown);
-                        m_AssistantJoystick.button(13).whileTrue(flipUp);
+                        m_AssistantJoystick.button(11).whileTrue(flipDown);
+                        m_AssistantJoystick.button(12).whileTrue(flipUp);
 
-                        m_AssistantJoystick.button(5).whileTrue(climb);
-                        m_AssistantJoystick.button(6).whileTrue(ClimbDown);
+                        m_AssistantJoystick.button(15).whileTrue(climb);
+                        m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(intakeFuel);
