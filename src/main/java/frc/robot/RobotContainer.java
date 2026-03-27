@@ -66,7 +66,7 @@ public class RobotContainer {
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
-        // private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
+        private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
 
 
@@ -87,32 +87,28 @@ public class RobotContainer {
 
 
         public RobotContainer() {
+
+                m_IntakeFlippy.setDefaultCommand(m_IntakeFlippy.setFlippyDutyCycle(0));
+                m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+                m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
+                m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
+                m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
+                m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
+
+
                 configureBindings();
 
-                // set limelight pipeline (use double-quoted string for Java)
-                // Add these imports to your LimelightSubsystem class
+                NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
+                NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
+                NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
 
-                 //Set the Limelight pipeline index.
-                //  m_limelight.setPipeline(0);
+                NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
+                NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
 
-                // NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
-                // NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
-                // NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                // NamedCommands.registerCommand("Set Intake Star", m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity));
-                // NamedCommands.registerCommand("Set Intake Sushi", m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
-
-                // NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
-                // NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
-                // NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
-                // NamedCommands.registerCommand("0 Intake Star", m_IntakeStar.setStarDutyCylce(0));
-                // NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
-
-                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
-                // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
-
-
-                // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.55).until(null));
-                NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
+                NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
+                NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
+                NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
+                // NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 
 
                 // Have the autoChooser pull in all PathPlanner autos as options
@@ -124,17 +120,9 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
-
-                // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
-
-                // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-
                 // Default: hold current position with closed-loop (doesn't fight closed-loop mode)
                 m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0).withName("ClimberDefault"));
 
-                // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
 
                 SmartDashboard.putData("Field", m_SwerveSubsystem.getSwerveDrive().field);
                 SmartDashboard.putBoolean("Field Centric Mode", isFieldCentric);
@@ -198,9 +186,8 @@ public class RobotContainer {
                 // Command driveFieldOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveAngularVelocityKeyboard);
                 // Command driveRobotOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveRobotOrientedKeyboard);
                 // Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
-
-
-                // Unified drive command: Chooses the stream based on the toggle and bypasses double-rotation!
+               
+                m_AssistantJoystick.button(14).whileTrue(m_IntakeSushi.setSushiDutyCycle(0.7));
                 
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
@@ -214,49 +201,28 @@ public class RobotContainer {
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
                                         .withName("Shoot Fuel");
                 
-                // m_AssistantJoystick.button(2).whileTrue(m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity));
-
-                // Command intakeFuel = Commands.parallel(
-                //                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity),
-                //                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity))
-                //                 .withName("IntakeFuel");
+                Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
                                 
-                // Command outtakeFuel = Commands.parallel(
-                //                 m_IntakeStar.setStarVelocity(Constants.Intake.starVelocity.times(1.25).unaryMinus()),
-                //                 m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.times(1.25).unaryMinus()))
-                //                 .withName("ReverseIntake");
+                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
 
-                // Command alignToTag =  new AlignToTag(m_SwerveSubsystem, m_limelight,
-                //                 () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
-                //                 () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble());
+                Command alignToTag =  new AlignToHub(m_SwerveSubsystem, m_limelight,
+                                () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
+                                () -> m_DriverJoystick.getX() * -1 * throttleSupplier.getAsDouble());
 
-                // Command unclogKicker = m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity.times(1.5).unaryMinus());
                 // Stow: go to stowed height, stop when limit switch is hit
                 Command climb  = m_ClimberSubsystem.set(0.40).until(m_ClimberSubsystem.getMaxHeightSupplier);
-                Command stowSafe = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
+                Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
                 Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.1);
                 Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.175).until(m_IntakeFlippy.limitSwitchSupplier);
 
-                Command intakeFuel = m_IntakeSushi.setSushiVelocity(RPM.of(2800));
 
-                // =========== Set Default Command for swerve ============
                 if (RobotBase.isSimulation()) {       
                         m_AssistantJoystick.button(12).whileTrue(flipDown);
                         m_AssistantJoystick.button(13).whileTrue(flipUp);
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-                        m_AssistantJoystick.button(5).onTrue(m_IntakeFlippy.setAngle(Degrees.of(90)));
-                        m_AssistantJoystick.button(6).onTrue(m_IntakeFlippy.setAngle(Degrees.of(180)));
-                        m_AssistantJoystick.button(7).onTrue(m_IntakeFlippy.setAngle(Degrees.of(45)));
-                        // m_ClimberSubsystem.setDefaultCommand(m_ClimberSubsystem.set(0));
-
-                        // m_IntakeStar.setDefaultCommand(m_IntakeStar.setStarDutyCylce(0));
-                        // m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
-
-                        // m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                        // m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-                        // m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
-
+                        m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                      
                         // Configure driveToPose on the stream backing the default command
                         Pose2d simTarget = new Pose2d(Meters.of(2), Meters.of(2), Rotation2d.fromDegrees(90));
                         m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(simTarget);
@@ -291,17 +257,13 @@ public class RobotContainer {
 
                         m_AssistantJoystick.button(12).whileTrue(flipDown);
                         m_AssistantJoystick.button(13).whileTrue(flipUp);
-                        m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
+
                         m_AssistantJoystick.button(5).whileTrue(climb);
-                        m_AssistantJoystick.button(6).whileTrue(stowSafe);
-                        m_IntakeFlippy.setDefaultCommand(m_IntakeFlippy.setFlippyDutyCycle(0));
-                        m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
+                        m_AssistantJoystick.button(6).whileTrue(ClimbDown);
 
-
-                        m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
-                        m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
-                        m_HopperSubsystem.setDefaultCommand(m_HopperSubsystem.set(0));
-
+                        m_AssistantJoystick.trigger().whileTrue(shootFuel);
+                        m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+                       
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
@@ -317,11 +279,11 @@ public class RobotContainer {
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                 () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
+
+                        // m_DriverJoystick.button(5).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
                 } 
 
-                m_AssistantJoystick.trigger().whileTrue(shootFuel);
-               
-                m_AssistantJoystick.button(14).whileTrue(m_IntakeSushi.setSushiDutyCycle(0.7));
+                
                 // m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
        
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);

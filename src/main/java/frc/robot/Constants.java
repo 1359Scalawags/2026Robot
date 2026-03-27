@@ -182,8 +182,9 @@ public final class Constants {
 
 
       // ======= Intake Speeds ======
-    public static AngularVelocity sushiVelocity = RPM.of(1500);
+    public static AngularVelocity sushiVelocity = RPM.of(2800);
     public static AngularVelocity flippyVelocity = RPM.of(1000);
+
     public static Angle flippyMinAngle = Degrees.of(0);
     public static Angle flippyMaxAngle = Degrees.of(590);
     
