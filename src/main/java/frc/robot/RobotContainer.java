@@ -276,6 +276,9 @@ public class RobotContainer {
                         // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                         //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
+                                                m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
+
+
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
                                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
