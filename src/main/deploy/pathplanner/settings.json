@@ -10,10 +10,8 @@
     "Test movements"
   ],
   "autoFolders": [
-    "Rebuilt Autos",
     "Shoot auto no climb",
-    "ShootClimb",
-    "Test autos"
+    "ShootClimb"
   ],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 5.0,

@@ -3,73 +3,60 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.527,
-        "y": 1.714
+        "x": 3.0135227272727274,
+        "y": 4.813737373737374
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.037121336846042,
-        "y": 1.8068621219250391
+        "x": 3.445745661992337,
+        "y": 4.851169561465666
       },
       "isLocked": false,
-      "linkedName": "Right Side Hub Start"
+      "linkedName": "L-MoveToHub"
     },
     {
       "anchor": {
-        "x": 1.105,
-        "y": 1.714
+        "x": 1.2332981220657286,
+        "y": 5.461502347417841
       },
       "prevControl": {
-        "x": 1.1823598532539992,
-        "y": 1.4762702098925762
+        "x": 1.312352266187041,
+        "y": 5.852541684270778
       },
       "nextControl": {
-        "x": 1.027640146746001,
-        "y": 1.9517297901074238
+        "x": 1.1837592763833948,
+        "y": 5.216459692419855
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "L-PreClimb"
     },
     {
       "anchor": {
-        "x": 1.105,
-        "y": 2.7869124602
+        "x": 1.1055516431924892,
+        "y": 4.641795774647887
       },
       "prevControl": {
-        "x": 1.1338240577509437,
-        "y": 2.2438171985023376
+        "x": 1.044917736933406,
+        "y": 4.88433139968422
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Side Tower"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 1.0047244094488057,
-      "rotationDegrees": -90.0
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": 88.60281897270362
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.0,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.5,
-        "maxAcceleration": 5.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.0035971223021583,
+      "minWaypointRelativePos": 0.9766355140186825,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.5,
+        "maxVelocity": 0.35,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -90,13 +77,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -90.0
+    "rotation": 88.35704762452357
   },
   "reversed": false,
   "folder": "Rebuilt Reba",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -25.97439396243127
   },
   "useDefaultConstraints": true
 }

@@ -3,6 +3,7 @@
   "waypoints": [
     {
       "anchor": {
+<<<<<<< HEAD
         "x": 3.527,
         "y": 1.714
       },
@@ -13,6 +14,18 @@
       },
       "isLocked": false,
       "linkedName": "Right Side Hub Start"
+=======
+        "x": 3.064699769053119,
+        "y": 2.935288683602772
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.53478255014422,
+        "y": 2.9512682471062672
+      },
+      "isLocked": false,
+      "linkedName": "R-MoveToHub"
+>>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
     },
     {
       "anchor": {
@@ -20,12 +33,21 @@
         "y": 1.714
       },
       "prevControl": {
+<<<<<<< HEAD
         "x": 1.1823598532539992,
         "y": 1.4762702098925762
       },
       "nextControl": {
         "x": 1.027640146746001,
         "y": 1.9517297901074238
+=======
+        "x": 1.08346110792347,
+        "y": 1.8687275658153277
+      },
+      "nextControl": {
+        "x": 1.136669496949625,
+        "y": 2.494724436437417
+>>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
       },
       "isLocked": false,
       "linkedName": null
@@ -33,11 +55,16 @@
     {
       "anchor": {
         "x": 1.105,
-        "y": 2.7869124602
+        "y": 2.799158767772511
       },
       "prevControl": {
+<<<<<<< HEAD
         "x": 1.1338240577509437,
         "y": 2.2438171985023376
+=======
+        "x": 1.0259629092993614,
+        "y": 2.066130256508985
+>>>>>>> ce3a1a4ce0567cf08366d5ddcdc9b48c7d0cf914
       },
       "nextControl": null,
       "isLocked": false,
@@ -96,7 +123,7 @@
   "folder": "Rebuilt Reba",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 34.69515353123393
   },
   "useDefaultConstraints": true
 }

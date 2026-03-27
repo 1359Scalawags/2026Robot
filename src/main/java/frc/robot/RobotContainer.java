@@ -266,6 +266,8 @@ public class RobotContainer {
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+
+
                        
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
@@ -284,6 +286,8 @@ public class RobotContainer {
                                 () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
                         // m_DriverJoystick.button(5).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
+                                                m_DriverJoystick.button(10).whileTrue(alignToTag);
+
                 } 
 
                 
