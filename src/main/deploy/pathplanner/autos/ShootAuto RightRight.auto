@@ -27,6 +27,12 @@
                 }
               },
               {
+                "type": "named",
+                "data": {
+                  "name": "Set Climb L1"
+                }
+              },
+              {
                 "type": "sequential",
                 "data": {
                   "commands": [
@@ -46,15 +52,47 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 8.0
+                  "commands": [
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Flippy Down"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.5
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "0 Flippy"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 9.0
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "wait",
                 "data": {
-                  "name": "Set Climb L1"
+                  "waitTime": 8.0
                 }
               }
             ]
