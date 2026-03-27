@@ -97,16 +97,23 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.05
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "HubToClimb-R"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Center to Left Side Climb"
+                }
+              }
+            ]
           }
         },
         {
