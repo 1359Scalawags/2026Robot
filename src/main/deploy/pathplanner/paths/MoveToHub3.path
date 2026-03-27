@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5288636363636368,
-        "y": 2.0308964646464656
+        "x": 3.5738033175355444,
+        "y": 2.0039218009478668
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.7612372619411083,
-        "y": 1.8431343183059647
+        "x": 3.806176943113016,
+        "y": 1.816159654607366
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Right Starting Pos"
     },
     {
       "anchor": {

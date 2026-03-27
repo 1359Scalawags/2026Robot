@@ -104,16 +104,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Hub2ToClimb"
-                }
-              }
-            ]
+            "pathName": "HubToClimb-R"
           }
         },
         {

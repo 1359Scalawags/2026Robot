@@ -97,7 +97,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.1
+                  "waitTime": 0.05
                 }
               }
             ]
@@ -110,7 +110,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Hub2Climb-R"
+                  "pathName": "HubToClimb-R"
                 }
               }
             ]
@@ -126,6 +126,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "ShootClimb",
   "choreoAuto": false
 }
