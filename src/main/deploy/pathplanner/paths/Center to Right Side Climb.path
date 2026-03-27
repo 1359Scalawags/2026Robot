@@ -4,15 +4,15 @@
     {
       "anchor": {
         "x": 3.527,
-        "y": 1.714
+        "y": 4.034663
       },
       "prevControl": null,
       "nextControl": {
         "x": 4.037121336846042,
-        "y": 1.8068621219250391
+        "y": 4.127525121925039
       },
       "isLocked": false,
-      "linkedName": "Right Side Hub Start"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -41,7 +41,7 @@
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Right Side Tower"
+      "linkedName": null
     }
   ],
   "rotationTargets": [
@@ -69,7 +69,7 @@
       "minWaypointRelativePos": 1.0035971223021583,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.5,
+        "maxVelocity": 0.25,
         "maxAcceleration": 5.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
