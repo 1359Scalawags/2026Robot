@@ -9,6 +9,7 @@ import frc.robot.commands.SwerveCommands.AlignToHub;
 // import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
+import frc.robot.subsystems.MatchTimeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.Kicker;
 import frc.robot.subsystems.ShooterSubsystem.Shooter;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -64,6 +65,7 @@ public class RobotContainer {
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+        private final MatchTimeSubsystem m_MatchTimeSubsystem = new MatchTimeSubsystem();
         // private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
 

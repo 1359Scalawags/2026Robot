@@ -4,12 +4,21 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
 public class MatchTimeSubsystem extends SubsystemBase{
 
   String gameData;
+
+  @Override
+  public void periodic() {
+    // This runs every 20ms. We use it to push telemetry to the dashboard 
+    // so your drivers/programmers can verify the logic is working.
+    SmartDashboard.putBoolean("Hub Active", isHubActive());
+    SmartDashboard.putNumber("Time Remaining", DriverStation.getMatchTime());
+  }
 
   public MatchTimeSubsystem() {
     gameData = DriverStation.getGameSpecificMessage();
