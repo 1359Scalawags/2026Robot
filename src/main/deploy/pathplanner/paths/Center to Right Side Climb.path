@@ -3,45 +3,45 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.527,
-        "y": 4.034663
+        "x": 2.5320539906103297,
+        "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.037121336846042,
-        "y": 4.127525121925039
+        "x": 3.042175327456371,
+        "y": 4.092862121925039
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "M-MoveToHub"
     },
     {
       "anchor": {
         "x": 1.105,
-        "y": 1.714
+        "y": 2.3478080568720374
       },
       "prevControl": {
         "x": 1.1823598532539992,
-        "y": 1.4762702098925762
+        "y": 2.1100782667646136
       },
       "nextControl": {
         "x": 1.027640146746001,
-        "y": 1.9517297901074238
+        "y": 2.585537846979461
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R-PreClimbCorrect"
     },
     {
       "anchor": {
         "x": 1.105,
-        "y": 2.7869124602
+        "y": 2.799158767772511
       },
       "prevControl": {
         "x": 1.1338240577509437,
-        "y": 2.2438171985023376
+        "y": 2.256063506074849
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "R-ClimbingPos"
     }
   ],
   "rotationTargets": [

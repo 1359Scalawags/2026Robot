@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.4,
+        "x": 2.5320539906103297,
         "y": 4.0
       },
       "prevControl": {
-        "x": 2.150034110543038,
+        "x": 2.282088101153368,
         "y": 3.995870338029544
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "M-MoveToHub"
     }
   ],
   "rotationTargets": [],

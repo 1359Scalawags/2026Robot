@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.064699769053119,
-        "y": 2.935288683602772
+        "x": 1.2,
+        "y": 4.175
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.064699769053119,
-        "y": 3.6682179765320644
+        "x": 1.2,
+        "y": 4.907929292929293
       },
       "isLocked": false,
       "linkedName": null
@@ -62,7 +62,7 @@
   "folder": "Hub to Climb",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 34.69515353123393
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
