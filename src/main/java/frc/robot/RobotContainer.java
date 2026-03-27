@@ -206,7 +206,7 @@ public class RobotContainer {
                 
                 Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
                                 
-                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
+                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
                 Command alignToTag =  new AlignToHub(m_SwerveSubsystem, m_limelight,
                                 () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
@@ -216,8 +216,8 @@ public class RobotContainer {
                 Command climb  = m_ClimberSubsystem.set(0.80).until(m_ClimberSubsystem.getMaxHeightSupplier);
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
-                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.1);
-                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.175).until(m_IntakeFlippy.limitSwitchSupplier);
+                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
+                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
 
 
                 if (RobotBase.isSimulation()) {       
@@ -266,6 +266,7 @@ public class RobotContainer {
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+                        m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
 
 
                        
