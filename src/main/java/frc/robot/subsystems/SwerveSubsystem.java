@@ -33,6 +33,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -67,6 +68,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotation;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
@@ -225,6 +227,9 @@ public void setupLimelight(){
             }
         }
         m_field.setRobotPose(swerveDrive.getPose());
+
+        getDynamicRPM();
+        SmartDashboard.putNumber("Dynamic RPM", getDynamicRPMAsDouble());
     }
 
    
@@ -828,6 +833,14 @@ public void setupLimelight(){
         } else {
             return Constants.FieldConstants.kBlueHubPosition;
         }
+    }
+
+    public AngularVelocity getDynamicRPM(){
+        return shootCalculator.CalculateShooterRPM(swerveDrive.getPose().getTranslation());
+    }
+
+    public double getDynamicRPMAsDouble() {
+        return getDynamicRPM().in(RPM);
     }
 
 }

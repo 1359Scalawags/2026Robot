@@ -202,7 +202,7 @@ public final class Constants {
     public static final double sushiD = 0.8;
 
     public static final double sushiS = 0.41333;
-    public static final double sushiV = 0.45;
+    public static final double sushiV = 0.45; //0.114
     public static final double sushiA = 0.024823;
 
 
