@@ -94,7 +94,7 @@ public class Shooter extends SubsystemBase {
         // Maximum speed of the shooter.
         .withSoftLimit(RPM.of(-4000), RPM.of(4000))
         // Telemetry name and verbosity for the arm.
-        .withTelemetry("HopperMech", TelemetryVerbosity.HIGH);
+        .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
     shooterWheel = new FlyWheel(shooterConfig);
   }

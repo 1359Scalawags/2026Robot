@@ -225,7 +225,7 @@ public class RobotContainer {
                 if (RobotBase.isSimulation()) {      
                         
                         Command shootDynamicFuel = Commands.parallel(
-                        new DynamicShooting(m_Shooter, m_SwerveSubsystem, m_ShootCalculator),
+                        m_Shooter.setShooterVelocity(m_ShootCalculator.CalculateShooterRPM()),
                         m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
                                         new WaitCommand(Seconds.of(0.5)),

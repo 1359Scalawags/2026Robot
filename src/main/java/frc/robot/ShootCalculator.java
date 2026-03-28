@@ -48,7 +48,9 @@ public class ShootCalculator {
     flywheelSpeedMap.put(5.60, 2900.0);
   }
 
-  public ShootCalculator(SwerveSubsystem swerveDrive) {}
+  public ShootCalculator(SwerveSubsystem swerveDrive) {
+    this.swerveDrive = swerveDrive;
+  }
 
   public AngularVelocity CalculateShooterRPM() {
     hubLocation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
