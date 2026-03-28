@@ -44,8 +44,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Micro;
-import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Seconds;
 
 
@@ -103,14 +101,15 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
                 NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.1));
-                NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(.1));
+                NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.135));
                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
                 NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
 
                 NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
                 NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
                 NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
+                NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(0));
+
                 // NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 
 

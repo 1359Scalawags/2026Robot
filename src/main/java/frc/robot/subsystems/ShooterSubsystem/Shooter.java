@@ -130,6 +130,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // AngularVelocity finalRPM = ShootCalculator.CalculateShooterRPM();
+    SmartDashboard.putNumber("Shooter Vel", getShooterVelAsDouble());
     shooterWheel.updateTelemetry();
   }
 
