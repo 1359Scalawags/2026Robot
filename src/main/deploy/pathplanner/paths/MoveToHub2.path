@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.837645008571132,
-        "y": 4.017773373961388
+        "x": 3.933631307665537,
+        "y": 4.012975536542678
       },
       "isLocked": false,
       "linkedName": "M-StartingPos"
@@ -20,8 +20,8 @@
         "y": 4.0
       },
       "prevControl": {
-        "x": 2.282088101153368,
-        "y": 3.995870338029544
+        "x": 2.280427450810734,
+        "y": 3.9890923862855687
       },
       "nextControl": null,
       "isLocked": false,

@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.53478255014422,
-        "y": 2.9512682471062672
+        "x": 3.585402224813094,
+        "y": 3.075931347959734
       },
       "isLocked": false,
       "linkedName": "R-MoveToHub"
     },
     {
       "anchor": {
-        "x": 1.035,
+        "x": 0.925,
         "y": 2.1221327014218003
       },
       "prevControl": {
-        "x": 1.0134611079234699,
-        "y": 1.8687275658153277
+        "x": 0.900940521000777,
+        "y": 1.873293111584721
       },
       "nextControl": {
-        "x": 1.0666694969496249,
-        "y": 2.494724436437417
+        "x": 0.9585502949340909,
+        "y": 2.4691328019053524
       },
       "isLocked": false,
       "linkedName": "R-PreClimbPos"
     },
     {
       "anchor": {
-        "x": 1.0,
+        "x": 0.925,
         "y": 2.9704460093896716
       },
       "prevControl": {
-        "x": 0.9209629092993614,
-        "y": 2.2374174981261454
+        "x": 0.8208652672568277,
+        "y": 2.007270864369037
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,7 +53,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.2565114443567498,
+      "minWaypointRelativePos": 1.2097026604068835,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 0.25,

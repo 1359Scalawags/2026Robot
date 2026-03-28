@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9240711384104823,
-        "y": 4.115202631619321
+        "x": 2.94100271043952,
+        "y": 4.184006002644786
       },
       "isLocked": false,
       "linkedName": "M-MoveToHub"
     },
     {
       "anchor": {
-        "x": 1.0,
+        "x": 0.925,
         "y": 2.3478080568720374
       },
       "prevControl": {
-        "x": 1.0137063165189146,
-        "y": 2.0981840658625925
+        "x": 0.9116049745937115,
+        "y": 2.0800949500146118
       },
       "nextControl": {
-        "x": 0.9862936834810854,
-        "y": 2.5974320478814823
+        "x": 0.9406704105456702,
+        "y": 2.66099703305294
       },
       "isLocked": false,
       "linkedName": "R-PreClimbCorrect"
     },
     {
       "anchor": {
-        "x": 1.0,
+        "x": 0.925,
         "y": 2.9704460093896716
       },
       "prevControl": {
-        "x": 1.0051793119806594,
-        "y": 2.4448712216875768
+        "x": 0.8885216523196718,
+        "y": 2.4446694556981874
       },
       "nextControl": null,
       "isLocked": false,
@@ -68,7 +68,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
+    "maxVelocity": 0.65,
     "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
