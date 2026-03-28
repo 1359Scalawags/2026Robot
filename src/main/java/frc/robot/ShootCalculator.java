@@ -22,8 +22,8 @@ public class ShootCalculator {
   
   private static final InterpolatingDoubleTreeMap    flywheelSpeedMap = new InterpolatingDoubleTreeMap();
 
-  private       Distance  minDistance      = Feet.of(1);
-  private       Distance  maxDistance      = Feet.of(5);
+  private       Distance  minDistance      = Meters.of(1);
+  private       Distance  maxDistance      = Meters.of(5);
 
   private Translation2d hubLocation;
 
@@ -35,7 +35,7 @@ public class ShootCalculator {
 
   static {
       // Puts values for the IDTM for the RPM of the shooter motor.
-      //             KEY: feet,    VALUE: RPM
+      //             KEY: Meters,    VALUE: RPM
     flywheelSpeedMap.put(1.34, 2100.0);
     flywheelSpeedMap.put(1.78, 2200.0);
     flywheelSpeedMap.put(2.17, 2200.0);
@@ -58,13 +58,15 @@ public class ShootCalculator {
 
     distanceToHub = Meters.of(robotTranslation.getDistance(hubLocation));
 
-    if (distanceToHub.gte(minDistance) && distanceToHub.lte(maxDistance)) {
-      finalRPM = RPM.of(flywheelSpeedMap.get(distanceToHub.in(Meters)));
-    } else {
-      finalRPM = Constants.Shooter.shooterVelocity;
-    }
+    // if (distanceToHub.gte(minDistance) && distanceToHub.lte(maxDistance)) {
+    finalRPM = RPM.of(flywheelSpeedMap.get(distanceToHub.in(Meters)));
+    // } else {
+    //   finalRPM = Constants.Shooter.shooterVelocity;
+    // }
 
     return finalRPM;
   }
+  
+
 }
 
