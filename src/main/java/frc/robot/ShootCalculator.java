@@ -48,15 +48,14 @@ public class ShootCalculator {
     flywheelSpeedMap.put(5.60, 2900.0);
   }
 
-  public ShootCalculator(SwerveSubsystem swerveDrive) {
-    this.swerveDrive = swerveDrive;
-  }
+  public ShootCalculator() {}
+  
 
-  public AngularVelocity CalculateShooterRPM() {
+  public AngularVelocity CalculateShooterRPM(Translation2d swerveTranslation) {
     hubLocation = AllianceFlipUtil.apply(FieldConstants.Hub.topCenterPoint.toTranslation2d());
-    robotTranslation = swerveDrive.getPose().getTranslation();
+   // robotTranslation = swerveDrive.getPose().getTranslation();
 
-    distanceToHub = Meters.of(robotTranslation.getDistance(hubLocation));
+    distanceToHub = Meters.of(swerveTranslation.getDistance(hubLocation));
 
     // if (distanceToHub.gte(minDistance) && distanceToHub.lte(maxDistance)) {
     finalRPM = RPM.of(flywheelSpeedMap.get(distanceToHub.in(Meters)));

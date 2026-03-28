@@ -43,6 +43,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.ShootCalculator;
+import frc.robot.Constants.Shooter;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -95,8 +98,11 @@ public class SwerveSubsystem extends SubsystemBase {
     
     private final Field2d m_field = new Field2d();
 
+    private final ShootCalculator shootCalculator;
+
 
 public SwerveSubsystem(File directory) {
+    shootCalculator = new ShootCalculator();
 
 
     // boolean blueAlliance = true;
@@ -141,6 +147,24 @@ public SwerveSubsystem(File directory) {
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 }
 
+
+    /**
+     * Construct the swerve drive.
+     *
+     * @param driveCfg SwerveDriveConfiguration for the swerve.
+     * @param controllerCfg Swerve Controller.
+     */
+    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, ShootCalculator shootCalculator) {
+        swerveDrive = new SwerveDrive(driveCfg,
+                controllerCfg,
+                Constants.swerveDrive.MAX_SPEED,
+                new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+                        Rotation2d.fromDegrees(0)));
+        this.shootCalculator = shootCalculator;
+    }
+
+
+
 public void setupLimelight(){
     Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
                                      Units.inchesToMeters(12),
@@ -155,19 +179,7 @@ public void setupLimelight(){
     limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
 }
 
-    /**
-     * Construct the swerve drive.
-     *
-     * @param driveCfg SwerveDriveConfiguration for the swerve.
-     * @param controllerCfg Swerve Controller.
-     */
-    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-        swerveDrive = new SwerveDrive(driveCfg,
-                controllerCfg,
-                Constants.swerveDrive.MAX_SPEED,
-                new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                        Rotation2d.fromDegrees(0)));
-    }
+
 
   @Override
   public void periodic() {

@@ -6,7 +6,6 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 // import frc.robot.commands.AutoAimCommand;
 import frc.robot.commands.SwerveCommands.AlignToHub;
-import frc.robot.commands.SwerveCommands.DynamicShooting;
 // import frc.robot.commands.SwerveCommands.ShootOnTheMove;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
@@ -67,7 +66,6 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
-        private final ShootCalculator m_ShootCalculator = new ShootCalculator(m_SwerveSubsystem);
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
         private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final MatchTimeSubsystem m_MatchTimeSubsystem = new MatchTimeSubsystem();
@@ -225,7 +223,7 @@ public class RobotContainer {
                 if (RobotBase.isSimulation()) {      
                         
                         Command shootDynamicFuel = Commands.parallel(
-                        m_Shooter.setShooterVelocity(m_ShootCalculator.CalculateShooterRPM()),
+                        // m_Shooter.setShooterVelocity(m_ShootCalculator.CalculateShooterRPM()),
                         m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
                                         new WaitCommand(Seconds.of(0.5)),
