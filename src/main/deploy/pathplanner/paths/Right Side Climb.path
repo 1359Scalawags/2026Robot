@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.585402224813094,
-        "y": 3.075931347959734
+        "x": 3.6059129978669913,
+        "y": 3.0842198641070007
       },
       "isLocked": false,
       "linkedName": "R-MoveToHub"
@@ -20,12 +20,12 @@
         "y": 2.1221327014218003
       },
       "prevControl": {
-        "x": 0.900940521000777,
-        "y": 1.873293111584721
+        "x": 0.8832766000213473,
+        "y": 1.8127024345627838
       },
       "nextControl": {
-        "x": 0.9585502949340909,
-        "y": 2.4691328019053524
+        "x": 0.9791232179911863,
+        "y": 2.5235228516696244
       },
       "isLocked": false,
       "linkedName": "R-PreClimbPos"
@@ -36,8 +36,8 @@
         "y": 2.9704460093896716
       },
       "prevControl": {
-        "x": 0.8208652672568277,
-        "y": 2.007270864369037
+        "x": 0.9429560081120186,
+        "y": 1.6641802031002646
       },
       "nextControl": null,
       "isLocked": false,
@@ -53,7 +53,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.2097026604068835,
+      "minWaypointRelativePos": 1.023364485981308,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 0.25,
@@ -68,7 +68,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.8,
+    "maxVelocity": 0.7,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -85,5 +85,5 @@
     "velocity": 0,
     "rotation": 34.69515353123393
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
