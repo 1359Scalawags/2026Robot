@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Second;
@@ -23,7 +22,6 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,8 +45,6 @@ public class Sushi extends SubsystemBase {
 
 
   private SmartMotorControllerConfig sushiSmcConfig;
-  // private DigitalInput limitSwitch = new DigitalInput(0);
-  // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController sushiSmartMotorController;
 
 
@@ -56,14 +52,12 @@ public class Sushi extends SubsystemBase {
 
   private FlyWheel sushiWheel;
 
-  //TODO: create constants whereveer needed.
   public Sushi() {
 
     //Creates the motor objects that control the motors on the real robot
     sushiMotor = new SparkMax(Constants.Intake.sushiMotorID, MotorType.kBrushless);
 
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
-    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,

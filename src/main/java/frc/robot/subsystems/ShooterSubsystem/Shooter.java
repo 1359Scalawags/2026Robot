@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.ShootCalculator;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
 import yams.mechanisms.config.FlyWheelConfig;
@@ -52,31 +51,20 @@ public class Shooter extends SubsystemBase {
 
   private FlyWheel shooterWheel;
 
-  //TODO: create constants whereveer needed.
   public Shooter() {
 
     //Creates the motor objects that control the motors on the real robot
     shooterMotor = new SparkMax(Constants.Shooter.flyWheelID, MotorType.kBrushless);    
 
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
-    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     shooterSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        // Feedback Constants (PID Constants)
         .withClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withSimClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        // Feedforward Constants
         .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
-        // Telemetry name and verbosity level
         .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
-        // Gearing from the motor rotor to final shaft.
-        // In this example GearBox.fromReductionStages(3,4) is the same as
-        // GearBox.fromStages("3:1","4:1") which corresponds to the gearbox attached to
-        // your motor.
-        // You could also use .withGearing(12) which does the same thing.
         .withGearing(new MechanismGearing(GearBox.fromReductionStages(1, 1)))
-        // Motor properties to prevent over currenting.
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
@@ -85,15 +73,10 @@ public class Shooter extends SubsystemBase {
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
 
-    //TODO check these values to see if they are accurate
     shooterConfig = new FlyWheelConfig(shooterSmartMotorController)
-        // Diameter of the flywheel.
         .withDiameter(Inches.of(4))
-        // Mass of the flywheel.
         .withMass(Pounds.of(1))
-        // Maximum speed of the shooter.
         .withSoftLimit(RPM.of(-4000), RPM.of(4000))
-        // Telemetry name and verbosity for the arm.
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
     shooterWheel = new FlyWheel(shooterConfig);

@@ -5,13 +5,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -20,18 +16,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 
 import edu.wpi.first.wpilibj.RobotBase;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean
- * constants. This class should not be used for any other purpose. All constants
- * should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
 
   public static final Mode simMode = Mode.SIM;
@@ -139,13 +123,11 @@ public final class Constants {
     public static final double GEAR_RATIO = 125.0;
     public static final int CURRENT_LIMIT = 60; // Amps
     
-    // PID Constants — TUNE THESE on the real robot!
     // With 125:1 gearing, max linear speed is only ~0.106 m/s.
-    // Feedforward (kv) does the heavy lifting. PID just corrects small errors.
     public static final double kP = 50
     ;
     public static final double kI = 0.0;
-    public static final double kD = 0.0;   // Damping to prevent overshoot
+    public static final double kD = 0.0;   
     public static final double kFF = 0.0;
     
     // Position limits (in inches)
@@ -161,9 +143,9 @@ public final class Constants {
     // ks = static friction, kg = gravity compensation, kv = velocity
     // NOTE: kg always pushes UP. In sim there's no gravity so set to 0.
     // On the real robot, slowly increase kg until the elevator holds position with PID off.
-    public static final double ks = 0;  // TODO: Tune on real robot
+    public static final double ks = 0; 
     public static final double kg = 0;   // Set to 0 for sim. Real robot: ~0.3-1.0 (find with SysId)
-    public static final double kv = 0;   // Disable feedforward for now — let PID-only control work first
+    public static final double kv = 0;  
 
     // Preset heights (in inches)
     public static final double STOWED_HEIGHT = 0.5;    // inches — fully retracted
@@ -207,9 +189,8 @@ public final class Constants {
 
 
       // =========  PID & FF values for StarWheel ==============
-          //Star motor is agrresivly tunned to help stop fuel getting stuck
-    public static final double flippyP = 0.035; //From sysID - 0.055968, 0.029853
-    public static final double flippyI = 0.000001;
+    public static final double flippyP = 0.035; //From sysID - kP = 0.055968, kD = 0.029853
+    public static final double flippyI = 0.000001; 
     public static final double flippyD = 1.3;
 
     public static final double flippyS = 0.66508;
@@ -230,11 +211,10 @@ public final class Constants {
     public static final AngularVelocity hopperMaxVelocity = RPM.of(2500);
     public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
-    // PID Constants (tune these based on your robot's performance)
     public static final double kP = 0.03;
     public static final double kI = 0.0000001;
     public static final double kD = 0.1;
-    public static final double kFF = 0.000156; // Feed-forward for NEO motors
+    public static final double kFF = 0.000156; 
 
     //hopper motorFF
     public static final double kS = 0;

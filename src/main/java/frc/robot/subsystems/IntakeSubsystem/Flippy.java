@@ -9,10 +9,6 @@ import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
-import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
 import static edu.wpi.first.units.Units.Degrees;
 
 import java.util.function.BooleanSupplier;
@@ -20,21 +16,15 @@ import java.util.function.BooleanSupplier;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
 import yams.gearing.MechanismGearing;
-import yams.mechanisms.config.FlyWheelConfig;
-import yams.mechanisms.velocity.FlyWheel;
 import yams.mechanisms.positional.Arm;
 import yams.mechanisms.config.ArmConfig;
 import yams.motorcontrollers.SmartMotorController;
@@ -50,24 +40,17 @@ public class Flippy extends SubsystemBase {
 
   private SmartMotorControllerConfig flippySmcConfig;
   private DigitalInput limitSwitch = new DigitalInput(1);
-  private boolean lastLimitPressed = false;
-
-  // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController flippySmartMotorController;
 
-  //TODO: make these not fly wheels (maybe i dont actualy know)
   private final ArmConfig flippyConfig;
 
-  // private FlyWheel flippyWheel;
   private Arm flippyArm;
 
   public Flippy() {
 
-    //Creates the motor objects that control the motors on the real robot
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
     
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
-    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     flippySmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
@@ -76,14 +59,6 @@ public class Flippy extends SubsystemBase {
         .withSimClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
-        // .withFeedforward(
-            // new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
-        // .withSimFeedforward(
-            // new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
-        // .withExternalEncoder(flippyMotor.getAbsoluteEncoder())
-        // .withExternalEncoderInverted(true)
-        // .withUseExternalFeedbackEncoder(false)
-        // .withExternalEncoderZeroOffset(Degrees.of(45))
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
         .withMotorInverted(false)
@@ -130,7 +105,6 @@ public class Flippy extends SubsystemBase {
     if (limitPressed) {
       flippySmartMotorController.setEncoderPosition(Degrees.of(0));
     }
-    lastLimitPressed = limitPressed;
 
     SmartDashboard.putNumber("getFlippyABSEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
     SmartDashboard.putNumber("getFlippyRelativeEncoder", flippyMotor.getEncoder().getPosition());
