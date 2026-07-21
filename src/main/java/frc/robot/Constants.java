@@ -131,6 +131,7 @@ public final class Constants {
     public static final double kickerS = 0.5;
     public static final double kickerV = 0.12113;
     public static final double kickerA = 0.041532;
+
   }
 
   public static class Climber {
@@ -180,13 +181,16 @@ public final class Constants {
     public static final int sushiMotorID = 10;
     public static final int flippyMotorID = 9;
 
-
+    public static final int flipperMotorID = 0;
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RPM.of(2800);
     public static AngularVelocity flippyVelocity = RPM.of(1000);
 
     public static Angle flippyMinAngle = Degrees.of(0);
     public static Angle flippyMaxAngle = Degrees.of(590);
+
+    public static Angle flipperMinAngle = Degrees.of(0);
+    public static Angle flipperMaxAngle = Degrees.of(590);
     
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
@@ -215,6 +219,16 @@ public final class Constants {
     public static final double flippyS = 0.66508;
     public static final double flippyV = 0.10476;
     public static final double flippyA = 0.03396;
+
+
+    
+    public static final double flipperP = 0.03; 
+    public static final double flipperI = 0.000035;
+    public static final double flipperD = 0.05;
+      
+    public static final double flipperS = 0.05;
+    public static final double flpperV = 0.12113;
+    public static final double flpperA = 0.041532;   
   }
 
 

@@ -47,19 +47,24 @@ import yams.motorcontrollers.local.SparkWrapper;
 public class Flippy extends SubsystemBase {
 
   private final SparkMax flippyMotor;
+  private final SparkMax flippersMotor;
 
   private SmartMotorControllerConfig flippySmcConfig;
+  private SmartMotorControllerConfig flippersSmcConfig;
   private DigitalInput limitSwitch = new DigitalInput(1);
   private boolean lastLimitPressed = false;
 
   // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController flippySmartMotorController;
+  private SmartMotorController flipperSmartMotorController;
 
   //TODO: make these not fly wheels (maybe i dont actualy know)
   private final ArmConfig flippyConfig;
+  private final ArmConfig flipperConfig;
 
   // private FlyWheel flippyWheel;
   private Arm flippyArm;
+  private Arm flipperArm;
 
   public Flippy() {
 
@@ -103,8 +108,55 @@ public class Flippy extends SubsystemBase {
             .withTelemetry("flippyMech", TelemetryVerbosity.HIGH);
 
     flippyArm = new Arm(flippyConfig);
+
+
+    //Creates the motor objects that control the motors on the real robot
+    flippersMotor = new SparkMax(Constants.Intake.flipperMotorID, MotorType.kBrushless);
+    
+    //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
+    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
+    flippersSmcConfig = new SmartMotorControllerConfig(this)
+        .withControlMode(ControlMode.CLOSED_LOOP)
+        .withClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD,
+            DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        .withSimClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD,
+            DegreesPerSecond.of(90),
+            DegreesPerSecondPerSecond.of(45))
+        // .withFeedforward(
+            // new SimpleMotorFeedforward(Constants.Intake.flippyS,Constants.Intake.flippyV,Constants.Intake.flippyA))
+        // .withSimFeedforward(
+            // new SimpleMotorFeedforward(Constants.Intake.flippyS, Constants.Intake.flippyV, Constants.Intake.flippyA))
+        // .withExternalEncoder(flippyMotor.getAbsoluteEncoder())
+        // .withExternalEncoderInverted(true)
+        // .withUseExternalFeedbackEncoder(false)
+        // .withExternalEncoderZeroOffset(Degrees.of(45))
+        .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
+        .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
+        .withMotorInverted(false)
+        .withIdleMode(MotorMode.BRAKE)
+        .withStatorCurrentLimit(Amps.of(40));
+
+    flipperSmartMotorController = new SparkWrapper(flippersMotor, DCMotor.getNEO(1), flippersSmcConfig);
+    // starSmartMotorController.setEncoderInverted(true);
+
+    //TODO: make sure these are correct too
+    flipperConfig = new ArmConfig(flipperSmartMotorController)
+            .withLength(Inches.of(10))
+            .withMass(Pounds.of(15))
+            .withStartingPosition(Degrees.of(90))
+            .withHardLimit(Constants.Intake.flipperMinAngle, Constants.Intake.flipperMaxAngle)
+            .withSoftLimits(Constants.Intake.flipperMinAngle, Constants.Intake.flipperMaxAngle)
+            .withTelemetry("flipperMech", TelemetryVerbosity.HIGH);
+
+    flipperArm = new Arm(flipperConfig);
+
   }
 
+
+
+
+  
   public BooleanSupplier limitSwitchSupplier = () -> {
     return !limitSwitch.get();
   };
