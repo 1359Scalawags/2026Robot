@@ -19,7 +19,6 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -30,11 +29,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
-import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,6 +39,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.ShootCalculator;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,22 +60,17 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Rotation;
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 //limelight stuff
 import limelight.Limelight;
 import limelight.networktables.AngularVelocity3d;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightResults;
-import limelight.networktables.LimelightSettings.LEDMode;
 import limelight.networktables.Orientation3d;
 import limelight.networktables.PoseEstimate;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
-import limelight.networktables.target.pipeline.NeuralClassifier;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -89,14 +82,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
 
     Limelight limelight = new Limelight("limelight-top");
-    private int     outofAreaReading = 0;
-    private boolean initialReading = false;
 
     
     private final Field2d m_field = new Field2d();
 
+    private final ShootCalculator shootCalculator;
+
 
 public SwerveSubsystem(File directory) {
+    shootCalculator = new ShootCalculator();
 
 
     // boolean blueAlliance = true;
@@ -113,8 +107,6 @@ public SwerveSubsystem(File directory) {
     try
     {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.swerveDrive.MAX_SPEED, startingPose);
-      // Alternative method if you don't want to supply the conversion factor via JSON files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
     } catch (Exception e)
     {
       throw new RuntimeException(e);
@@ -130,7 +122,6 @@ public SwerveSubsystem(File directory) {
                                                 1); // Enable if you want to resynchronize your absolute encoders and motor encoders periodically when they are not moving.
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
-    // zeroGyroWithAlliance();
 
     seedForMatch(startingPose);
 
@@ -140,6 +131,24 @@ public SwerveSubsystem(File directory) {
 
     swerveDrivePoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getHeading(), swerveDrive.getModulePositions(), getPose());
 }
+
+
+    /**
+     * Construct the swerve drive.
+     *
+     * @param driveCfg SwerveDriveConfiguration for the swerve.
+     * @param controllerCfg Swerve Controller.
+     */
+    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg, ShootCalculator shootCalculator) {
+        swerveDrive = new SwerveDrive(driveCfg,
+                controllerCfg,
+                Constants.swerveDrive.MAX_SPEED,
+                new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+                        Rotation2d.fromDegrees(0)));
+        this.shootCalculator = shootCalculator;
+    }
+
+
 
 public void setupLimelight(){
     Pose3d cameraOffset = new Pose3d(Units.inchesToMeters(12),
@@ -155,19 +164,7 @@ public void setupLimelight(){
     limelightPoseEstimator = limelight.createPoseEstimator(EstimationMode.MEGATAG2);
 }
 
-    /**
-     * Construct the swerve drive.
-     *
-     * @param driveCfg SwerveDriveConfiguration for the swerve.
-     * @param controllerCfg Swerve Controller.
-     */
-    public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
-        swerveDrive = new SwerveDrive(driveCfg,
-                controllerCfg,
-                Constants.swerveDrive.MAX_SPEED,
-                new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
-                        Rotation2d.fromDegrees(0)));
-    }
+
 
   @Override
   public void periodic() {
@@ -213,6 +210,9 @@ public void setupLimelight(){
             }
         }
         m_field.setRobotPose(swerveDrive.getPose());
+
+        getDynamicRPM();
+        SmartDashboard.putNumber("Dynamic RPM", getDynamicRPMAsDouble());
     }
 
    
@@ -411,18 +411,6 @@ public void setupLimelight(){
                 .forEach(it -> it.setAngle(0.0)));
     }
 
-    /**
-     * Returns a Command that tells the robot to drive forward until the command
-     * ends.
-     *
-     * @return a Command that tells the robot to drive forward until the command
-     * ends
-     */
-    public Command driveForward() {
-        return run(() -> {
-            swerveDrive.drive(new Translation2d(1, 0), 0, false, false);
-        }).finallyDo(() -> swerveDrive.drive(new Translation2d(0, 0), 0, false, false));
-    }
 
     /**
      * Replaces the swerve module feedforward with a new SimpleMotorFeedforward
@@ -668,14 +656,6 @@ public void setupLimelight(){
         resetOdometry(startpose);
     }
 
-    /**
-     * Sets the drive motors to brake/coast mode.
-     *
-     * @param brake True to set motors to brake mode, false for coast.
-     */
-    public void setMotorBrake(boolean brake) {
-        swerveDrive.setMotorIdleMode(brake);
-    }
 
     /**
      * Gets the current yaw angle of the robot, as reported by the swerve pose
@@ -770,14 +750,6 @@ public void setupLimelight(){
         swerveDrive.lockPose();
     }
 
-    /**
-     * Gets the current pitch angle of the robot, as reported by the imu.
-     *
-     * @return The heading as a {@link Rotation2d} angle
-     */
-    public Rotation2d getPitch() {
-        return swerveDrive.getPitch();
-    }
 
     /**
      * Gets the swerve drive object.
@@ -816,6 +788,14 @@ public void setupLimelight(){
         } else {
             return Constants.FieldConstants.kBlueHubPosition;
         }
+    }
+
+    public AngularVelocity getDynamicRPM(){
+        return shootCalculator.CalculateShooterRPM(swerveDrive.getPose().getTranslation());
+    }
+
+    public double getDynamicRPMAsDouble() {
+        return getDynamicRPM().in(RPM);
     }
 
 }
