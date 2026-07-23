@@ -161,11 +161,12 @@ public final class Constants {
     // ========== CONFIGURATION ==========
       // CAN IDs for the motor controllers
     public static final int sushiMotorID = 10;
+    public static final int upperMotorID = 18;
     public static final int flippyMotorID = 9;
-
-    public static final int flipperMotorID = 0;
+    public static final int flipperMotorID = 5;
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RPM.of(2800);
+    public static AngularVelocity upperVelocity = RPM.of(2800);
     public static AngularVelocity flippyVelocity = RPM.of(1000);
 
     public static Angle flippyMinAngle = Degrees.of(0);
@@ -181,6 +182,9 @@ public final class Constants {
     public static final AngularVelocity sushiMaxVelocity = RPM.of(4000);
     public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
 
+    public static final AngularVelocity upperMaxVelocity = RPM.of(4000);
+    public static final AngularAcceleration upperMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
+
 
       // =========  PID & FF values for SushiWheel ==============
     public static final double sushiP = 0.025; //0.029668
@@ -190,6 +194,17 @@ public final class Constants {
     public static final double sushiS = 0.41333;
     public static final double sushiV = 0.45; //0.114
     public static final double sushiA = 0.024823;
+
+
+     // =========  PID & FF values for Upper ==============
+    public static final double upperP = 0.025; //0.029668
+    public static final double upperI = 0.00000001;
+    public static final double upperD = 0.8;
+
+    public static final double upperS = 0.41333;
+    public static final double upperV = 0.45; //0.114
+    public static final double upperA = 0.024823;
+
 
 
       // =========  PID & FF values for StarWheel ==============
