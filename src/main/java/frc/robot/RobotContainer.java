@@ -271,7 +271,7 @@ public class RobotContainer {
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                        m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel));
                         m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
 
 
