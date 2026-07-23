@@ -226,8 +226,8 @@ public class RobotContainer {
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
                                         .withName("Shoot Fuel");
 
-                        m_AssistantJoystick.button(12).whileTrue(flipDown);
-                        m_AssistantJoystick.button(13).whileTrue(flipUp);
+                        m_AssistantJoystick.button(12).whileTrue(Commands.parallel(flipDown));
+                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp));
                         m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
                         m_AssistantJoystick.trigger().whileTrue(shootDynamicFuel);
                       
@@ -263,8 +263,9 @@ public class RobotContainer {
 
                 } else if (RobotBase.isReal()) {
 
-                        m_AssistantJoystick.button(11).whileTrue(flipDown);
-                        m_AssistantJoystick.button(12).whileTrue(flipUp);
+                        m_AssistantJoystick.button(11).whileTrue(Commands.parallel(flipDown));
+                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp));
+                        
 
                         m_AssistantJoystick.button(15).whileTrue(climb);
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
