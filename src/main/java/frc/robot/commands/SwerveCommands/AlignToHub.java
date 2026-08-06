@@ -8,19 +8,14 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.OptionalDouble;
 import java.util.function.DoubleSupplier;
 
 public class AlignToHub extends Command {
     private SwerveSubsystem swerve;
-    private LimelightSubsystem limelight;
     private DoubleSupplier forwardSupplier;
     private DoubleSupplier strafeSupplier;
 
@@ -43,7 +38,6 @@ public class AlignToHub extends Command {
             DoubleSupplier forwardSupplier,
             DoubleSupplier strafeSupplier) {
         this.swerve = swerve;
-        this.limelight = limelight;
         this.forwardSupplier = forwardSupplier;
         this.strafeSupplier = strafeSupplier;
 

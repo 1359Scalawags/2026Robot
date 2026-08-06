@@ -5,13 +5,9 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.RPM;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecondPerSecond;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
@@ -20,18 +16,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 
 import edu.wpi.first.wpilibj.RobotBase;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide
- * numerical or boolean
- * constants. This class should not be used for any other purpose. All constants
- * should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>
- * It is advised to statically import this class (or one of its inner classes)
- * wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
 
   public static final Mode simMode = Mode.SIM;
@@ -131,6 +115,7 @@ public final class Constants {
     public static final double kickerS = 0.5;
     public static final double kickerV = 0.12113;
     public static final double kickerA = 0.041532;
+
   }
 
   public static class Climber {
@@ -139,13 +124,11 @@ public final class Constants {
     public static final double GEAR_RATIO = 125.0;
     public static final int CURRENT_LIMIT = 60; // Amps
     
-    // PID Constants — TUNE THESE on the real robot!
     // With 125:1 gearing, max linear speed is only ~0.106 m/s.
-    // Feedforward (kv) does the heavy lifting. PID just corrects small errors.
     public static final double kP = 50
     ;
     public static final double kI = 0.0;
-    public static final double kD = 0.0;   // Damping to prevent overshoot
+    public static final double kD = 0.0;   
     public static final double kFF = 0.0;
     
     // Position limits (in inches)
@@ -161,9 +144,9 @@ public final class Constants {
     // ks = static friction, kg = gravity compensation, kv = velocity
     // NOTE: kg always pushes UP. In sim there's no gravity so set to 0.
     // On the real robot, slowly increase kg until the elevator holds position with PID off.
-    public static final double ks = 0;  // TODO: Tune on real robot
+    public static final double ks = 0; 
     public static final double kg = 0;   // Set to 0 for sim. Real robot: ~0.3-1.0 (find with SysId)
-    public static final double kv = 0;   // Disable feedforward for now — let PID-only control work first
+    public static final double kv = 0;  
 
     // Preset heights (in inches)
     public static final double STOWED_HEIGHT = 0.5;    // inches — fully retracted
@@ -178,15 +161,19 @@ public final class Constants {
     // ========== CONFIGURATION ==========
       // CAN IDs for the motor controllers
     public static final int sushiMotorID = 10;
+    public static final int upperMotorID = 18;
     public static final int flippyMotorID = 9;
-
-
+    public static final int flipperMotorID = 5;
       // ======= Intake Speeds ======
     public static AngularVelocity sushiVelocity = RPM.of(2800);
+    public static AngularVelocity upperVelocity = RPM.of(2800);
     public static AngularVelocity flippyVelocity = RPM.of(1000);
 
     public static Angle flippyMinAngle = Degrees.of(0);
     public static Angle flippyMaxAngle = Degrees.of(590);
+
+    public static Angle flipperMinAngle = Degrees.of(0);
+    public static Angle flipperMaxAngle = Degrees.of(590);
     
       // ====== Trapazoidal Profile =======
     public static final AngularVelocity intakeMaxVelocity = RPM.of(2500);
@@ -195,6 +182,9 @@ public final class Constants {
     public static final AngularVelocity sushiMaxVelocity = RPM.of(4000);
     public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
 
+    public static final AngularVelocity upperMaxVelocity = RPM.of(4000);
+    public static final AngularAcceleration upperMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
+
 
       // =========  PID & FF values for SushiWheel ==============
     public static final double sushiP = 0.025; //0.029668
@@ -202,14 +192,24 @@ public final class Constants {
     public static final double sushiD = 0.8;
 
     public static final double sushiS = 0.41333;
-    public static final double sushiV = 0.45;
+    public static final double sushiV = 0.45; //0.114
     public static final double sushiA = 0.024823;
 
 
+     // =========  PID & FF values for Upper ==============
+    public static final double upperP = 0.025; //0.029668
+    public static final double upperI = 0.00000001;
+    public static final double upperD = 0.8;
+
+    public static final double upperS = 0.41333;
+    public static final double upperV = 0.45; //0.114
+    public static final double upperA = 0.024823;
+
+
+
       // =========  PID & FF values for StarWheel ==============
-          //Star motor is agrresivly tunned to help stop fuel getting stuck
-    public static final double flippyP = 0.035; //From sysID - 0.055968, 0.029853
-    public static final double flippyI = 0.000001;
+    public static final double flippyP = 0.035; //From sysID - kP = 0.055968, kD = 0.029853
+    public static final double flippyI = 0.000001; 
     public static final double flippyD = 1.3;
 
     public static final double flippyS = 0.66508;
@@ -238,11 +238,10 @@ public final class Constants {
     public static final AngularVelocity hopperMaxVelocity = RPM.of(2500);
     public static final AngularAcceleration hopperMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
-    // PID Constants (tune these based on your robot's performance)
     public static final double kP = 0.03;
     public static final double kI = 0.0000001;
     public static final double kD = 0.1;
-    public static final double kFF = 0.000156; // Feed-forward for NEO motors
+    public static final double kFF = 0.000156; 
 
     //hopper motorFF
     public static final double kS = 0;

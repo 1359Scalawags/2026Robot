@@ -46,23 +46,17 @@ public class Flippy extends SubsystemBase {
   private SmartMotorControllerConfig flipperSmConfig;
 
   private DigitalInput limitSwitch = new DigitalInput(1);
-  private boolean lastLimitPressed = false;
-
-  // Create our SmartMotorController from our Spark and config with the NEO.
   private SmartMotorController flippySmartMotorController;
   private SmartMotorController flipperSmartMotorController;
 
-  //TODO: make these not fly wheels (maybe i dont actualy know)
   private final ArmConfig flippyConfig;
   private final ArmConfig flipperConfig;
 
-  // private FlyWheel flippyWheel;
   private Arm flippyArm;
   private Arm flipperArm;
 
   public Flippy() {
 
-    //Creates the motor objects that control the motors on the real robot
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
     flipperMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
     
@@ -96,7 +90,6 @@ public class Flippy extends SubsystemBase {
             .withTelemetry("flippyMech", TelemetryVerbosity.HIGH);
     
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
-    //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     flippySmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
@@ -166,7 +159,6 @@ public class Flippy extends SubsystemBase {
     if (limitPressed) {
       flippySmartMotorController.setEncoderPosition(Degrees.of(0));
     }
-    lastLimitPressed = limitPressed;
 
     SmartDashboard.putNumber("getFlippyABSEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
     SmartDashboard.putNumber("getFlippyRelativeEncoder", flippyMotor.getEncoder().getPosition());

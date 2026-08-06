@@ -1,3 +1,5 @@
+
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -39,89 +41,91 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class Sushi extends SubsystemBase {
+public class upper extends SubsystemBase {
 
-  private final SparkMax sushiMotor;
-
-
-  private SmartMotorControllerConfig sushiSmcConfig;
-  private SmartMotorController sushiSmartMotorController;
+  private final SparkMax upperMotor;
 
 
-  private final FlyWheelConfig sushiConfig;
+  private SmartMotorControllerConfig upperSmcConfig;
+  private SmartMotorController upperSmartMotorController;
 
-  private FlyWheel sushiWheel;
 
-  public Sushi() {
+  private final FlyWheelConfig upperConfig;
+
+  private FlyWheel upperWheel;
+
+  public upper() {
 
     //Creates the motor objects that control the motors on the real robot
-    sushiMotor = new SparkMax(Constants.Intake.sushiMotorID, MotorType.kBrushless);
+    upperMotor = new SparkMax(Constants.Intake.upperMotorID, MotorType.kBrushless);
 
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
-    sushiSmcConfig = new SmartMotorControllerConfig(this)
+    upperSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+        .withClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD,
            RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
-        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
+        .withSimClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD,
             DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
-        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
-        .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
+        .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
+        .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
+        .withTelemetry("upperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("1.36:1")))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
-        .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
+        .withTrapezoidalProfile(Constants.Intake.upperMaxVelocity, Constants.Intake.upperMaxAcceleration);
 
-    sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
-    sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
+    upperSmartMotorController = new SparkWrapper(upperMotor, DCMotor.getNEO(1), upperSmcConfig);
+    upperConfig = new FlyWheelConfig(upperSmartMotorController)
         .withDiameter(Inches.of(2))
         .withMass(Pounds.of(1.07))
         .withSoftLimit(RPM.of(-3500), RPM.of(3500))
-        .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
+        .withTelemetry("upperMech", TelemetryVerbosity.HIGH);
 
-    sushiWheel = new FlyWheel(sushiConfig);   
+    upperWheel = new FlyWheel(upperConfig);   
   }
   /**
    * @return Shooter velocity.
    */
-  public AngularVelocity getSushiVelocity() {
-    return sushiWheel.getSpeed();
+  public AngularVelocity getupperVelocity() {
+    return upperWheel.getSpeed();
   }
 
-    public Command setSushiVelocity(AngularVelocity speed) {
-    return sushiWheel.setSpeed(speed);
+    public Command setupperVelocity(AngularVelocity speed) {
+    return upperWheel.setSpeed(speed);
   }
 
   // Set the dutycycle of the shooter.
-  public Command setSushiDutyCycle(double dutyCycle) {
-    return sushiWheel.set(dutyCycle);
+  public Command setupperDutyCycle(double dutyCycle) {
+    return upperWheel.set(dutyCycle);
   }
 
   public Command setVolatage(double volts) {
-    return sushiWheel.setVoltage(Volts.of(volts));
+    return upperWheel.setVoltage(Volts.of(volts));
   }
 
   public Command sysId() {
-    return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+    return upperWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
   }
 
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Sushi/VelocityRPM", sushiMotor.getEncoder().getVelocity());
-    SmartDashboard.putNumber("Sushi/Applied", sushiMotor.getAppliedOutput());
-    SmartDashboard.putNumber("Sushi/SetpointRPS",
-    sushiWheel.getMechanismSetpointVelocity()
+    SmartDashboard.putNumber("upper/VelocityRPM", upperMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("upper/Applied", upperMotor.getAppliedOutput());
+    SmartDashboard.putNumber("upper/SetpointRPS",
+    upperWheel.getMechanismSetpointVelocity()
         .map(v -> v.in(edu.wpi.first.units.Units.RotationsPerSecond))
         .orElse(0.0));
-    sushiWheel.updateTelemetry();
+    upperWheel.updateTelemetry();
 
   }
 
   @Override
   public void simulationPeriodic() {
-    sushiWheel.simIterate();
+    upperWheel.simIterate();
   }
 }
+
+
 
