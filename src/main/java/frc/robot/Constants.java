@@ -189,8 +189,8 @@ public final class Constants {
     public static Angle flippyMaxAngle = Degrees.of(590);
     
       // ====== Trapazoidal Profile =======
-    public static final AngularVelocity flippyMaxVelocity = RPM.of(2500);
-    public static final AngularAcceleration flippyMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
+    public static final AngularVelocity intakeMaxVelocity = RPM.of(2500);
+    public static final AngularAcceleration intakeMaxAcceleration = RotationsPerSecondPerSecond.of(5000);
 
     public static final AngularVelocity sushiMaxVelocity = RPM.of(4000);
     public static final AngularAcceleration sushiMaxAcceleration = RotationsPerSecondPerSecond.of(4000);
@@ -215,6 +215,14 @@ public final class Constants {
     public static final double flippyS = 0.66508;
     public static final double flippyV = 0.10476;
     public static final double flippyA = 0.03396;
+    
+    public static final double flipperP = flippyP;
+    public static final double flipperI = flippyI;
+    public static final double flipperD = flippyD;
+
+    public static final double flipperS = flippyS;
+    public static final double flipperV = flippyV;
+    public static final double flipperA = flippyA;
   }
 
 

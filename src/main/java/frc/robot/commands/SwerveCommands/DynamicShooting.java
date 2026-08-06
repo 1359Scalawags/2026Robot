@@ -31,8 +31,6 @@ public class DynamicShooting extends Command {
         addRequirements(shooter);
     }
     
-
-
     @Override
     public void initialize() {
         shooter.setShooterDutyCycle(0);
