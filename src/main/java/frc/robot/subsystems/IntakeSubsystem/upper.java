@@ -1,5 +1,3 @@
-
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -41,7 +39,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class upper extends SubsystemBase {
+public class Upper extends SubsystemBase {
 
   private final SparkMax upperMotor;
 
@@ -54,7 +52,7 @@ public class upper extends SubsystemBase {
 
   private FlyWheel upperWheel;
 
-  public upper() {
+  public Upper() {
 
     //Creates the motor objects that control the motors on the real robot
     upperMotor = new SparkMax(Constants.Intake.upperMotorID, MotorType.kBrushless);
