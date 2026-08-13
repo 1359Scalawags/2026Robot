@@ -218,9 +218,9 @@ public class RobotContainer {
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
                 Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
-                Command upperDown = m_Upper.setUpperDutyCycle(11);
+                Command upperDown = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
                 Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
-                Command upperUp = m_Upper.setUpperDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
+                Command upperUp = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
 
                 if (RobotBase.isSimulation()) {      
@@ -270,16 +270,16 @@ public class RobotContainer {
 
                 } else if (RobotBase.isReal()) {
 
-                        m_AssistantJoystick.button(11).whileTrue(Commands.parallel(flipDown, upperDown));
-                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp, upperUp));
+                        m_AssistantJoystick.button(11).whileTrue(Commands.parallel(flipDown));
+                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp));
                         
 
                         m_AssistantJoystick.button(15).whileTrue(climb);
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                        m_AssistantJoystick.button(14).whileTrue(intakeFuel);
-                        m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
+                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel, upperUp));
+                        m_AssistantJoystick.button(4).whileTrue(Commands.parallel(outtakeFuel, upperDown));
                         // m_AssistantJoystick.button(2).whileTrue(flipUp)
 
 
