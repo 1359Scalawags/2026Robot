@@ -205,7 +205,7 @@ public class RobotContainer {
                                         .withName("Shoot Fuel");
                 
                 Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
-                Command intakeFuelUpper = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
+                // Command intakeFuelUpper = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
                                 
                 Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
@@ -218,7 +218,9 @@ public class RobotContainer {
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
                 Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
+                Command upperDown = m_Upper.setUpperDutyCycle(11);
                 Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
+                Command upperUp = m_Upper.setUpperDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
 
 
                 if (RobotBase.isSimulation()) {      
@@ -268,8 +270,8 @@ public class RobotContainer {
 
                 } else if (RobotBase.isReal()) {
 
-                        m_AssistantJoystick.button(11).whileTrue(Commands.parallel(flipDown));
-                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp));
+                        m_AssistantJoystick.button(11).whileTrue(Commands.parallel(flipDown, upperDown));
+                        m_AssistantJoystick.button(13).whileTrue(Commands.parallel(flipUp, upperUp));
                         
 
                         m_AssistantJoystick.button(15).whileTrue(climb);
@@ -302,7 +304,7 @@ public class RobotContainer {
 
 
                         // m_DriverJoystick.button(5).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
-                                                m_DriverJoystick.button(10).whileTrue(alignToTag);
+                        m_DriverJoystick.button(10).whileTrue(alignToTag);
 
                 } 
 
