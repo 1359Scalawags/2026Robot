@@ -89,6 +89,7 @@ public class RobotContainer {
         public RobotContainer() {
 
                 m_IntakeFlippy.setDefaultCommand(m_IntakeFlippy.setFlippyDutyCycle(0));
+                m_Upper.setDefaultCommand(m_Upper.setUpperDutyCycle(0));
                 m_IntakeSushi.setDefaultCommand(m_IntakeSushi.setSushiDutyCycle(0));
                 m_Shooter.setDefaultCommand(m_Shooter.setShooterDutyCycle(0));
                 m_Kicker.setDefaultCommand(m_Kicker.setKickerDutyCylce(0));
