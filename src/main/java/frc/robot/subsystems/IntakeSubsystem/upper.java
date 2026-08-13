@@ -86,20 +86,20 @@ public class Upper extends SubsystemBase {
   /**
    * @return Shooter velocity.
    */
-  public AngularVelocity getupperVelocity() {
+  public AngularVelocity getUpperVelocity() {
     return upperWheel.getSpeed();
   }
 
-    public Command setupperVelocity(AngularVelocity speed) {
+    public Command setUpperVelocity(AngularVelocity speed) {
     return upperWheel.setSpeed(speed);
   }
 
   // Set the dutycycle of the shooter.
-  public Command setupperDutyCycle(double dutyCycle) {
+  public Command setUpperDutyCycle(double dutyCycle) {
     return upperWheel.set(dutyCycle);
   }
 
-  public Command setVolatage(double volts) {
+  public Command setVoltage(double volts) {
     return upperWheel.setVoltage(Volts.of(volts));
   }
 

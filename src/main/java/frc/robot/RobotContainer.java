@@ -205,7 +205,7 @@ public class RobotContainer {
                                         .withName("Shoot Fuel");
                 
                 Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
-                Command intakeFuelUpper = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
+                Command intakeFuelUpper = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
                                 
                 Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
