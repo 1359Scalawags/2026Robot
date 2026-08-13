@@ -309,7 +309,7 @@ public class RobotContainer {
                 } 
 
                 
-                // m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
+                m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
        
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
