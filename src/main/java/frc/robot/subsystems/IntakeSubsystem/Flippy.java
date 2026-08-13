@@ -13,7 +13,6 @@ import static edu.wpi.first.units.Units.Degrees;
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.ctre.phoenix6.controls.Follower;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -58,7 +57,7 @@ public class Flippy extends SubsystemBase {
   public Flippy() {
 
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
-    flipperMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
+    flipperMotor = new SparkMax(Constants.Intake.flipperMotorID, MotorType.kBrushless);
     
     flipperSmConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
@@ -72,10 +71,11 @@ public class Flippy extends SubsystemBase {
         .withExternalEncoder(flipperMotor.getAbsoluteEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
-        .withExternalEncoderZeroOffset(Inches.of(0))
+        // .withExternalEncoderZeroOffset(Inches.of(0))
         .withUseExternalFeedbackEncoder(true)
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
+        // .withMechanismCircumference(Inches.of(3)) //Need to adjust to actual dimension.
         .withMotorInverted(true)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40));
@@ -102,10 +102,11 @@ public class Flippy extends SubsystemBase {
         .withExternalEncoder(flipperMotor.getAbsoluteEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
-        .withExternalEncoderZeroOffset(Inches.of(0))
+        // .withExternalEncoderZeroOffset(Inches.of(0))
         .withUseExternalFeedbackEncoder(true)
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
+        // .withMechanismCircumference(Inches.of(3))
         .withMotorInverted(false)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40))

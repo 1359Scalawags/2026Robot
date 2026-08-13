@@ -16,6 +16,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Flippy;
 import frc.robot.subsystems.IntakeSubsystem.Sushi;
 import frc.robot.subsystems.LimelightSubsystem.LimelightSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.Upper;
 import swervelib.SwerveInputStream;
 
 import java.io.File;
@@ -62,6 +63,7 @@ public class RobotContainer {
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
         private final Kicker m_Kicker = new Kicker();
+        private final Upper m_Upper = new Upper();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
         private final LimelightSubsystem m_limelight = new LimelightSubsystem(Constants.Limelight.limelight_Name);
         private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem();
@@ -95,17 +97,18 @@ public class RobotContainer {
 
                 configureBindings();
 
-                NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
-                NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
-                NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.135));
-                NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
-                NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
-
-                NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
-                NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
-                NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
-                NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(0));
+                // NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
+                // NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
+                // NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
+                // NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.135));
+                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
+                // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
+                // NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
+                // NamedCommands.registerCommand("0 Intake Star", m_IntakeSushi.setSushiDutyCycle(0));
+                // NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
+                // NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
+                // NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
+                // NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(0));
 
                 // NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 
@@ -116,7 +119,7 @@ public class RobotContainer {
                 // Set the default auto (do nothing)
                 autoChooser.setDefaultOption("Do Nothing", Commands.none());
 
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                // SmartDashboard.putData("Auto Chooser", autoChooser);
                 SmartDashboard.putData(CommandScheduler.getInstance());
 
                 // Default: hold current position with closed-loop (doesn't fight closed-loop mode)
@@ -201,6 +204,7 @@ public class RobotContainer {
                                         .withName("Shoot Fuel");
                 
                 Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
+                Command intakeFuelUpper = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
                                 
                 Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
@@ -271,7 +275,7 @@ public class RobotContainer {
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel));
+                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel, intakeFuelUpper));
                         m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
 
 

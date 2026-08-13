@@ -41,7 +41,7 @@ import yams.motorcontrollers.SmartMotorControllerConfig.MotorMode;
 import yams.motorcontrollers.SmartMotorControllerConfig.TelemetryVerbosity;
 import yams.motorcontrollers.local.SparkWrapper;
 
-public class upper extends SubsystemBase {
+public class Upper extends SubsystemBase {
 
   private final SparkMax upperMotor;
 
@@ -54,7 +54,7 @@ public class upper extends SubsystemBase {
 
   private FlyWheel upperWheel;
 
-  public upper() {
+  public Upper() {
 
     //Creates the motor objects that control the motors on the real robot
     upperMotor = new SparkMax(Constants.Intake.upperMotorID, MotorType.kBrushless);
@@ -70,6 +70,7 @@ public class upper extends SubsystemBase {
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
         .withTelemetry("upperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("1.36:1")))
+        .withMechanismCircumference(Inches.of(3))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)
         .withStatorCurrentLimit(Amps.of(35))
