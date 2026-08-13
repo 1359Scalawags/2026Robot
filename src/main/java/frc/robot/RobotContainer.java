@@ -62,6 +62,7 @@ public class RobotContainer {
         private final Flippy m_IntakeFlippy = new Flippy();
         private final Sushi m_IntakeSushi = new Sushi();
         private final Shooter m_Shooter = new Shooter();
+        // private final Upper m_Upper = new upper();
         private final Kicker m_Kicker = new Kicker();
         private final Upper m_Upper = new Upper();
         private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
@@ -277,6 +278,7 @@ public class RobotContainer {
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel, intakeFuelUpper));
                         m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
+                        // m_AssistantJoystick.button(2).whileTrue(flipUp)
 
 
                        
