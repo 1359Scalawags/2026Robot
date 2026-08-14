@@ -99,20 +99,20 @@ public class RobotContainer {
 
                 configureBindings();
 
-                // NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
-                // NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
-                // NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
-                // NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.135));
-                // NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
-                // NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
-                // NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
-                // NamedCommands.registerCommand("0 Intake Star", m_IntakeSushi.setSushiDutyCycle(0));
-                // NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
-                // NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
-                // NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
-                // NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(0));
+                 NamedCommands.registerCommand("Set Shooter", m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity));
+                 NamedCommands.registerCommand("Set Kicker", m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity));
+                 NamedCommands.registerCommand("Set Hopper", m_HopperSubsystem.set(0.7));
+                 NamedCommands.registerCommand("Flippy Down", m_IntakeFlippy.setFlippyDutyCycle(.135));
+                 NamedCommands.registerCommand("Set Climb L1", m_ClimberSubsystem.set(0.70).until(m_ClimberSubsystem.getMaxHeightSupplier));
+                 NamedCommands.registerCommand("Climb L1", m_ClimberSubsystem.set(-0.60).until(m_ClimberSubsystem.limitSwitchSupplier));
+                 NamedCommands.registerCommand("0 Intake Sushi", m_IntakeSushi.setSushiDutyCycle(0));
+                 NamedCommands.registerCommand("0 Intake Star", m_IntakeSushi.setSushiDutyCycle(0));
+                 NamedCommands.registerCommand("0 Shooter", m_Shooter.setShooterDutyCycle(0));
+                 NamedCommands.registerCommand("0 Kicker", m_Kicker.setKickerDutyCylce(0));
+                 NamedCommands.registerCommand("0 Hopper", m_HopperSubsystem.set(0));
+                 NamedCommands.registerCommand("0 Flippy", m_IntakeFlippy.setFlippyDutyCycle(0));
 
-                // NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
+                 NamedCommands.registerCommand("testPrint", Commands.print("The command is being called here"));
                 
 
                 // Have the autoChooser pull in all PathPlanner autos as options
@@ -258,7 +258,7 @@ public class RobotContainer {
                         // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                         //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
-                                                // m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
+                        m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
 
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
@@ -281,7 +281,7 @@ public class RobotContainer {
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel, upperUp));
                         m_AssistantJoystick.button(4).whileTrue(Commands.parallel(outtakeFuel, upperDown));
-                        // m_AssistantJoystick.button(2).whileTrue(flipUp)
+                        //m_AssistantJoystick.button(2).whileTrue(flipUp)
 
 
                        
