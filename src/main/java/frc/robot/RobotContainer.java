@@ -281,7 +281,7 @@ public class RobotContainer {
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel,intakeFuelUpper, upperUp));
                         m_AssistantJoystick.button(4).whileTrue(Commands.parallel(outtakeFuel, upperDown));
-                        m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
+                       // m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
 
 
                        
@@ -315,7 +315,7 @@ public class RobotContainer {
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
 
-                m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+               //  m_AssistantJoystick.button(2).whileTrue(intakeFuel);
                 //Robot Centric to Field Centric, vice versa.
                 // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
                 // m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
