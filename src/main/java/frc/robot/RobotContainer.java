@@ -191,8 +191,6 @@ public class RobotContainer {
                 // Command driveRobotOrientedAngularVelocityKeyboard = m_SwerveSubsystem.driveFieldOriented(driveRobotOrientedKeyboard);
                 // Command driveFieldOrientedDirectAngleKeyboard = m_SwerveSubsystem.driveFieldOriented(driveDirectAngleKeyboard);
                
-                m_AssistantJoystick.button(14).whileTrue(m_IntakeSushi.setSushiDutyCycle(0.7));
-                
                 m_DriverJoystick.button(2).onTrue(Commands.runOnce(
                         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
               
@@ -205,10 +203,13 @@ public class RobotContainer {
                                         m_Kicker.setKickerVelocity(Constants.Shooter.kickerVelocity)))
                                         .withName("Shoot Fuel");
                 
-                Command intakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
+                Command intakeFuelLower = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity);
                 Command intakeFuelUpper = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
+                Command intakeFuel = Commands.parallel(intakeFuelLower, intakeFuelUpper);
                                 
-                Command outtakeFuel = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
+                Command outtakeFuelLower = m_IntakeSushi.setSushiVelocity(Constants.Intake.sushiVelocity.unaryMinus());
+                Command outtakeFuelUpper = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity.unaryMinus());
+                Command outtakeFuel = Commands.parallel(outtakeFuelLower, outtakeFuelUpper);
 
                 Command alignToTag =  new AlignToHub(m_SwerveSubsystem, m_limelight,
                                 () -> m_DriverJoystick.getY() * -1 * throttleSupplier.getAsDouble(),
@@ -219,9 +220,7 @@ public class RobotContainer {
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
                 Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
-                Command upperDown = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity);
                 Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
-                Command upperUp = m_Upper.setUpperVelocity(Constants.Intake.sushiVelocity.unaryMinus());
 
 
                 if (RobotBase.isSimulation()) {      
@@ -279,11 +278,8 @@ public class RobotContainer {
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel,intakeFuelUpper, upperUp));
-                        m_AssistantJoystick.button(4).whileTrue(Commands.parallel(outtakeFuel, upperDown));
-                       // m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
-
-
+                        m_AssistantJoystick.button(14).whileTrue(intakeFuel);
+                        m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
                        
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
@@ -309,19 +305,10 @@ public class RobotContainer {
 
                 } 
 
-                
-                m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
+                // Temporarily deactivate the Hopper for debugging.
+                // m_AssistantJoystick.button(14).whileTrue(m_HopperSubsystem.set(0.5));
        
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
-
-
-               //  m_AssistantJoystick.button(2).whileTrue(intakeFuel);
-                //Robot Centric to Field Centric, vice versa.
-                // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
-                // m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));
-
-
-
         }
 
         public Command getAutonomousCommand() {
