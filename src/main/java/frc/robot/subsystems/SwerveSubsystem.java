@@ -74,15 +74,13 @@ import limelight.networktables.LimelightPoseEstimator.EstimationMode;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-    private final  SwerveDrive swerveDrive;
-
+    private final SwerveDrive swerveDrive;
 
     SwerveDrivePoseEstimator swerveDrivePoseEstimator; 
     LimelightPoseEstimator limelightPoseEstimator;
 
 
     Limelight limelight = new Limelight("limelight-top");
-
     
     private final Field2d m_field = new Field2d();
 
