@@ -165,8 +165,8 @@ public final class Constants {
     public static final int flippyMotorID = 9;
     public static final int flipperMotorID = 5;
       // ======= Intake Speeds ======
-    public static AngularVelocity sushiVelocity = RPM.of(2800);
-    public static AngularVelocity upperVelocity = RPM.of(2800);
+    public static AngularVelocity sushiVelocity = RPM.of(950);
+    public static AngularVelocity upperVelocity = RPM.of(950);
     public static AngularVelocity flippyVelocity = RPM.of(1000);
 
     public static Angle flippyMinAngle = Degrees.of(0);

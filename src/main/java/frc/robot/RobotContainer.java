@@ -85,6 +85,12 @@ public class RobotContainer {
                 return MathUtil.clamp(scaled, 0.25, 1.0);
         };
 
+        // private final DoubleSupplier shooterSupplier = () -> {
+        //         double raw = m_AssistantJoystick.getThrottle();
+        //         double scaled = raw + 2;
+        //         return MathUtil.clamp(scaled, 1, 3);
+        // };
+
 
         public RobotContainer() {
 
@@ -198,6 +204,7 @@ public class RobotContainer {
               
                
                 Command shootFuel = Commands.parallel(
+                        // m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity.times(shooterSupplier.getAsDouble())),
                         m_Shooter.setShooterVelocity(Constants.Shooter.shooterVelocity),
                         m_HopperSubsystem.set(0.75),
                                 Commands.sequence(
@@ -279,9 +286,9 @@ public class RobotContainer {
                         m_AssistantJoystick.button(16).whileTrue(ClimbDown);
 
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
-                        m_AssistantJoystick.button(14).whileTrue(Commands.parallel(intakeFuel,intakeFuelUpper, upperUp));
+                        m_AssistantJoystick.button(2).whileTrue(Commands.parallel(intakeFuel,intakeFuelUpper));
                         m_AssistantJoystick.button(4).whileTrue(Commands.parallel(outtakeFuel, upperDown));
-                       // m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
+                        //m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
 
 
                        
@@ -315,7 +322,7 @@ public class RobotContainer {
                 m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity);
 
 
-               //  m_AssistantJoystick.button(2).whileTrue(intakeFuel);
+                // m_AssistantJoystick.button(2).whileTrue(intakeFuel);
                 //Robot Centric to Field Centric, vice versa.
                 // m_DriverJoystick.button(5).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveFieldOrientedAngularVelocity), m_SwerveSubsystem));
                 // m_DriverJoystick.button(6).onTrue(Commands.runOnce(() -> m_SwerveSubsystem.setDefaultCommand(driveRobotOrientedAngularVelocity), m_SwerveSubsystem));

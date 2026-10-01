@@ -61,7 +61,7 @@ public class Sushi extends SubsystemBase {
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
         .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
-           RPM.of(5000), RotationsPerSecondPerSecond.of(2500))
+           RPM.of(1750), RotationsPerSecondPerSecond.of(1250))
         .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
             DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
