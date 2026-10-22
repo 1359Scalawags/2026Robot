@@ -67,7 +67,7 @@ public class Upper extends SubsystemBase {
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
         .withTelemetry("upperMotor", TelemetryVerbosity.HIGH)
-        .withGearing(new MechanismGearing(GearBox.fromStages("1.36:1")))
+        .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
         .withMechanismCircumference(Inches.of(3))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.COAST)

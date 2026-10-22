@@ -225,8 +225,8 @@ public class RobotContainer {
                 Command climb  = m_ClimberSubsystem.set(0.80).until(m_ClimberSubsystem.getMaxHeightSupplier);
                 Command ClimbDown = m_ClimberSubsystem.set(-.55).until(m_ClimberSubsystem.limitSwitchSupplier);
 
-                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.11);
-                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.225).until(m_IntakeFlippy.limitSwitchSupplier);
+                Command flipDown = m_IntakeFlippy.setFlippyDutyCycle(.4);
+                Command flipUp = m_IntakeFlippy.setFlippyDutyCycle(-.4).until(m_IntakeFlippy.limitSwitchSupplier);
 
 
                 if (RobotBase.isSimulation()) {      
@@ -286,10 +286,7 @@ public class RobotContainer {
                         m_AssistantJoystick.trigger().whileTrue(shootFuel);
                         m_AssistantJoystick.button(2).whileTrue(intakeFuel);
                         m_AssistantJoystick.button(4).whileTrue(outtakeFuel);
-                        //m_AssistantJoystick.button(2).whileTrue(intakeFuel); 
 
-
-                       
                         //===============================DRIVE TO POSE ===============================
                         Pose2d target = new Pose2d(new Translation2d(0, 0),
                                         Rotation2d.fromDegrees(90));
