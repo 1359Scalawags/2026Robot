@@ -158,12 +158,14 @@ public class Flippy extends SubsystemBase {
     final boolean limitPressed = limitSwitchSupplier.getAsBoolean();
 
     if (limitPressed) {
-      flippySmartMotorController.setEncoderPosition(Degrees.of(0));
+      flippyMotor.getAlternateEncoder().setPosition(0);
+      flipperMotor.getAlternateEncoder().setPosition(0);
     }
-
-    SmartDashboard.putNumber("getFlippyABSEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putNumber("getFlippyRelativeEncoder", flippyMotor.getEncoder().getPosition());
-    SmartDashboard.putBoolean("FlipMotor/LimitSwitch", limitPressed);
+    SmartDashboard.putNumber("FlipMotor/Flippy/externalEncoder", flippyMotor.getAlternateEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flippy/absoluteEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flipper/externalEncoder", flipperMotor.getAlternateEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flipper/absoluteEncoder", flipperMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
     SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
     flippyArm.updateTelemetry();
   }

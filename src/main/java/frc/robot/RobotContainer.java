@@ -263,7 +263,7 @@ public class RobotContainer {
                         // m_DriverJoystick.trigger().onTrue(Commands.runOnce(
                         //                 () -> m_SwerveSubsystem.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
 
-                        m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
+                        // m_AssistantJoystick.button(6).onTrue(m_IntakeSushi.sysId());
 
 
                         m_DriverJoystick.button(11).onTrue(Commands.runOnce(
@@ -291,26 +291,26 @@ public class RobotContainer {
 
                        
                         //===============================DRIVE TO POSE ===============================
-                        Pose2d target = new Pose2d(new Translation2d(0, 0),
-                                        Rotation2d.fromDegrees(90));
+                        // Pose2d target = new Pose2d(new Translation2d(0, 0),
+                        //                 Rotation2d.fromDegrees(90));
 
-                        m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
+                        // m_SwerveSubsystem.getSwerveDrive().field.getObject("targetPose").setPose(target);
 
-                        driveAngularVelocity.driveToPose(() -> target,
-                                        new ProfiledPIDController(5,0,0,
-                                                new Constraints(5, 2)),
-                                        new ProfiledPIDController(5,0,0,
-                                                new Constraints(Units.degreesToRadians(360),
-                                                                        Units.degreesToRadians(180))));
+                        // driveAngularVelocity.driveToPose(() -> target,
+                        //                 new ProfiledPIDController(5,0,0,
+                        //                         new Constraints(5, 2)),
+                        //                 new ProfiledPIDController(5,0,0,
+                        //                         new Constraints(Units.degreesToRadians(360),
+                        //                                                 Units.degreesToRadians(180))));
 
-                        m_DriverJoystick.button(11).onTrue(Commands.runOnce(
-                                () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
+                        // m_DriverJoystick.button(11).onTrue(Commands.runOnce(
+                        //         () -> m_SwerveSubsystem.zeroGyroWithAlliance()));
 
                         // m_DriverJoystick.button(5).onTrue(m_IntakeSushi.sysId());
 
 
                         // m_DriverJoystick.button(5).whileTrue(new AutoAimCommand(m_SwerveSubsystem, driveAngularVelocity));
-                        m_DriverJoystick.button(10).whileTrue(alignToTag);
+                        // m_DriverJoystick.button(10).whileTrue(alignToTag);
 
                 } 
 
