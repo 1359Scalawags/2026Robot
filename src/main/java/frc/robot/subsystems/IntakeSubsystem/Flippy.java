@@ -68,7 +68,7 @@ public class Flippy extends SubsystemBase {
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withTrapezoidalProfile(Intake.intakeMaxVelocity, Intake.intakeMaxAcceleration)
-        .withExternalEncoder(flipperMotor.getAbsoluteEncoder())
+        .withExternalEncoder(flipperMotor.getAlternateEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
         // .withExternalEncoderZeroOffset(Inches.of(0))
@@ -99,7 +99,7 @@ public class Flippy extends SubsystemBase {
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withTrapezoidalProfile(Intake.intakeMaxVelocity, Intake.intakeMaxAcceleration)
-        .withExternalEncoder(flipperMotor.getAbsoluteEncoder())
+        .withExternalEncoder(flipperMotor.getAlternateEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
         // .withExternalEncoderZeroOffset(Inches.of(0))
@@ -162,9 +162,9 @@ public class Flippy extends SubsystemBase {
       flipperMotor.getAlternateEncoder().setPosition(0);
     }
     SmartDashboard.putNumber("FlipMotor/Flippy/externalEncoder", flippyMotor.getAlternateEncoder().getPosition());
-    SmartDashboard.putNumber("FlipMotor/Flippy/absoluteEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flippy/relativeEncoder", flippyMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("FlipMotor/Flipper/externalEncoder", flipperMotor.getAlternateEncoder().getPosition());
-    SmartDashboard.putNumber("FlipMotor/Flipper/absoluteEncoder", flipperMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flipper/relativeEncoder", flipperMotor.getEncoder().getPosition());
     SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
     SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
     flippyArm.updateTelemetry();
