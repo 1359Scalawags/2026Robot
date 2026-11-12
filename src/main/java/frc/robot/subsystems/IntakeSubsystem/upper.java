@@ -24,6 +24,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -60,10 +61,8 @@ public class Upper extends SubsystemBase {
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     upperSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD,
-           RPM.of(1750), RotationsPerSecondPerSecond.of(1250))
-        .withSimClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD,
-            DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD)
+        .withSimClosedLoopController(Constants.Intake.upperP, Constants.Intake.upperI, Constants.Intake.upperD)
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.upperS,Constants.Intake.upperV,Constants.Intake.upperA))
         .withTelemetry("upperMotor", TelemetryVerbosity.HIGH)
@@ -75,13 +74,11 @@ public class Upper extends SubsystemBase {
         .withTrapezoidalProfile(Constants.Intake.upperMaxVelocity, Constants.Intake.upperMaxAcceleration);
 
     upperSmartMotorController = new SparkWrapper(upperMotor, DCMotor.getNEO(1), upperSmcConfig);
-    upperConfig = new FlyWheelConfig(upperSmartMotorController)
+    upperConfig = new FlyWheelConfig()
         .withDiameter(Inches.of(2))
-        .withMass(Pounds.of(1.07))
-        .withSoftLimit(RPM.of(-3500), RPM.of(3500))
         .withTelemetry("upperMech", TelemetryVerbosity.HIGH);
 
-    upperWheel = new FlyWheel(upperConfig);   
+    upperWheel = new FlyWheel(upperConfig, upperSmartMotorController);   
   }
   /**
    * @return Shooter velocity.
@@ -90,8 +87,8 @@ public class Upper extends SubsystemBase {
     return upperWheel.getSpeed();
   }
 
-    public Command setUpperVelocity(AngularVelocity speed) {
-    return upperWheel.setSpeed(speed);
+  public Command setUpperVelocity(AngularVelocity speed) {
+    return Commands.runOnce(() -> upperSmartMotorController.setVelocity(speed), this);
   }
 
   // Set the dutycycle of the shooter.
@@ -103,9 +100,9 @@ public class Upper extends SubsystemBase {
     return upperWheel.setVoltage(Volts.of(volts));
   }
 
-  public Command sysId() {
-    return upperWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-  }
+  // public Command sysId() {
+  //   return upperWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  // }
 
 
   @Override

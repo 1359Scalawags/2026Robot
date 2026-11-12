@@ -21,6 +21,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Shooter;
@@ -60,10 +61,8 @@ public class Kicker extends SubsystemBase {
     //TODO: need to confiure the SMC correctly for the values and test values we want to use on the real robot
     kickerSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD, DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD)
+        .withSimClosedLoopController(Constants.Shooter.kickerP, Constants.Shooter.kickerI, Constants.Shooter.kickerD)
         .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.kickerS, Constants.Shooter.kickerV, Constants.Shooter.kickerA))
         .withTelemetry("KickerMotor", TelemetryVerbosity.HIGH)
@@ -78,17 +77,15 @@ public class Kicker extends SubsystemBase {
 
     //TODO check these values to see if they are accurate
 
-    kickerConfig = new FlyWheelConfig(kickerSmartMotorController)
+    kickerConfig = new FlyWheelConfig()
     .withDiameter(Inches.of(4))
-    .withMass(Pounds.of(1))
-    .withSoftLimit(RPM.of(-1500), RPM.of(1500))
     .withTelemetry("KickerMech", TelemetryVerbosity.HIGH);
 
-    kickerWheel = new FlyWheel(kickerConfig);
+    kickerWheel = new FlyWheel(kickerConfig, kickerSmartMotorController);
   }
 
     public Command setKickerVelocity(AngularVelocity speed) {
-    return kickerWheel.setSpeed(speed);
+      return Commands.runOnce(() -> kickerSmartMotorController.setVelocity(speed), this);
   }
 
   // Set the dutycycle of the shooter.
@@ -96,9 +93,9 @@ public class Kicker extends SubsystemBase {
     return kickerWheel.set(dutyCycle);
   }
 
-  public Command sysId() {
-    return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(20));
-  }
+  // public Command sysId() {
+  //   return kickerWheel.sysId(Volts.of(10), Volts.of(1).per(Second), Seconds.of(20));
+  // }
 
 
   @Override

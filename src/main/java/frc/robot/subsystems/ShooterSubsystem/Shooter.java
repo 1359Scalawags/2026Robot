@@ -22,6 +22,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import yams.gearing.GearBox;
@@ -59,8 +60,8 @@ public class Shooter extends SubsystemBase {
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     shooterSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD, DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD)
+        .withSimClosedLoopController(Constants.Shooter.shooterP, Constants.Shooter.shooterI, Constants.Shooter.shooterD)
         .withFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Shooter.shooterS, Constants.Shooter.shooterV, Constants.Shooter.shooterA))
         .withTelemetry("ShooterMotor", TelemetryVerbosity.HIGH)
@@ -73,13 +74,11 @@ public class Shooter extends SubsystemBase {
 
     shooterSmartMotorController = new SparkWrapper(shooterMotor, DCMotor.getNEO(1), shooterSmcConfig);
 
-    shooterConfig = new FlyWheelConfig(shooterSmartMotorController)
+    shooterConfig = new FlyWheelConfig()
         .withDiameter(Inches.of(4))
-        .withMass(Pounds.of(1))
-        .withSoftLimit(RPM.of(-4000), RPM.of(4000))
         .withTelemetry("ShooterMech", TelemetryVerbosity.HIGH);
         
-    shooterWheel = new FlyWheel(shooterConfig);
+    shooterWheel = new FlyWheel(shooterConfig, shooterSmartMotorController);
   }
   
   public AngularVelocity getShooterVelocity() {
@@ -90,8 +89,8 @@ public class Shooter extends SubsystemBase {
     return  shooterWheel.getSpeed().in(RPM);
   }
 
-    public Command setShooterVelocity(AngularVelocity speed) {
-    return shooterWheel.setSpeed(speed).withName("Shooter Wheel set Vel");
+  public Command setShooterVelocity(AngularVelocity speed) {
+    return Commands.runOnce(() -> shooterSmartMotorController.setVelocity(speed), this);
   }
 
   // Set the dutycycle of the shooter.
@@ -105,9 +104,9 @@ public class Shooter extends SubsystemBase {
   }
   
   
-  public Command sysId() {
-    return shooterWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-  }
+  // public Command sysId() {
+  //   return shooterWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  // }
 
 
   @Override
