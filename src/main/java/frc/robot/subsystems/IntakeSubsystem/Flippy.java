@@ -14,6 +14,7 @@ import java.util.function.BooleanSupplier;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkMaxAlternateEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.Pair;
@@ -52,11 +53,10 @@ public class Flippy extends SubsystemBase {
   private final ArmConfig flipperConfig;
 
   private Arm flippyArm;
-  private Arm flipperArm;
-
-  public Flippy() {
+  
 
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
+  //SparkMaxAlternateEncoder alternateEncoder = flippyMotor.getAlternateEncoder();
     flipperMotor = new SparkMax(Constants.Intake.flipperMotorID, MotorType.kBrushless);
     
     flipperSmConfig = new SmartMotorControllerConfig(this)
@@ -99,7 +99,7 @@ public class Flippy extends SubsystemBase {
             DegreesPerSecond.of(90),
             DegreesPerSecondPerSecond.of(45))
         .withTrapezoidalProfile(Intake.intakeMaxVelocity, Intake.intakeMaxAcceleration)
-        .withExternalEncoder(flippyMotor.getAlternateEncoder())
+        .withExternalEncoder(flipperMotor.getAlternateEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
         // .withExternalEncoderZeroOffset(Inches.of(0))
@@ -157,16 +157,16 @@ public class Flippy extends SubsystemBase {
   public void periodic() {
     final boolean limitPressed = limitSwitchSupplier.getAsBoolean();
 
-    if (limitPressed) {
-      flippyMotor.getAlternateEncoder().setPosition(0);
-      flipperMotor.getAlternateEncoder().setPosition(0);
-    }
-    SmartDashboard.putNumber("FlipMotor/Flippy/externalEncoder", flippyMotor.getAlternateEncoder().getPosition());
-    SmartDashboard.putNumber("FlipMotor/Flippy/alternateEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putNumber("FlipMotor/Flipper/externalEncoder", flipperMotor.getAlternateEncoder().getPosition());
-    SmartDashboard.putNumber("FlipMotor/Flipper/alternateEncoder", flipperMotor.getAbsoluteEncoder().getPosition());
-    SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
-    SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
+    // if (limitPressed) {
+    //   flippyMotor.getAlternateEncoder().setPosition(0);
+    //   flipperMotor.getAlternateEncoder().setPosition(0);
+    // }
+    // SmartDashboard.putNumber("FlipMotor/Flippy/externalEncoder", flippyMotor.getAlternateEncoder().getPosition());
+    // SmartDashboard.putNumber("FlipMotor/Flippy/relativeEncoder", flippyMotor.getEncoder().getPosition());
+    // SmartDashboard.putNumber("FlipMotor/Flipper/externalEncoder", flipperMotor.getAlternateEncoder().getPosition());
+    // SmartDashboard.putNumber("FlipMotor/Flipper/relativeEncoder", flipperMotor.getEncoder().getPosition());
+    // SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
+    // SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
     flippyArm.updateTelemetry();
   }
 
