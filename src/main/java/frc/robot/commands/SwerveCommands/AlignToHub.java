@@ -52,7 +52,7 @@ public class AlignToHub extends Command {
 
     @Override
     public void initialize() {
-        // Reset the internal motion profile to “start from where we are right now”
+        // Reset the internal motion profile to start from where we are right now
         headingController.reset(swerve.getHeading().getRadians());
     }
 

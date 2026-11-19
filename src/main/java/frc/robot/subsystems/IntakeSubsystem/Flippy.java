@@ -123,7 +123,6 @@ public class Flippy extends SubsystemBase {
 
     // Ensure the final flipperConfig is initialized to a sensible default to avoid compilation errors.
     // Reuse flippyConfig as the default; adjust if a separate configuration is required later.
-
   }
 
   public BooleanSupplier limitSwitchSupplier = () -> {
