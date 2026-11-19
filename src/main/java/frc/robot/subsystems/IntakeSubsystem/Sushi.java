@@ -24,6 +24,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants;
@@ -60,10 +61,8 @@ public class Sushi extends SubsystemBase {
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     sushiSmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
-           RPM.of(1750), RotationsPerSecondPerSecond.of(1250))
-        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD,
-            DegreesPerSecond.of(90), DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD)
+        .withSimClosedLoopController(Constants.Intake.sushiP, Constants.Intake.sushiI, Constants.Intake.sushiD)
         .withFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withSimFeedforward(new SimpleMotorFeedforward(Constants.Intake.sushiS,Constants.Intake.sushiV,Constants.Intake.sushiA))
         .withTelemetry("sushiMotor", TelemetryVerbosity.HIGH)
@@ -74,13 +73,11 @@ public class Sushi extends SubsystemBase {
         .withTrapezoidalProfile(Constants.Intake.sushiMaxVelocity, Constants.Intake.sushiMaxAcceleration);
 
     sushiSmartMotorController = new SparkWrapper(sushiMotor, DCMotor.getNEO(1), sushiSmcConfig);
-    sushiConfig = new FlyWheelConfig(sushiSmartMotorController)
+    sushiConfig = new FlyWheelConfig()
         .withDiameter(Inches.of(2))
-        .withMass(Pounds.of(1.07))
-        .withSoftLimit(RPM.of(-3500), RPM.of(3500))
         .withTelemetry("sushiMech", TelemetryVerbosity.HIGH);
 
-    sushiWheel = new FlyWheel(sushiConfig);   
+    sushiWheel = new FlyWheel(sushiConfig, sushiSmartMotorController);   
   }
   /**
    * @return Shooter velocity.
@@ -89,8 +86,9 @@ public class Sushi extends SubsystemBase {
     return sushiWheel.getSpeed();
   }
 
-    public Command setSushiVelocity(AngularVelocity speed) {
-    return sushiWheel.setSpeed(speed);
+  public Command setSushiVelocity(AngularVelocity speed) {
+    // return sushiWheel.setSpeed(speed);
+    return Commands.runOnce(() -> sushiSmartMotorController.setVelocity(speed), this);
   }
 
   // Set the dutycycle of the shooter.
@@ -102,9 +100,9 @@ public class Sushi extends SubsystemBase {
     return sushiWheel.setVoltage(Volts.of(volts));
   }
 
-  public Command sysId() {
-    return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-  }
+  // public Command sysId() {
+  //   return sushiWheel.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  // }
 
 
   @Override

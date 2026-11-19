@@ -66,8 +66,8 @@ public ClimberSubsystem(){
   smcConfig = new SmartMotorControllerConfig(this)
     .withControlMode(ControlMode.CLOSED_LOOP)
     .withMechanismCircumference(Meters.of(Inches.of(0.25).in(Meters) * 22))
-    .withClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.1), MetersPerSecondPerSecond.of(0.4))
-    .withSimClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD, MetersPerSecond.of(0.1), MetersPerSecondPerSecond.of(0.4))
+    .withClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD)
+    .withSimClosedLoopController(Constants.Climber.kP, Constants.Climber.kI, Constants.Climber.kD)
     .withFeedforward(new ElevatorFeedforward(Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
     .withSimFeedforward(new ElevatorFeedforward( Constants.Climber.ks, Constants.Climber.kg, Constants.Climber.kv))
     .withTelemetry("ElevatorMotor", TelemetryVerbosity.HIGH)
@@ -76,22 +76,26 @@ public ClimberSubsystem(){
     .withIdleMode(MotorMode.BRAKE)
     .withStatorCurrentLimit(Amps.of(Constants.Climber.CURRENT_LIMIT))
     .withClosedLoopRampRate(Seconds.of(0.15))
-    .withOpenLoopRampRate(Seconds.of(0.15));
-
-  sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
-
-  elevconfig = new ElevatorConfig(sparkSmartMotorController)
-    .withStartingHeight(Meters.of(Inches.of(Constants.Climber.START_HEIGHT).in(Meters)))
-    .withHardLimits(
-        Meters.of(Inches.of(Constants.Climber.MIN_HEIGHT).in(Meters)),
-        Meters.of(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)))
+    .withStartingPosition(Meters.of(Inches.of(Constants.Climber.START_HEIGHT).in(Meters)))
     .withSoftLimits(
         Meters.of(Inches.of(Constants.Climber.SOFT_MIN).in(Meters)),
         Meters.of(Inches.of(Constants.Climber.SOFT_MAX).in(Meters)))
-    .withTelemetry("Climber", TelemetryVerbosity.HIGH)
-    .withMass(Pounds.of(16));
+    .withOpenLoopRampRate(Seconds.of(0.15))
+    .withTelemetry("Climber", TelemetryVerbosity.HIGH);
+
+  sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
+
+  elevconfig = new ElevatorConfig()
+    // .withStartingHeight(Meters.of(Inches.of(Constants.Climber.START_HEIGHT).in(Meters)))
+    .withHardLimits(
+        Meters.of(Inches.of(Constants.Climber.MIN_HEIGHT).in(Meters)),
+        Meters.of(Inches.of(Constants.Climber.MAX_HEIGHT).in(Meters)));
+    // .withSoftLimits(
+    //     Meters.of(Inches.of(Constants.Climber.SOFT_MIN).in(Meters)),
+    //     Meters.of(Inches.of(Constants.Climber.SOFT_MAX).in(Meters)))
+    // .withTelemetry("Climber", TelemetryVerbosity.HIGH));
   spark.getEncoder().setPosition(5);
-  climber = new Elevator(elevconfig);
+  climber = new Elevator(elevconfig, sparkSmartMotorController);
 
   Shuffleboard.getTab("Arm").add("LimitSwitch", limitSwitch);
 
@@ -161,13 +165,13 @@ public ClimberSubsystem(){
    * - Start the elevator near the MIDDLE of its travel, not at a hard stop.
    * - Watch the mechanism the entire time. Disable immediately if it hits a stop.
    */
-  public Command sysId() {
-    return climber.sysId(
-        Volts.of(2.5),              // Max voltage — LOW for high-ratio gearbox
-        Volts.of(0.25).per(Second), // Ramp rate — very slow ramp
-        Seconds.of(10)              // Duration — long enough for slow ramp to collect data
-    );
-  }
+  // public Command sysId() {
+  //   return climber.sysId(
+  //       Volts.of(2.5),              // Max voltage — LOW for high-ratio gearbox
+  //       Volts.of(0.25).per(Second), // Ramp rate — very slow ramp
+  //       Seconds.of(10)              // Duration — long enough for slow ramp to collect data
+  //   );
+  // }
 
   public Command homeCommand() {
     return Commands.run(() -> spark.getEncoder().setPosition(Inches.of(20).in(Meters)));

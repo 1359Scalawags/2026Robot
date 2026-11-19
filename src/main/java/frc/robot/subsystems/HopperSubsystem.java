@@ -20,6 +20,7 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
@@ -63,13 +64,11 @@ public class HopperSubsystem extends SubsystemBase {
 
   sparkSmartMotorController = new SparkWrapper(spark, DCMotor.getNEO(1), smcConfig);
 
-  hopperConfig = new FlyWheelConfig(sparkSmartMotorController)
+  hopperConfig = new FlyWheelConfig()
   .withDiameter(Inches.of(4))
-  .withMass(Pounds.of(1))
-  .withSoftLimit(RPM.of(-2500), RPM.of(2500))
   .withTelemetry("HopperMech", TelemetryVerbosity.HIGH);
 
-  hopper = new FlyWheel(hopperConfig);
+  hopper = new FlyWheel(hopperConfig, sparkSmartMotorController);
   }
 
 
@@ -91,7 +90,7 @@ public class HopperSubsystem extends SubsystemBase {
    * @return {@link edu.wpi.first.wpilibj2.command.RunCommand}
    */
   public Command setVelocity(AngularVelocity speed) {
-    return hopper.setSpeed(speed);
+    return Commands.runOnce(() -> sparkSmartMotorController.setVelocity(speed), this);
   }
 
 
@@ -118,9 +117,9 @@ public class HopperSubsystem extends SubsystemBase {
         () -> {setVelocity(speed);});
   }
 
-    public Command sysId() {
-      return hopper.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
-    }
+  // public Command sysId() {
+  //     return hopper.sysId(Volts.of(12), Volts.of(0.5).per(Second), Seconds.of(30));
+  //   }
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).

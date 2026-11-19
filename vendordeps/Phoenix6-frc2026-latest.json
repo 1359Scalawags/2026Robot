@@ -1,18 +1,23 @@
 {
+<<<<<<< HEAD:vendordeps/Phoenix6-replay-frc2026-latest.json
     "fileName": "Phoenix6-replay-frc2026-latest.json",
     "name": "CTRE-Phoenix (v6) Replay",
+=======
+    "fileName": "Phoenix6-frc2026-latest.json",
+    "name": "CTRE-Phoenix (v6)",
+>>>>>>> d9b32118fb89f202fbc40a20361b1812e6670aa2:vendordeps/Phoenix6-frc2026-latest.json
     "version": "26.3.0",
     "frcYear": "2026",
-    "uuid": "e7900d8d-826f-4dca-a1ff-182f658e98af",
+    "uuid": "e995de00-2c64-4df5-8831-c1441420ff19",
     "mavenUrls": [
         "https://maven.ctr-electronics.com/release/"
     ],
-    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-replay-frc2026-latest.json",
+    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix6/latest/Phoenix6-frc2026-latest.json",
     "conflictsWith": [
         {
-            "uuid": "e995de00-2c64-4df5-8831-c1441420ff19",
+            "uuid": "e7900d8d-826f-4dca-a1ff-182f658e98af",
             "errorMessage": "Users can not have both the replay and regular Phoenix 6 vendordeps in their robot program.",
-            "offlineFileName": "Phoenix6-frc2026-latest.json"
+            "offlineFileName": "Phoenix6-replay-frc2026-latest.json"
         }
     ],
     "javaDependencies": [
@@ -30,6 +35,9 @@
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxarm64",
                 "linuxathena"
             ],
             "simMode": "hwsim"
@@ -41,11 +49,15 @@
             "isJar": false,
             "skipInvalidPlatforms": true,
             "validPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxarm64",
                 "linuxathena"
             ],
             "simMode": "hwsim"
         },
         {
+<<<<<<< HEAD:vendordeps/Phoenix6-replay-frc2026-latest.json
             "groupId": "com.ctre.phoenix6.replay",
             "artifactId": "api-cpp-replay",
             "version": "26.3.0",
@@ -74,6 +86,8 @@
             "simMode": "hwsim"
         },
         {
+=======
+>>>>>>> d9b32118fb89f202fbc40a20361b1812e6670aa2:vendordeps/Phoenix6-frc2026-latest.json
             "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "api-cpp-sim",
             "version": "26.3.0",
@@ -252,6 +266,9 @@
             "sharedLibrary": true,
             "skipInvalidPlatforms": true,
             "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxarm64",
                 "linuxathena"
             ],
             "simMode": "hwsim"
@@ -265,11 +282,15 @@
             "sharedLibrary": true,
             "skipInvalidPlatforms": true,
             "binaryPlatforms": [
+                "windowsx86-64",
+                "linuxx86-64",
+                "linuxarm64",
                 "linuxathena"
             ],
             "simMode": "hwsim"
         },
         {
+<<<<<<< HEAD:vendordeps/Phoenix6-replay-frc2026-latest.json
             "groupId": "com.ctre.phoenix6.replay",
             "artifactId": "wpiapi-cpp-replay",
             "version": "26.3.0",
@@ -302,6 +323,8 @@
             "simMode": "hwsim"
         },
         {
+=======
+>>>>>>> d9b32118fb89f202fbc40a20361b1812e6670aa2:vendordeps/Phoenix6-frc2026-latest.json
             "groupId": "com.ctre.phoenix6.sim",
             "artifactId": "wpiapi-cpp-sim",
             "version": "26.3.0",

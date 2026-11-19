@@ -10,6 +10,7 @@ import static edu.wpi.first.units.Units.DegreesPerSecondPerSecond;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Pounds;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
 import java.util.function.BooleanSupplier;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -58,81 +59,70 @@ public class Flippy extends SubsystemBase {
     flippyMotor = new SparkMax(Constants.Intake.flippyMotorID, MotorType.kBrushless);
   //SparkMaxAlternateEncoder alternateEncoder = flippyMotor.getAlternateEncoder();
     flipperMotor = new SparkMax(Constants.Intake.flipperMotorID, MotorType.kBrushless);
-    
+
     flipperSmConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD,
-            DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD,
-            DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD)
+        .withSimClosedLoopController(Constants.Intake.flipperP, Constants.Intake.flipperI, Constants.Intake.flipperD)
         .withTrapezoidalProfile(Intake.intakeMaxVelocity, Intake.intakeMaxAcceleration)
-        .withExternalEncoder(flipperMotor.getAlternateEncoder())
+        .withExternalEncoder(flipperMotor.getAbsoluteEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
-        // .withExternalEncoderZeroOffset(Inches.of(0))
+        .withExternalEncoderDiscontinuityPoint(Rotations.of(0.5))
+        .withExternalEncoderZeroOffset(Degrees.of(0))
         .withUseExternalFeedbackEncoder(true)
         .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
-        // .withMechanismCircumference(Inches.of(3)) //Need to adjust to actual dimension.
+        .withStartingPosition(Degrees.of(90))
+        .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+        .withMomentOfInertia(Inches.of(10), Pounds.of(15))
         .withMotorInverted(true)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40));
-      
+
     flipperSmartMotorController = new SparkWrapper(flipperMotor, DCMotor.getNEO(1), flipperSmConfig);
-    flipperConfig = new ArmConfig(flipperSmartMotorController)
-            .withLength(Inches.of(10))
-            .withMass(Pounds.of(15))
-            .withStartingPosition(Degrees.of(90))
-            .withHardLimit(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
-            .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
-            .withTelemetry("flippyMech", TelemetryVerbosity.HIGH);
+    
+    flipperConfig = new ArmConfig()
+        .withLength(Inches.of(10))
+        .withHardLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+        .withTelemetry("flipperMech", TelemetryVerbosity.HIGH);
     
     //YAMS SmartMotorController generic config to configure the motors, ID, PIDF, gearing, idlemode... etc
     flippySmcConfig = new SmartMotorControllerConfig(this)
         .withControlMode(ControlMode.CLOSED_LOOP)
-        .withClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
-            DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
-        .withSimClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD,
-            DegreesPerSecond.of(90),
-            DegreesPerSecondPerSecond.of(45))
+        .withClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD)
+        .withSimClosedLoopController(Constants.Intake.flippyP, Constants.Intake.flippyI, Constants.Intake.flippyD)
         .withTrapezoidalProfile(Intake.intakeMaxVelocity, Intake.intakeMaxAcceleration)
-        .withExternalEncoder(flipperMotor.getAlternateEncoder())
+        .withExternalEncoder(flippyMotor.getAbsoluteEncoder())
         .withExternalEncoderGearing(1.0)
         .withExternalEncoderInverted(false)
-        // .withExternalEncoderZeroOffset(Inches.of(0))
+        .withExternalEncoderDiscontinuityPoint(Rotations.of(0.5))
+        .withExternalEncoderZeroOffset(Degrees.of(0))
         .withUseExternalFeedbackEncoder(true)
-        .withTelemetry("FlipperMotor", TelemetryVerbosity.HIGH)
+        .withTelemetry("FlippyMotor", TelemetryVerbosity.HIGH)
         .withGearing(new MechanismGearing(GearBox.fromStages("64:1")))
-        // .withMechanismCircumference(Inches.of(3))
-        .withMotorInverted(false)
+        .withStartingPosition(Degrees.of(90))
+        .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+        .withMomentOfInertia(Inches.of(10), Pounds.of(15))
+        .withMotorInverted(true)
         .withIdleMode(MotorMode.BRAKE)
         .withStatorCurrentLimit(Amps.of(40))
         .withLooselyCoupledFollowers(flipperSmartMotorController);
       
     
     flippySmartMotorController = new SparkWrapper(flippyMotor, DCMotor.getNEO(1), flippySmcConfig);
-    // starSmartMotorController.setEncoderInverted(true);
 
-    //TODO: make sure these are correct too
-    flippyConfig = new ArmConfig(flippySmartMotorController)
-            .withLength(Inches.of(10))
-            .withMass(Pounds.of(15))
-            .withStartingPosition(Degrees.of(90))
-            .withHardLimit(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
-            .withSoftLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
-            .withTelemetry("flippyMech", TelemetryVerbosity.HIGH);
-
-
-    flippyArm = new Arm(flippyConfig);
-    flipperArm = new Arm(flipperConfig);
+    flippyConfig = new ArmConfig()
+        .withLength(Inches.of(10))
+        .withHardLimits(Constants.Intake.flippyMinAngle, Constants.Intake.flippyMaxAngle)
+        .withTelemetry("flipperMech", TelemetryVerbosity.HIGH);
+    
+    flippyArm = new Arm(flippyConfig, flippySmartMotorController);
+    flipperArm = new Arm(flipperConfig, flipperSmartMotorController);
 
 
     // Ensure the final flipperConfig is initialized to a sensible default to avoid compilation errors.
     // Reuse flippyConfig as the default; adjust if a separate configuration is required later.
-
   }
 
   public BooleanSupplier limitSwitchSupplier = () -> {
@@ -157,6 +147,7 @@ public class Flippy extends SubsystemBase {
   public void periodic() {
     final boolean limitPressed = limitSwitchSupplier.getAsBoolean();
 
+<<<<<<< HEAD
     // if (limitPressed) {
     //   flippyMotor.getAlternateEncoder().setPosition(0);
     //   flipperMotor.getAlternateEncoder().setPosition(0);
@@ -167,6 +158,18 @@ public class Flippy extends SubsystemBase {
     // SmartDashboard.putNumber("FlipMotor/Flipper/relativeEncoder", flipperMotor.getEncoder().getPosition());
     // SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
     // SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
+=======
+    if (limitPressed) {
+      // flippyMotor.getAbsoluteEncoder.setPosition();
+      // flipperMotor.getAbsoluteEncoder().setPosition();
+    }
+    SmartDashboard.putNumber("FlipMotor/Flippy/externalEncoder", flippyMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flippy/relativeEncoder", flippyMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flipper/externalEncoder", flipperMotor.getAbsoluteEncoder().getPosition());
+    SmartDashboard.putNumber("FlipMotor/Flipper/relativeEncoder", flipperMotor.getEncoder().getPosition());
+    SmartDashboard.putBoolean("FlipMotor/Flippy/LimitSwitch", limitPressed);
+    SmartDashboard.putNumber("FlipMotor/Angle", getFlippyAngle().in(Degrees));
+>>>>>>> d9b32118fb89f202fbc40a20361b1812e6670aa2
     flippyArm.updateTelemetry();
   }
 
